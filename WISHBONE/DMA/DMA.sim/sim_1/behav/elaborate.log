@@ -1,0 +1,34 @@
+Vivado Simulator 2014.3
+Copyright 1986-1999, 2001-2014 Xilinx, Inc. All Rights Reserved.
+Running: C:/Xilinx/Vivado/2014.3/bin/unwrapped/win64.o/xelab.exe -wto 243dd12971454f77b81e6c003e7ae2c6 --debug typical --relax -L xil_defaultlib -L secureip --snapshot DMA_WISHBONE_TOPLEVEL_tb_behav xil_defaultlib.DMA_WISHBONE_TOPLEVEL_tb -log elaborate.log 
+Multi-threading is on. Using 6 slave threads.
+Starting static elaboration
+Completed static elaboration
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling package std.standard
+Compiling package ieee.std_logic_1164
+Compiling package ieee.numeric_std
+Compiling architecture behaviour of entity xil_defaultlib.fifo [\fifo(8,96)\]
+Compiling architecture arch of entity xil_defaultlib.adapter [adapter_default]
+Compiling architecture controller of entity xil_defaultlib.DMAControllerSta [\DMAControllerSta(32,32,2)\]
+Compiling architecture behaviour of entity xil_defaultlib.fifo [\fifo(16,64)\]
+Compiling architecture arch of entity xil_defaultlib.loadIDComparator [\loadIDComparator(32)\]
+Compiling architecture arch of entity xil_defaultlib.adder [\adder(32)\]
+Compiling architecture arch of entity xil_defaultlib.subtractor [\subtractor(32)\]
+Compiling architecture activate of entity xil_defaultlib.manSubtractor [\manSubtractor(32)\]
+Compiling architecture arch of entity xil_defaultlib.countCheck [\countCheck(32)\]
+Compiling architecture arch of entity xil_defaultlib.loadChannel [\loadChannel(32,32)\]
+Compiling architecture arch of entity xil_defaultlib.storeChannel [\storeChannel(32,32)\]
+Compiling architecture arch of entity xil_defaultlib.fullChannel [\fullChannel(32,32)\]
+Compiling architecture arch of entity xil_defaultlib.arbiterController [\arbiterController(34,3)\]
+Compiling architecture arch of entity xil_defaultlib.adrMux [\adrMux(34,3)\]
+Compiling architecture arch of entity xil_defaultlib.dataMux [\dataMux(32)\]
+Compiling architecture top of entity xil_defaultlib.arbiterTop [\arbiterTop(34,32,3)\]
+Compiling architecture arch of entity xil_defaultlib.twoChannelSetUpBuffered [\twoChannelSetUpBuffered(32,32,3...]
+Compiling architecture arch of entity xil_defaultlib.DMATopLevel [\DMATopLevel(32,32,96,64,8)\]
+Compiling architecture behavioral of entity xil_defaultlib.WISHBONE_STANDARD_SC [wishbone_standard_sc_default]
+Compiling architecture behavioral of entity xil_defaultlib.DMA_WISHBONE_Toplevel [dma_wishbone_toplevel_default]
+Compiling architecture behavioral of entity xil_defaultlib.dma_wishbone_toplevel_tb
+Built simulation snapshot DMA_WISHBONE_TOPLEVEL_tb_behav

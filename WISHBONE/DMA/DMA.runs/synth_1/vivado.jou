@@ -1,0 +1,10 @@
+#-----------------------------------------------------------
+# Vivado v2014.3 (64-bit)
+# SW Build 1034051 on Fri Oct  3 17:14:12 MDT 2014
+# IP Build 1028902 on Fri Sep 26 17:35:13 MDT 2014
+# Start of session at: Tue Jan 20 18:39:28 2015
+# Process ID: 5764
+# Log file: C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.runs/synth_1/DMATopLevel.vds
+# Journal file: C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.runs/synth_1\vivado.jou
+#-----------------------------------------------------------
+source DMATopLevel.tcl
