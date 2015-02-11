@@ -98,7 +98,10 @@ architecture controller of DMAControllerSta is
 	signal totalActive : std_logic_vector(1 downto 0) := "00";
 	signal workDone : std_logic_vector(1 downto 0);
 
-	--
+	-- MASTER
+	signal FLAConvertByte : std_logic_vector(n-1 downto 0) := (n-1 downto 0 => '0'); --Byte-addressing version of FLAConvert
+    signal FSAConvertByte : std_logic_vector(n-1 downto 0) := (n-1 downto 0 => '0'); --Byte-addressing version of FSAConvert
+    signal counterByte : std_logic_vector(n-1 downto 0) := (n-1 downto 0 => '0');
 	
 	
 begin 
@@ -119,12 +122,13 @@ begin
 	-- Internal signals to outputs
 	set1 <= set1_internal;
     set0 <= set0_internal;
-
-	
-	-- Other combinatorics:
-	
-	--FLAConvert <= std_logic_vector(unsigned(loadDetails)+unsigned(counterInput)+(unsigned(counterInput)*3*addressingMode)); -- Adds Load address and counter to generate FLA
-    --FSAConvert <= std_logic_vector(unsigned(storeDetails)+unsigned(counterInput)+(unsigned(counterInput)*3*addressingMode)); -- Adds Store address and counter to generate FSA
+    
+    -- Other combinatorics:
+    
+    counterByte <= counterInput(29 downto 0) & "00";
+    
+    FLAConvertByte <= std_logic_vector(unsigned(loadDetails)+unsigned(counterByte)); 
+    FSAConvertByte <= std_logic_vector(unsigned(storeDetails)+unsigned(counterByte)); 
 	
 	
 	-- Lower section of FSM
@@ -164,7 +168,7 @@ begin
 	
 	-- Upper section of FSM
 	
-	setNext : process(req, reset, pr_state, FLAConvert, FSAConvert, counterInput, addressingMode, requestIDInput, totalActive, 
+	setNext : process(req, reset, pr_state, FLAConvert, FSAConvert, FLAConvertByte, FSAConvertByte, counterInput, addressingMode, requestIDInput, totalActive, 
 						activeCh0, activeCh1, workDone, occupied, interruptDetails_internal, interruptAck, requestID0, requestID1)
 		-- Variables for each next-signal
 		variable var_reqUpdate : std_logic;
@@ -217,8 +221,8 @@ begin
 					if (addressingMode = '1') then
 					   var_decrementOut := "100";
 					   var_counterOut := counterInput(n-3 downto 0) & "00";
-					   var_FLAOut := FLAConvert(n-3 downto 0) & "00";
-                       var_FSAOut := FSAConvert(n-3 downto 0) & "00";
+					   var_FLAOut := FLAConvertByte;
+                       var_FSAOut := FSAConvertByte;
 					end if;
 					
 					
@@ -251,8 +255,8 @@ begin
 					if (addressingMode = '1') then
                         var_decrementOut := "100";
                         var_counterOut := counterInput(n-3 downto 0) & "00";
-                        var_FLAOut := FLAConvert(n-3 downto 0) & "00";
-                        var_FSAOut := FSAConvert(n-3 downto 0) & "00";
+                        var_FLAOut := FLAConvertByte;               
+                        var_FSAOut := FSAConvertByte;
                     end if;
                                         
 					
@@ -305,8 +309,8 @@ begin
 					if (addressingMode = '1') then
                         var_decrementOut := "100";
                         var_counterOut := counterInput(n-3 downto 0) & "00";
-                        var_FLAOut := FLAConvert(n-3 downto 0) & "00";
-                        var_FSAOut := FSAConvert(n-3 downto 0) & "00";
+                        var_FLAOut := FLAConvertByte;
+                        var_FSAOut := FSAConvertByte;
                     end if;
 					
 					
@@ -367,8 +371,8 @@ begin
 						if (addressingMode = '1') then
                             var_decrementOut := "100";
                             var_counterOut := counterInput(n-3 downto 0) & "00";
-                            var_FLAOut := FLAConvert(n-3 downto 0) & "00";
-                            var_FSAOut := FSAConvert(n-3 downto 0) & "00";
+                            var_FLAOut := FLAConvertByte;
+                            var_FSAOut := FSAConvertByte;
                         end if;
 					
 						if activeCh0 = '0' then	-- Channel 0 is free, prioritized above channel 1 in dynamic mode

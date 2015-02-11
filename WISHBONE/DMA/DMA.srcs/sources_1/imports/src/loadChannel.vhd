@@ -25,7 +25,10 @@ entity loadChannel is
 		
 		-- Output to Arbiter
 		loadAdrOut : out std_logic_vector(2+(n-1) downto 0); -- Current load address
-		loadReq : out std_logic -- Request signal to arbiter to pass through load data
+		loadReq : out std_logic; -- Request signal to arbiter to pass through load data
+		
+		-- MASTER: Output for addressing mode, needed for WB interface
+		AMOut: out std_logic
 		);
 end loadChannel;
 
@@ -178,7 +181,19 @@ begin
 		else
 			-- Nothing
 		end if;
-	end process; 
+	end process;
+	
+	
+	--MASTER
+	setAMOut : process(decrement)
+	begin
+	   if decrement = "100" then
+	       AMOut <= '1';
+	   else 
+	       AMOut <= '0';
+	   end if;
+	end process;
+	
 end arch;
 
 

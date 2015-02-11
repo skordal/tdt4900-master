@@ -38,15 +38,22 @@ entity fullChannel is
 		loadAdrOut : out std_logic_vector(2+(n-1) downto 0); -- Current load address for load request
 		storeAdrOut : out std_logic_vector(2+(n-1) downto 0); -- Current store address for store request
 		loadReq : out std_logic;
-		storeReq : out std_logic -- Request signal to arbiter to pass through store address to arbiter (will be passed together with data from shared buffer)
+		storeReq : out std_logic; -- Request signal to arbiter to pass through store address to arbiter (will be passed together with data from shared buffer)
+		
+		-- MASTER: Output for addressing mode, needed for WB interface
+        AMOut: out std_logic
 		);
 end fullChannel;
 
 architecture arch of fullChannel is
 	
 	-- Internal signals
-	signal loadActive : std_logic;
-	signal storeActive : std_logic;
+	signal loadActive : std_logic := '0';
+	signal storeActive : std_logic := '0';
+	
+	--MASTER
+	signal AMOut0 : std_logic := '0';
+	signal AMOut1 : std_logic := '0';
 	
 	-- Used components:
 	component loadChannel
@@ -67,7 +74,8 @@ architecture arch of fullChannel is
 		loadActive : out std_logic;
 	
 		loadAdrOut : out std_logic_vector(2+(n-1) downto 0); 
-		loadReq : out std_logic
+		loadReq : out std_logic;
+		AMOut : out std_logic
 	);
 	end component;
 	
@@ -95,7 +103,8 @@ architecture arch of fullChannel is
 		loadAdrOut : out std_logic_vector((n-1) downto 0); 
 	
 		storeAdrOut : out std_logic_vector(2+(n-1) downto 0); 
-		storeReq : out std_logic 
+		storeReq : out std_logic;
+        AMOut : out std_logic 
 	);
 	end component;
 begin
@@ -114,7 +123,8 @@ begin
 		
 		loadActive => loadActive,
 		loadAdrOut => loadAdrOut,
-		loadReq => loadReq
+		loadReq => loadReq,
+		AMOut => AMOut0
 	);
 	
 	storer : storeChannel
@@ -134,8 +144,18 @@ begin
 		storeActive => storeActive,
 		loadAdrOut => loadIDOut,
 		storeAdrOut => storeAdrOut,
-		storeReq => storeReq
+		storeReq => storeReq,
+        AMOut => AMOut1        
 	);
+	
+	-- MASTER: Easy version to set AMOut, as long as both load and store has same addressing mode
+	-- (incompatible with advanced type of implementation if loading is for one job, while storing is for another, with different addressing modes) 
+	AMOut <= AMOut0 OR AMOut1;
+	
+	-- MASTER: Advanced version to set AMOut, with possible different AMOut from load and store.
+	-- If so, implement a process where AMOut is set based on if loadAck or storeAck is set
+	
+	
 	
 end arch;
 

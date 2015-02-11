@@ -31,10 +31,10 @@ entity storeChannel is
 		loadAdrOut : out std_logic_vector((n-1) downto 0); 
 		-- To arbiter
 		storeAdrOut : out std_logic_vector(2+(n-1) downto 0); 
-		storeReq : out std_logic 
+		storeReq : out std_logic; 
 		
-		-- OUTPUTS
-		
+        -- MASTER: Output for addressing mode, needed for WB interface
+        AMOut: out std_logic
 		
 		);
 end storeChannel;
@@ -201,6 +201,17 @@ begin
 			-- Nothing
 		end if;
 	end process; 
+	
+	
+	--MASTER
+    setAMOut : process(decrement)
+    begin
+        if decrement = "100" then
+            AMOut <= '1';
+        else 
+            AMOut <= '0';
+        end if;
+    end process;
 	
 	
 end arch;

@@ -33,7 +33,8 @@ entity DMATopLevel is
 	   -- Output from DMA
 	   storeOutput : out std_logic;
 	   detailsOut : out std_logic_vector((n+2)-1 downto 0);
-	   dataOut : out std_logic_vector(n-1 downto 0)
+	   dataOut : out std_logic_vector(n-1 downto 0);
+	   AMOut : out std_logic
 	   
 	   );
 end DMATopLevel;
@@ -186,6 +187,7 @@ architecture arch of DMATopLevel is
             -- Output from arbiter
             detailsOutput : out std_logic_vector(i-1 downto 0); -- Interrupt details, store cmd + address, or load cmd + address
             dataOutput : out std_logic_vector(n-1 downto 0);    -- Data for store cmd, or just 0's
+            AMOut : out std_logic;
             
             -- Output from system to receiving buffer at bus system
             storeOutput : out std_logic;
@@ -302,6 +304,7 @@ begin
         detailsOutput => detailsOut,
         dataOutput => dataOut,
         storeOutput => storeOutput,
+        AMOut => AMOut,
         
         active0 => activeChannel0,
         active1 => activeChannel1,

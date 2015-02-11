@@ -43,17 +43,17 @@ architecture Behavioral of DMA_WISHBONE_TOPLEVEL_tb is
     -- Mapped signals for component to be tested
      signal clk : STD_LOGIC := '0';
      signal reset : STD_LOGIC := '0';
-     signal dat_i : STD_LOGIC_VECTOR (31 downto 0) := (31 downto 0 => '0');
+     signal dat_i : STD_LOGIC_VECTOR (127 downto 0) := (127 downto 0 => '0');
      signal ack_i : STD_LOGIC := '0';
      signal err_i : STD_LOGIC := '0';
      signal rty_i : STD_LOGIC := '0';
      signal tgd_i : STD_LOGIC_VECTOR (2 downto 0) := "000";
 
     signal adr_o : STD_LOGIC_VECTOR (31 downto 0) := (31 downto 0 => '0');
-    signal dat_o : STD_LOGIC_VECTOR (31 downto 0) := (31 downto 0 => '0');
+    signal dat_o : STD_LOGIC_VECTOR (127 downto 0) := (127 downto 0 => '0');
     signal cyc_o : STD_LOGIC := '0';
     signal lock_o : STD_LOGIC := '0';
-    signal sel_o : STD_LOGIC_VECTOR (31 downto 0) := (31 downto 0 => '0');
+    signal sel_o : STD_LOGIC_VECTOR (1 downto 0) := (1 downto 0 => '0');
     signal stb_o : STD_LOGIC := '0';
     signal tga_o : STD_LOGIC_VECTOR (2 downto 0) := "000";
     signal tgc_o : STD_LOGIC_VECTOR (2 downto 0) := "000";
@@ -74,7 +74,7 @@ architecture Behavioral of DMA_WISHBONE_TOPLEVEL_tb is
             -- WISHBONE MASTER INPUTS 
               clk_i : in STD_LOGIC;
               rst_i : in STD_LOGIC;
-              dat_i : in STD_LOGIC_VECTOR (31 downto 0);
+              dat_i : in STD_LOGIC_VECTOR (127 downto 0);
               ack_i : in STD_LOGIC;
               err_i : in STD_LOGIC;
               rty_i : in STD_LOGIC;
@@ -82,10 +82,10 @@ architecture Behavioral of DMA_WISHBONE_TOPLEVEL_tb is
               
               -- WISHBONE MASTER OUTPUTS
               adr_o : out STD_LOGIC_VECTOR (31 downto 0);
-              dat_o : out STD_LOGIC_VECTOR (31 downto 0);
+              dat_o : out STD_LOGIC_VECTOR (127 downto 0);
               cyc_o : out STD_LOGIC;
               lock_o : out STD_LOGIC;
-              sel_o : out STD_LOGIC_VECTOR (31 downto 0);
+              sel_o : out STD_LOGIC_VECTOR (1 downto 0);
               stb_o : out STD_LOGIC;
               tga_o : out STD_LOGIC_VECTOR (2 downto 0);
               tgc_o : out STD_LOGIC_VECTOR (2 downto 0);
@@ -106,6 +106,12 @@ architecture Behavioral of DMA_WISHBONE_TOPLEVEL_tb is
     -- Counters used to monitor number of loads and stores, to be compared to number of expected loads and stores
     signal loads : integer := 0; -- Counts loads issued
     signal stores : integer := 0; -- Counts stores issued
+    
+    -- Different input data parts, used to distinguish the four different words in the 128-bit data bus
+    signal dat0 : std_logic_vector(31 downto 0) := "00000000000000000000000000000000";-- := (31 downto 0 => '0');
+    signal dat1 : std_logic_vector(31 downto 0) := "10000000000000000000000000000000";-- := (31 downto 0 => '0');
+    signal dat2 : std_logic_vector(31 downto 0) := "11000000000000000000000000000000";-- := (31 downto 0 => '0');
+    signal dat3 : std_logic_vector(31 downto 0) := "11100000000000000000000000000000";-- := (31 downto 0 => '0');
     
     -- Clock period set to 10 ns
     constant clock_period : time := 10 ns;
@@ -161,10 +167,17 @@ begin
 	begin
 		if rising_edge(clk) then
 		  if ack_i = '1' and we_o = '0' then
-		      dat_i <= STD_LOGIC_VECTOR(UNSIGNED(dat_i) + 3);
+		      --dat_i <= STD_LOGIC_VECTOR(UNSIGNED(dat_i) + 3);
+		      dat3 <= STD_LOGIC_VECTOR(UNSIGNED(dat3) + 3);
+		      dat2 <= STD_LOGIC_VECTOR(UNSIGNED(dat2) + 3);
+		      dat1 <= STD_LOGIC_VECTOR(UNSIGNED(dat1) + 3);
+		      dat0 <= STD_LOGIC_VECTOR(UNSIGNED(dat0) + 3);
 		  end if;
 		end if;
 	end process;
+	
+    dat_i <= dat3 & dat2 & dat1 & dat0;
+	
 	
 	-- Synchronous version
 --	acceptRequest : process(clk, cyc_o, stb_o) -- Have mock SLAVE respond with ack_i when both cyc_o and stb_o are asserted
@@ -222,7 +235,7 @@ begin
         wait for clock_period/2;
     end process;
 
-
+    
 	-- Add your stimulus here ...
     STIMULUS : process
 	begin
@@ -235,7 +248,8 @@ begin
 		
 		LRegIn <= "11000000000000000000000000000000";
 		SRegIn <= "11000110000000000000000000000000";
-		RRegIn <= "00000010110100000000000000000001"; --Count: 45 (excluding base), Byte addressing ON, 0's for ID (currently not in use), final bit set to 1 (for ON). 
+		RRegIn <= "00000010110110000000000000000001"; --Count: 45 (excluding base), Byte addressing ON, 0's for ID (currently not in use), final bit set to 1 (for ON). 
+		--RRegIn <= "00000010110110000000000000000001"; --Same as above, but with word-addressing
 		
 		wait for clock_period;
 		

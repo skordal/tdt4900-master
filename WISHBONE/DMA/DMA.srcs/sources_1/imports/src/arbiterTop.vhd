@@ -28,6 +28,10 @@ entity arbiterTop is
 		loadInput0: in std_logic_vector(n-1 downto 0);
 		loadInput1: in std_logic_vector(n-1 downto 0);
 		
+		-- MASTER
+		AMInput0 : in std_logic;
+		AMInput1 : in std_logic;
+		
 		--OUTPUTS
 		-- Ack outputs to requestors
 		interruptAck : out std_logic;
@@ -38,7 +42,11 @@ entity arbiterTop is
 		
 		-- Outputs that are granted access
 		adrOut : out std_logic_vector(n-1 downto 0);
-		dataOut : out std_logic_vector(m-1 downto 0)
+		dataOut : out std_logic_vector(m-1 downto 0);
+		
+		-- MASTER
+		AMOut : out std_logic
+		
 		
 		);
 end arbiterTop;
@@ -47,8 +55,11 @@ architecture top of arbiterTop is
 	--signal adrOpt : std_logic_vector(2 downto 0); 
 	signal adrOpt : std_logic_vector(o-1 downto 0); 
 	signal dataOpt: std_logic;
+	signal AMOpt : std_logic;
 	--signal noDataOutput : std_logic_vector(31 downto 0) := "00000000000000000000000000000000"; -- Used when not store
 	signal noDataOutput : std_logic_vector(m-1 downto 0) := (m-1 downto 0 => '0'); 
+	
+	signal AMOutS : std_logic := '0'; -- System tweak, linked to AMOut to avoid syntax error
 
 	component arbiterController
 	port(
@@ -109,6 +120,17 @@ architecture top of arbiterTop is
 		--dataOut: out std_logic_vector(31 downto 0)
 	);
 	end component;
+	
+	-- MASTER
+	
+	component AMMux
+	port(
+	   opt: in std_logic;
+	   AMInput0 : in std_logic;
+	   AMInput1 : in std_logic;
+	   AMOutput : out std_logic
+	);
+	end component;
 
 begin
 	controller : arbiterController 
@@ -151,6 +173,20 @@ begin
 		
 		dataOut => dataOut
 	);
+	
+	-- MASTER: AMMux setup
+	
+	AMOpt <= not adrOpt(0); -- adrOpt(0) value is the negative of needed to AMOpt for correct setting of AMMux
+	
+	ammux0: AMMux
+	port map(
+	   opt => AMOpt,
+	   AMInput0 => AMInput0,
+	   AMInput1 => AMInput1,
+	   AMOutput => AMOutS
+	); 
+	
+	AMOut <= AMOutS;
 
 
 end top;

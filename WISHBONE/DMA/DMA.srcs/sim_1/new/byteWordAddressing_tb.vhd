@@ -60,7 +60,8 @@ architecture TB_ARCHITECTURE of byteWordAddressing_tb is
            -- Output from DMA
            storeOutput : out std_logic;
            detailsOut : out std_logic_vector((32+2)-1 downto 0);
-           dataOut : out std_logic_vector(32-1 downto 0)
+           dataOut : out std_logic_vector(32-1 downto 0);
+           AMOut : out std_logic
            
            );
 		end component;
@@ -85,6 +86,7 @@ architecture TB_ARCHITECTURE of byteWordAddressing_tb is
 	signal storeOutput : std_logic := '0';
 	signal detailsOut : std_logic_vector (33 downto 0) := (33 downto 0 => '0');
 	signal dataOut : std_logic_vector (31 downto 0) := (31 downto 0 => '0');
+	signal AMOut : std_logic;
 	
 	-- Test-related signals
 	
@@ -151,7 +153,8 @@ begin
 			dataFull => dataFull,
 			storeOutput => storeOutput,
 			detailsOut => detailsOut,
-			dataOut => dataOut
+			dataOut => dataOut,
+			AMOut => AMOut
 		);
 
 	-- Add your stimulus here ...

@@ -37,7 +37,7 @@ entity DMA_WISHBONE_Toplevel is
             -- WISHBONE MASTER INPUTS 
                clk_i : in STD_LOGIC;
               rst_i : in STD_LOGIC;
-              dat_i : in STD_LOGIC_VECTOR (31 downto 0);
+              dat_i : in STD_LOGIC_VECTOR (127 downto 0);
               ack_i : in STD_LOGIC;
               err_i : in STD_LOGIC;
               rty_i : in STD_LOGIC;
@@ -45,10 +45,10 @@ entity DMA_WISHBONE_Toplevel is
               
               -- WISHBONE MASTER OUTPUTS
               adr_o : out STD_LOGIC_VECTOR (31 downto 0);
-              dat_o : out STD_LOGIC_VECTOR (31 downto 0);
+              dat_o : out STD_LOGIC_VECTOR (127 downto 0);
               cyc_o : out STD_LOGIC;
               lock_o : out STD_LOGIC;
-              sel_o : out STD_LOGIC_VECTOR (31 downto 0);
+              sel_o : out STD_LOGIC_VECTOR (1 downto 0);
               stb_o : out STD_LOGIC;
               tga_o : out STD_LOGIC_VECTOR (2 downto 0);
               tgc_o : out STD_LOGIC_VECTOR (2 downto 0);
@@ -78,12 +78,13 @@ architecture Behavioral of DMA_WISHBONE_Toplevel is
     signal newDMAOutputToWB :  STD_LOGIC := '0';                          
     signal DMADetailsToWB :  STD_LOGIC_VECTOR (33 downto 0) := (33 downto 0 => '0');   
     signal DMADataOutToWB :  STD_LOGIC_VECTOR (31 downto 0) := (31 downto 0 => '0');       
+    signal DMAAMOutToWB : STD_LOGIC := '0';
     
     -- Interim signals, Wishbone interface -> DMA                                                      
     signal blockNewOutputToDMA : STD_LOGIC := '0';
     signal newDMAInputToDMA : STD_LOGIC := '0';                          
     signal DMAAddressInToDMA : STD_LOGIC_VECTOR (31 downto 0) := (31 downto 0 => '0');    
-    signal DMADAtaInToDMA : STD_LOGIC_VECTOR (31 downto 0) := (31 downto 0 => '0');       
+    signal DMADataInToDMA : STD_LOGIC_VECTOR (31 downto 0) := (31 downto 0 => '0');       
       
     -- Signal for concatination
     signal DMADataInTotal : STD_LOGIC_VECTOR(63 downto 0) := (63 downto 0 => '0');
@@ -133,7 +134,8 @@ architecture Behavioral of DMA_WISHBONE_Toplevel is
         -- Output from DMA
         storeOutput : out std_logic;
         detailsOut : out std_logic_vector((n+2)-1 downto 0);
-        dataOut : out std_logic_vector(n-1 downto 0)
+        dataOut : out std_logic_vector(n-1 downto 0);
+        AMOut : out std_logic
            
         );
 	end component;
@@ -143,7 +145,7 @@ architecture Behavioral of DMA_WISHBONE_Toplevel is
                     -- WISHBONE MASTER INPUTS
                     clk_i : in STD_LOGIC;
                      rst_i : in STD_LOGIC;
-                     dat_i : in STD_LOGIC_VECTOR (31 downto 0);
+                     dat_i : in STD_LOGIC_VECTOR (127 downto 0);
                      ack_i : in STD_LOGIC;
                      err_i : in STD_LOGIC;
                      rty_i : in STD_LOGIC;
@@ -151,10 +153,10 @@ architecture Behavioral of DMA_WISHBONE_Toplevel is
                      
                      -- WISHBONE MASTER OUTPUTS
                      adr_o : out STD_LOGIC_VECTOR (31 downto 0);
-                     dat_o : out STD_LOGIC_VECTOR (31 downto 0);
+                     dat_o : out STD_LOGIC_VECTOR (127 downto 0);
                      cyc_o : out STD_LOGIC;
                      lock_o : out STD_LOGIC;
-                     sel_o : out STD_LOGIC_VECTOR (31 downto 0);
+                     sel_o : out STD_LOGIC_VECTOR (1 downto 0);
                      stb_o : out STD_LOGIC;
                      tga_o : out STD_LOGIC_VECTOR (2 downto 0);
                      tgc_o : out STD_LOGIC_VECTOR (2 downto 0);
@@ -165,6 +167,7 @@ architecture Behavioral of DMA_WISHBONE_Toplevel is
                     newDMAOutput : in STD_LOGIC;
                     DMADetailsOut : in  STD_LOGIC_VECTOR (33 downto 0);
                     DMADataOut : in STD_LOGIC_VECTOR (31 downto 0);
+                    DMAAMOut : in std_logic;
                     
                     -- Outputs to DMA
                     blockNewOutput : out STD_LOGIC; 
@@ -197,7 +200,8 @@ begin
     
         storeOutput => newDMAOutputToWB,
         detailsOut => DMADetailsToWB,
-        dataOut => DMADataOutToWB
+        dataOut => DMADataOutToWB,
+        AMOut => DMAAMOutToWB
     );
     
     WISHBONE : WISHBONE_STANDARD_SC
@@ -227,12 +231,13 @@ begin
         newDMAOutput => newDMAOutputToWB,
         DMADetailsOut => DMADetailsToWB,
         DMADataOut => DMADataOutToWB,
+        DMAAMOut => DMAAMOutToWB,
                        
         -- Outputs to DMA
         blockNewOutput => blockNewOutputToDMA,
         newDMAInput => newDMAInputToDMA,
         DMAAddressIn => DMAAddressInToDMA,
-        DMADAtaIn =>DMADAtaInToDMA,
+        DMADAtaIn =>DMADataInToDMA,
                        
         -- Outputs to RReg
         clear => clear

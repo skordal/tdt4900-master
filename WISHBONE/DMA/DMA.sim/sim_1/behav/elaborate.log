@@ -25,6 +25,7 @@ Compiling architecture arch of entity xil_defaultlib.fullChannel [\fullChannel(3
 Compiling architecture arch of entity xil_defaultlib.arbiterController [\arbiterController(34,3)\]
 Compiling architecture arch of entity xil_defaultlib.adrMux [\adrMux(34,3)\]
 Compiling architecture arch of entity xil_defaultlib.dataMux [\dataMux(32)\]
+Compiling architecture arch of entity xil_defaultlib.AMMux [ammux_default]
 Compiling architecture top of entity xil_defaultlib.arbiterTop [\arbiterTop(34,32,3)\]
 Compiling architecture arch of entity xil_defaultlib.twoChannelSetUpBuffered [\twoChannelSetUpBuffered(32,32,3...]
 Compiling architecture arch of entity xil_defaultlib.DMATopLevel [\DMATopLevel(32,32,96,64,8)\]

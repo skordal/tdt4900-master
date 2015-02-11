@@ -38,6 +38,7 @@ entity twoChannelSetUpBuffered is
 		-- Output from arbiter
 		detailsOutput : out std_logic_vector(i-1 downto 0); -- Interrupt details, store cmd + address, or load cmd + address
 		dataOutput : out std_logic_vector(n-1 downto 0);	-- Data for store cmd, or just 0's
+		AMOut : out std_logic; -- New for MASTER THESIS: Addressing mode, for any interface with DMA (primalry WISHBONE)
 		
 		-- Output from system to receiving buffer at bus system
 		storeOutput : out std_logic;
@@ -98,6 +99,10 @@ end twoChannelSetUpBuffered;
 	signal totalStoreAck : std_logic; -- Used for combinatorics
 	signal storeAdr0 : std_logic_vector(i-1 downto 0); -- Store cmd + address from channel 0 to arbiter
 	signal storeAdr1 : std_logic_vector(i-1 downto 0);
+	
+	--MASTER: Addressing mode signals for both loads and stores, between channels and arbiter
+	signal AM0 : std_logic;
+	signal AM1 : std_logic;
 	
 	-- Concatinated fifo-signals
 	signal fifoIn : std_logic_vector((n*2)-1 downto 0); -- loadIDIn & dataIn
@@ -190,9 +195,10 @@ end twoChannelSetUpBuffered;
 		loadAdrOut : out std_logic_vector(2+(n-1) downto 0); -- Current load address for load request
 		storeAdrOut : out std_logic_vector(2+(n-1) downto 0); -- Current store address for store request
 		loadReq : out std_logic;
-		storeReq : out std_logic
+		storeReq : out std_logic;
  -- Request signal to arbiter to pass through store address to arbiter (will be passed together with data from shared buffer)
-	
+	   -- MASTER
+	   AMOut : out std_logic
 	);
 	
 	end component;
@@ -218,6 +224,10 @@ end twoChannelSetUpBuffered;
 		loadInput0: in std_logic_vector(i-1 downto 0);
 		loadInput1: in std_logic_vector(i-1 downto 0);
 	
+	   -- MASTER
+	   AMInput0 : in std_logic;
+	   AMInput1 : in std_logic;
+	
 		--OUTPUTS
 		-- To the channels
 		interruptAck : out std_logic;
@@ -228,7 +238,10 @@ end twoChannelSetUpBuffered;
 		
 		-- Final output to the system
 		adrOut : out std_logic_vector(i-1 downto 0);
-		dataOut : out std_logic_vector(m-1 downto 0)
+		dataOut : out std_logic_vector(m-1 downto 0);
+		
+		-- MASTER
+		AMOut : out std_logic
 	);
 	end component;
 	
@@ -286,7 +299,8 @@ begin
 		loadAdrOut => loadAdr0,
 		storeAdrOut => storeAdr0,
 		loadReq => loadReq0,
-		storeReq => storeReq0
+		storeReq => storeReq0,
+		AMOut => AM0
 	);
 	
 	channel1 : fullChannel
@@ -309,7 +323,8 @@ begin
 		loadAdrOut => loadAdr1,
 		storeAdrOut => storeAdr1,
 		loadReq => loadReq1,
-		storeReq => storeReq1
+		storeReq => storeReq1,
+        AMOut => AM1
 	);
 	
 	arbiter : arbiterTop
@@ -323,6 +338,8 @@ begin
 		storeReq1 => storeReq1,
 		loadReq0 => loadReq0,
 		loadReq1 => loadReq1,
+		AMInput0 => AM0,
+		AMInput1 => AM1,
 		-- From buffer
 		data_in => data,
 		-- From DMA Controller
@@ -344,7 +361,8 @@ begin
 		
 		-- Final output to the system
 		adrOut => detailsOutput,
-		dataOut => dataOutput
+		dataOut => dataOutput,
+		AMOut => AMOut
 		
 	);
 	
