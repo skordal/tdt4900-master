@@ -31,7 +31,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity WISHBONE_STANDARD_SC is
+entity WISHBONE_DMA_MASTER_STANDARD_SC is
     Port (
                 -- WISHBONE MASTER INPUTS
                 clk_i : in STD_LOGIC;
@@ -69,9 +69,9 @@ entity WISHBONE_STANDARD_SC is
                 -- Outputs to Slave Registers
                 clear : out STD_LOGIC
      );
-end WISHBONE_STANDARD_SC;
+end WISHBONE_DMA_MASTER_STANDARD_SC;
 
-architecture Behavioral of WISHBONE_STANDARD_SC is
+architecture Behavioral of WISHBONE_DMA_MASTER_STANDARD_SC is
     -- Internal registers, used when transfering data from DMA to system
     signal typeReg: std_logic_vector(1 downto 0) := "00"; -- 
     signal AMReg : std_logic := '0'; -- AM = Addressing Mode (byte or word)
@@ -193,6 +193,8 @@ begin
                 dat_o(95 downto 0) <= (95 downto 0 => '0');
             end if;
         end if;
+    else
+        dat_o <= (127 downto 0 => '-'); -- Attempt at don't care, in order to avoid crash with Slave module
     end if;
     dat_selected <= dat_var;
     end process;

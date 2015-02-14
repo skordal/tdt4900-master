@@ -33,11 +33,11 @@ use ieee.numeric_std.all;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity DMA_WISHBONE_TOPLEVEL_tb is
+entity DMA_WISHBONE_TOPLEVEL_tb2 is
 --  Port ( );
-end DMA_WISHBONE_TOPLEVEL_tb;
+end DMA_WISHBONE_TOPLEVEL_tb2;
 
-architecture Behavioral of DMA_WISHBONE_TOPLEVEL_tb is
+architecture Behavioral of DMA_WISHBONE_TOPLEVEL_tb2 is
 
 
     
@@ -226,6 +226,7 @@ begin
 		      dat2 <= STD_LOGIC_VECTOR(UNSIGNED(dat2) + 3);
 		      dat1 <= STD_LOGIC_VECTOR(UNSIGNED(dat1) + 3);
 		      dat0 <= STD_LOGIC_VECTOR(UNSIGNED(dat0) + 3);
+		      --dat_i <= dat128;
 		  end if;
 		end if;
 	end process;
@@ -444,23 +445,58 @@ begin
 		
 		-- PHASE 3
 		-- Activate DMA
+		-- Expected number of loads and stores: 46 (count 45 + base)      
 		
-		
---		RDat(0) <= '1';
---		--we_i <= '1';
---		cyc_i <= '1';
---        stb_i <= '1';
+		RDat(0) <= '1';
+		wait for clock_period;
+		dat_i <= RDAT128;
+		we_i <= '1';
+		cyc_i <= '1';
+        stb_i <= '1';
                         
---        wait for clock_period * 2;
+        wait for clock_period * 2;
                         
---        cyc_i <= '0';
---        stb_i <= '0';
+        cyc_i <= '0';
+        stb_i <= '0';
+        we_i <= '0';
+        transferActive <= '1'; -- For updating the inputs to dat_i per transfer
+        dat_i <= DAT128;
 		                                                                 
-        wait;                                                                                  
-        -- Expected number of loads and stores: 46 (count 45 + base)                                                                               
+        wait for clock_period * 30;                                                                                                                                     
 		
+		-- PHASE 4
+		-- Read R-register during transfer (will happen simultaneously with DMA transfer due to the test environment, will ideally happen alternately in real environment)
+		-- May happen optinally, but is not compulsory
 		
+        adr_i <= "00000000000000000000000000011000"; --RREG0
+        wait for clock_period;
 		
+        cyc_i <= '1';
+        stb_i <= '1';
+		
+		wait for clock_period * 2;
+		
+        cyc_i <= '0';
+        stb_i <= '0';
+		
+		wait for clock_period * 270;
+        
+        -- PHASE 5:
+        -- Read R-register after transfer
+        -- Should always happen at least once after interrupt due to DMA finished transfering data.
+                
+        adr_i <= "00000000000000000000000000011000"; --RREG0
+        wait for clock_period;
+                
+        cyc_i <= '1';
+        stb_i <= '1';
+        
+        wait for clock_period * 2;
+                
+        cyc_i <= '0';
+        stb_i <= '0';
+        
+		wait;
 		
 	end process;
 

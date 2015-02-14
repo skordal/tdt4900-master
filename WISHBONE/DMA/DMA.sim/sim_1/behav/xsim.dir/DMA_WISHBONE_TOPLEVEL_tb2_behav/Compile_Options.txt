@@ -1,0 +1,1 @@
+-wto "243dd12971454f77b81e6c003e7ae2c6" --debug "typical" --relax -L "xil_defaultlib" -L "secureip" --snapshot "DMA_WISHBONE_TOPLEVEL_tb2_behav" "xil_defaultlib.DMA_WISHBONE_TOPLEVEL_tb2" -log "elaborate.log" 

@@ -33,11 +33,13 @@ INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTE
 INFO: [VRFC 10-307] analyzing entity DMAControllerSta
 INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sources_1/imports/src/adapter.vhd" into library xil_defaultlib
 INFO: [VRFC 10-307] analyzing entity adapter
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sources_1/new/WISHBONE_DMA_SLAVE.vhd" into library xil_defaultlib
+INFO: [VRFC 10-307] analyzing entity WISHBONE_DMA_SLAVE
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sources_1/new/WISHBONE_STANDARD_SC.vhd" into library xil_defaultlib
+INFO: [VRFC 10-307] analyzing entity WISHBONE_DMA_MASTER_STANDARD_SC
 INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sources_1/imports/new/DMAToplevel.vhd" into library xil_defaultlib
 INFO: [VRFC 10-307] analyzing entity DMATopLevel
-INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sources_1/new/WISHBONE_STANDARD_SC.vhd" into library xil_defaultlib
-INFO: [VRFC 10-307] analyzing entity WISHBONE_STANDARD_SC
 INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sources_1/new/DMA_WISHBONE_Toplevel.vhd" into library xil_defaultlib
 INFO: [VRFC 10-307] analyzing entity DMA_WISHBONE_Toplevel
-INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sim_1/new/DMA_WISHBONE_TOPLEVEL_tb.vhd" into library xil_defaultlib
-INFO: [VRFC 10-307] analyzing entity DMA_WISHBONE_TOPLEVEL_tb
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sim_1/new/DMA_WISHBONE_TOPLEVEL_tb2.vhd" into library xil_defaultlib
+INFO: [VRFC 10-307] analyzing entity DMA_WISHBONE_TOPLEVEL_tb2
