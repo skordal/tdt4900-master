@@ -1,0 +1,162 @@
+\chapter{Background}
+\label{cha:background}
+
+Insert smart intro here
+
+
+\section{Rise of Dark Silicon, and the four areas of solution}
+\label{sec:dark-silicon}
+As Taylor\ref{dark-silicon} points out, transistor density on a CMOS chip continue double every two years, according to Moore's Law.
+Native transistor speed also increases with a factor of 1,4x.
+Energy efficiency on the other hands improves only with 1,4x, and under a constant power budget, it will cause a 2x shortfall in energy budget to power a chip at its native frequency.
+The utulization of a chip's potential is thus falling expentionally by 2x per generation.
+If the power limitation were to be based on the current generation, then designs would be 93,75\% dark in eight years.
+This gives the rise to the term "Dark Silicon", the chip must either be underclocked, or parts of it turned off in order to keep within a set power budget.
+This is essentially true for chips where \todo{Hmmm.... sounds cliche} traditional cooling no longer can be efficient enough to \todo{source needed}remove generated heat from a fully powered chip.
+
+According to Dennard scaling progress were measured by the improvement in transistor speed and count, while according to the new post-Dennard scaling the progress will now be measured by improvement in transistor energy efficiency.
+While reducing delays have been the previous focus, the focus will now be to utulize as much joule from the transistors as possible.
+
+The transistion from single-core to multicore processors in 2005 was a direct response from the industry to this problem, but adding multiple cores does not circumvent the problem on a longer run.
+Multicore chips will not scale as transistors shrink, and the fraction of a chip that can be filled with cores running at full frequency is dropping exponentially with each processor generation. 
+Large fractions of the chip will be left dark - either idle for a long time, or significantly underclocked.
+Hence new designs are required, where new architectural techniques "spend" area to "buy" energy efficiency.
+
+\subsection{The Utulization Wall}
+\todo{Tror dette blir overflødig, men har lagt av plass sånn i tilfelle}
+Considered optional for now.
+If written, should contain the details of why there is the Utulization Wall that leads to dark silicon. 
+
+
+\section{Heterogeneous Architectures}
+\label{sec:heterogeneous}
+
+\subsection{The Single-ISA Heterogeneous MAny-core Computer}
+\label{sec:shmac}
+
+\section{The Bitcoin Currency}
+\label{sec:bitcoins}
+Bitcoin is a decentralized currency using a peer-to-peer network to replace
+the financial institutions that are used to process transactions in conventional
+currency systems.
+
+The network keeps a ledger of all transactions in a linked list of blocks, called the
+block-chain. Each block contains a list of all transactions executed since the last
+block was published. Blocks are generated periodically through a process
+called ``mining'', described in \ref{sec:bitcoin-mining}. This is due to the fact that
+a valid block must satisfy the requirement that the hash of the block must be below a certain value,
+called the ``target'' value, which is determined by a variable difficulty value used to limit the number
+of blocks being generated each hour \cite{bitcoin}.
+
+As an incentive to keep generating new blocks, a reward is offered on each new block
+generated. This reward is currently at 25~bitcoins (467~USD as of the 9th of November, 2014).
+This reward is why bitcoin mining is a popular activity, and a reason for why
+there are many initiatives to improve the performance of bitcoin mining systems.
+
+\subsection{Mining Bitcoins}
+\label{sec:bitcoin-mining}
+The process of creating a new block in the bitcoin network is called ``mining''. The basic
+principle of bitcoin mining is to create a block that generates a SHA-256 hash with
+a value lower than the preset target value.
+
+Since bitcoin mining is an NP-hard problem \cite{bitcoin-np}, the search for a block with a valid
+hash has to be done by brute-force search. The block header contains several fields
+that can be varied to produce different hashes, and it is also possible to include
+or exclude transactions from the block in order to produce a hash with the desired
+value.
+
+Mining performance is measured in hashes per second, denoted H/s. Hashing is the
+most computing intensive part of the algorithm for mining bitcoins, which is
+why accelerating hashing is a priority.
+
+\section{Cryptographic Hashing}
+
+A cryptographic hash function, also commonly referred to as a digital signature or
+a message digest, is a function that takes input data of varying size and
+produces an output value of a constant size \cite{hashing-overview}.
+% That article is a pain to read, it pains me to cite it
+
+Cryptographic hash functions are designed to be one-way, meaning it should
+not be computationally feasible to find the input data given the hash value,
+and collision resistant, meaning that it should not be practical to find two
+different sets of input data that produces the same output hash \cite{sha-spec}.
+
+\subsection{The SHA-256 Hashing Algorithm}
+\label{sec:hashing-algo}
+
+The SHA-256 algorithm is a member of a set of algorithms referred to as the SHA-2 standard.
+These are described in \cite{fips180-4} and consists of algorithms for producing hashes with lengths of 224, 256, 384 and 512 bits.
+The algorithms use simple operations, limited to shifts, rotates, xor, and unsigned additions,
+in addition to a lookup-table of constants, which allow for high-speed implementations in both
+software and hardware. The different algorithms differ in how and with what parameters the various
+operations are invoked.
+
+SHA-256 is the algorithm used in cryptocoin mining. It operates on blocks of 512 bits
+and keeps a 256-bit intermediate hash value as state.
+
+Before the first block is processed, the initial hash value is set to a predefined
+value. The entire message that is to be hashed is then padded by adding a 1 bit to
+the end of the message and then appending zeroes until the length of the final block
+is 448 bits. Then the length of the entire message, without padding, is added as a
+64-bit big-endian integer to the end of the block.
+
+Then, each input block is split into a 64 times 32-bit long expanded message block, where
+each 32-bit word $W_j$ is defined according to the formula
+
+\[ W_j = \left\{
+	\begin{array}{l l}
+		M_j & \quad j \in \left[0, 15\right]\\
+		\sigma_1(W_{j - 2}) + W_{j - 7} + \sigma_0(W-{j - 15}) + W_{j - 15} & \quad j \in \left[16, 63\right]
+	\end{array}
+\right.\]
+
+\noindent where $M_j$ is the $j$th word of the input message block and the functions
+$\sigma_0$ and $\sigma_1$ are defined as
+
+\[\sigma_0 = R^7(x) \oplus R^{18}(x) \oplus S^3(x)\]
+\[\sigma_1 = R^{17}(x) \oplus R^{19}(x) \oplus S^{10}(x)\]
+
+\noindent where the operator $R^n$ means right rotation by $n$ bits and $S^n$ means right shift by $n$
+bits \footnote{Curiously, \cite{sha-spec} defines the operator $R$ as shift and $S$ as rotate.
+We use the more intuitive definitions.}.
+
+\subsubsection{The Compression Function}
+\label{sec:sha-compr}
+The compression function is the core of the SHA-256 algorithm. It uses a look-up table
+of 64 constants, $K_j$, and the following functions when calculating the new intermediate
+hash values:
+
+\[Ch(x,y,z) = (x \wedge y) \oplus (\neg x \wedge z)\]
+\[Maj(x, y, z) = (x \wedge y) \oplus (x \wedge z) \oplus (y \wedge z)\]
+\[\Sigma_0(x) = R^2(x) \oplus R^{13}(x) \oplus R^{22}(x)\]
+\[\Sigma_1(x) = R^6(x) \oplus R^{11}(x) \oplus R^{25}(x)\]
+
+Before starting the iterations with the compression function, the intermediate
+hash values from the previous message block are assigned to the variables $a$--$h$.
+
+At the beginning of each iteration of the compression function, two temporary
+values are calculated:
+
+\[T_1 = h + \Sigma_1(e) + Ch(e, f, g) + K_j + W_j\]
+\[T_2 = \Sigma_0(a) + Maj(a, b, c)\]
+
+The new hash values are then assigned as follows:
+
+\[\begin{array}{l}
+	h \leftarrow g \\
+	g \leftarrow f \\
+	f \leftarrow e \\
+	e \leftarrow d + T_1\\
+	d \leftarrow c \\
+	c \leftarrow b \\
+	b \leftarrow a \\
+	a \leftarrow T_1 + T_2 \\
+\end{array}\]
+
+The compression function is run 64 times, once for each word in the extended message block,
+$W_j$. Afterwards, the intermediate hash for the message is updated by adding the
+variables $a$--$h$ to the corresponding values of the intermediate hash values from
+the previous message block.
+
+When the final input block has been processed, the final hash is composed by
+concatenating the intermediate hash values \cite{sha-spec}.

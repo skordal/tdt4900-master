@@ -1,0 +1,47 @@
+\documentclass[a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage{todonotes}
+\usepackage{graphicx}
+\usepackage{rotating}
+\usepackage[toc,page]{appendix}
+
+\begin{document}
+
+\begin{titlepage}
+	\begin{center}
+		{\huge The Master Thesis that became so successfull that Torbjørn and Kristian didn't need to express the title in an intelligent way}\\[0.5cm]
+		{\large and still got them supervisor-jobs}\\[5cm]
+
+		\textbf{Written by:}\\
+		\textsc{Torbjørn Langland}\\
+		\textsc{Kristian Klomsten Skordal}\\[3em]
+		\textbf{Supervised by:}\\
+		\textsc{Donn Morrison} (Main supervisor)\\
+		\textsc{Yaman Umuroğlu} (Co-supervisor)\\[1cm]
+
+		\vfill
+		{\large TDT4501 - Computer Science Specialization Project}\\[0.2em]
+		{\large Norwegian University of Science and Technology}\\[0.2em]
+		{Autumn 2014}
+	\end{center}
+\end{titlepage}
+
+\input{Chapters/Abstract}
+
+\tableofcontents
+
+\input{Chapters/Introduction}
+\input{Chapters/Background}
+\input{Chapters/RelatedWork}
+\input{Chapters/Architecture}
+\input{Chapters/Evaluation}
+\input{Chapters/Conclusion}
+
+\bibliography{references}
+\bibliographystyle{plain}
+
+\input{Chapters/Appendices}
+
+\end{document}
+
