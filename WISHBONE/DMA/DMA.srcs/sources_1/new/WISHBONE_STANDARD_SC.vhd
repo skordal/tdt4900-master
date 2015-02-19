@@ -47,7 +47,7 @@ entity WISHBONE_DMA_MASTER_STANDARD_SC is
                  dat_o : out STD_LOGIC_VECTOR (127 downto 0);
                  cyc_o : out STD_LOGIC;
                  lock_o : out STD_LOGIC;
-                 sel_o : out STD_LOGIC_VECTOR (1 downto 0);
+                 sel_o : out STD_LOGIC_VECTOR (15 downto 0);
                  stb_o : out STD_LOGIC;
                  tga_o : out STD_LOGIC_VECTOR (2 downto 0);
                  tgc_o : out STD_LOGIC_VECTOR (2 downto 0);
@@ -83,7 +83,7 @@ architecture Behavioral of WISHBONE_DMA_MASTER_STANDARD_SC is
     signal inputDataBuffer : std_logic_vector(31 downto 0) := (31 downto 0 => '0'); 
 
     -- Internal signals
-    signal sel_internal : std_logic_vector(1 downto 0) := "00"; -- Internal version of sel_o
+    signal sel_internal : std_logic_vector(15 downto 0) := (15 downto 0 => '0'); -- Internal version of sel_o
     signal dat_selected : std_logic_vector(31 downto 0) := (31 downto 0 => '0'); -- Selected data from dat_i based in sel_internal. Used for simplification
 
 begin
@@ -150,54 +150,95 @@ begin
     end process;
 
     -- Choose which bits from address register to set sel_o (and sel_internal), based on addressing mode (byte or word)
-    setSel : process(AMReg, addrReg)
-    begin
-        if AMReg = '1' then -- Byte addressing
-            sel_internal <= addrReg (3 downto 2);
-        else  -- Word addressing
-            sel_internal <= addrReg (1 downto 0);
-        end if;
-    end process;
+--    setSel : process(AMReg, addrReg)
+--    begin
+--        if AMReg = '1' then -- Byte addressing
+--            sel_internal(1 downto 0) <= addrReg (3 downto 2);
+--        else  -- Word addressing
+--            sel_internal(1 downto 0) <= addrReg (1 downto 0);
+--        end if;
+--    end process;
 
     -- Choose where to read from dat_i and where to write on dat_o, based on sel_internal
-    selectDatSpace : process(active, typeReg, sel_internal, dat_i, datReg)
-    variable dat_var : std_logic_vector (31 downto 0);
-    begin
-    dat_var := (31 downto 0 => '0');
-    if active = '1' then -- No point if active is low
-        if typereg = "00" then -- LOADS
-            if sel_internal = "00" then
-                dat_var := dat_i(31 downto 0);
-            elsif sel_internal = "01" then
-                dat_var := dat_i(63 downto 32);
-            elsif sel_internal = "10" then
-                dat_var := dat_i(95 downto 64);
-            else
-                dat_var := dat_i(127 downto 96);
-            end if;
+--    selectDatSpace : process(active, typeReg, sel_internal, dat_i, datReg)
+--    variable dat_var : std_logic_vector (31 downto 0);
+--    begin
+--    dat_var := (31 downto 0 => '0');
+--    if active = '1' then -- No point if active is low
+--        if typereg = "00" then -- LOADS
+--            if sel_internal = "00" then
+--                dat_var := dat_i(31 downto 0);
+--            elsif sel_internal = "01" then
+--                dat_var := dat_i(63 downto 32);
+--            elsif sel_internal = "10" then
+--                dat_var := dat_i(95 downto 64);
+--            else
+--                dat_var := dat_i(127 downto 96);
+--            end if;
         
-        elsif typereg = "01" then -- STORES
-            if sel_internal = "00" then
-                dat_o(127 downto 32) <= (127 downto 32 => '0');
-                dat_o(31 downto 0) <= datReg;
-            elsif sel_internal = "01" then
-                dat_o(127 downto 64) <= (127 downto 64 => '0');
-                dat_o(63 downto 32) <= datReg;
-                dat_o(31 downto 0) <= (31 downto 0 => '0');
-            elsif sel_internal = "10" then
-                dat_o(127 downto 96) <= (127 downto 96 => '0');
-                dat_o(95 downto 64) <= datReg;
-                dat_o(63 downto 0) <= (63 downto 0 => '0');
-            else
-                dat_o(127 downto 96) <= datReg;
-                dat_o(95 downto 0) <= (95 downto 0 => '0');
-            end if;
-        end if;
-    else
-        dat_o <= (127 downto 0 => '-'); -- Attempt at don't care, in order to avoid crash with Slave module
-    end if;
-    dat_selected <= dat_var;
-    end process;
+--        elsif typereg = "01" then -- STORES
+--            if sel_internal = "00" then
+--                dat_o(127 downto 32) <= (127 downto 32 => '0');
+--                dat_o(31 downto 0) <= datReg;
+--            elsif sel_internal = "01" then
+--                dat_o(127 downto 64) <= (127 downto 64 => '0');
+--                dat_o(63 downto 32) <= datReg;
+--                dat_o(31 downto 0) <= (31 downto 0 => '0');
+--            elsif sel_internal = "10" then
+--                dat_o(127 downto 96) <= (127 downto 96 => '0');
+--                dat_o(95 downto 64) <= datReg;
+--                dat_o(63 downto 0) <= (63 downto 0 => '0');
+--            else
+--                dat_o(127 downto 96) <= datReg;
+--                dat_o(95 downto 0) <= (95 downto 0 => '0');
+--            end if;
+--        end if;
+--    else
+--        dat_o <= (127 downto 0 => '-'); -- Attempt at don't care, in order to avoid crash with Slave module
+--    end if;
+--    dat_selected <= dat_var;
+--    end process;
     
+   -- Version using addreReg instead of selInternal (byte addressing only)
+    selectDatSpace : process(active, typeReg, addrReg, dat_i, datReg)
+        variable dat_var : std_logic_vector (31 downto 0);
+    begin
+        dat_var := (31 downto 0 => '0');
+        if active = '1' then -- No point if active is low
+            if typereg = "00" then -- LOADS
+            if addrReg(3 downto 2) = "00" then
+            dat_var := dat_i(31 downto 0);
+        elsif addrReg(3 downto 2) = "01" then
+            dat_var := dat_i(63 downto 32);
+        elsif addrReg(3 downto 2) = "10" then
+            dat_var := dat_i(95 downto 64);
+        else
+            dat_var := dat_i(127 downto 96);
+        end if;
+    
+    elsif typereg = "01" then -- STORES
+        if addrReg(3 downto 2) = "00" then
+            dat_o(127 downto 32) <= (127 downto 32 => '0');
+            dat_o(31 downto 0) <= datReg;
+        elsif addrReg(3 downto 2) = "01" then
+            dat_o(127 downto 64) <= (127 downto 64 => '0');
+            dat_o(63 downto 32) <= datReg;
+            dat_o(31 downto 0) <= (31 downto 0 => '0');
+        elsif addrReg(3 downto 2) = "10" then
+            dat_o(127 downto 96) <= (127 downto 96 => '0');
+            dat_o(95 downto 64) <= datReg;
+            dat_o(63 downto 0) <= (63 downto 0 => '0');
+        else
+            dat_o(127 downto 96) <= datReg;
+            dat_o(95 downto 0) <= (95 downto 0 => '0');
+        end if;
+    end if;
+else
+    dat_o <= (127 downto 0 => '-'); -- Attempt at don't care, in order to avoid crash with Slave module
+end if;
+dat_selected <= dat_var;
+end process;
+
+
 
 end Behavioral;

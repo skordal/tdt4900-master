@@ -44,20 +44,20 @@ architecture Behavioral of DMA_WISHBONE_TOPLEVEL_tb2 is
     -- Mapped signals for component to be tested
      signal clk : STD_LOGIC := '0';
      signal reset : STD_LOGIC := '0';
-     signal dat_i : STD_LOGIC_VECTOR (127 downto 0) := (127 downto 0 => '0');
+     signal M_dat_i : STD_LOGIC_VECTOR (127 downto 0) := (127 downto 0 => '0');
      
      -- MASTER INPUT SIGNALS
      signal ack_i : STD_LOGIC := '0';
      signal err_i : STD_LOGIC := '0';
      signal rty_i : STD_LOGIC := '0';
-     signal tgd_i : STD_LOGIC_VECTOR (2 downto 0) := "000";
+     signal M_tgd_i : STD_LOGIC_VECTOR (2 downto 0) := "000";
      signal stall_i : std_logic := '0';
     -- MASTER OUTPUT SIGNALS
     signal adr_o : STD_LOGIC_VECTOR (31 downto 0) := (31 downto 0 => '0');
     signal M_dat_o : STD_LOGIC_VECTOR (127 downto 0) := (127 downto 0 => '0');
     signal cyc_o : STD_LOGIC := '0';
     signal lock_o : STD_LOGIC := '0';
-    signal sel_o : STD_LOGIC_VECTOR (1 downto 0) := (1 downto 0 => '0');
+    signal sel_o : STD_LOGIC_VECTOR (15 downto 0) := (15 downto 0 => '0');
     signal stb_o : STD_LOGIC := '0';
     signal tga_o : STD_LOGIC_VECTOR (2 downto 0) := "000";
     signal tgc_o : STD_LOGIC_VECTOR (2 downto 0) := "000";
@@ -68,11 +68,13 @@ architecture Behavioral of DMA_WISHBONE_TOPLEVEL_tb2 is
     signal adr_i : STD_LOGIC_VECTOR (31 downto 0) := (31 downto 0 => '0');            
     signal cyc_i : STD_LOGIC := '0';                                 
     signal lock_i : std_logic := '0';                                
-    signal sel_i : std_logic := '0';                                 
+    signal sel_i : std_logic_vector(15 downto 0) := (15 downto 0 => '0');                                 
     signal stb_i : std_logic := '0';                                 
     signal tga_i : std_logic := '0';                                 
     signal tgc_i : std_logic := '0';                                 
-    signal we_i : std_logic := '0';                                  
+    signal we_i : std_logic := '0';
+    signal S_dat_i : STD_LOGIC_VECTOR (127 downto 0) := (127 downto 0 => '0');
+    signal S_tgd_i : STD_LOGIC_VECTOR (2 downto 0) := "000";                                  
                                                           
     -- WISHBONE SLAVE OUTPUTS
     signal S_dat_o : STD_LOGIC_VECTOR (127 downto 0) := (127 downto 0 => '0');
@@ -90,11 +92,11 @@ architecture Behavioral of DMA_WISHBONE_TOPLEVEL_tb2 is
             -- WISHBONE MASTER INPUTS 
               clk_i : in STD_LOGIC;
               rst_i : in STD_LOGIC;
-              dat_i : in STD_LOGIC_VECTOR (127 downto 0);
+              M_dat_i : in STD_LOGIC_VECTOR (127 downto 0);
               ack_i : in STD_LOGIC;
               err_i : in STD_LOGIC;
               rty_i : in STD_LOGIC;
-              tgd_i : in STD_LOGIC_VECTOR (2 downto 0);
+              M_tgd_i : in STD_LOGIC_VECTOR (2 downto 0);
               stall_i : in STD_LOGIC;
               
               -- WISHBONE MASTER OUTPUTS
@@ -102,7 +104,7 @@ architecture Behavioral of DMA_WISHBONE_TOPLEVEL_tb2 is
               M_dat_o : out STD_LOGIC_VECTOR (127 downto 0);
               cyc_o : out STD_LOGIC;
               lock_o : out STD_LOGIC;
-              sel_o : out STD_LOGIC_VECTOR (1 downto 0);
+              sel_o : out STD_LOGIC_VECTOR (15 downto 0);
               stb_o : out STD_LOGIC;
               tga_o : out STD_LOGIC_VECTOR (2 downto 0);
               tgc_o : out STD_LOGIC_VECTOR (2 downto 0);
@@ -113,11 +115,13 @@ architecture Behavioral of DMA_WISHBONE_TOPLEVEL_tb2 is
               adr_i : in STD_LOGIC_VECTOR (31 downto 0);            
               cyc_i : in STD_LOGIC;                                 
               lock_i : in std_logic;                                
-              sel_i : in std_logic;                                 
+              sel_i : in std_logic_vector (15 downto 0);                                 
               stb_i : in std_logic;                                 
               tga_i : in std_logic;                                 
               tgc_i : in std_logic;                                 
-              we_i : in std_logic;                                  
+              we_i : in std_logic;
+              S_tgd_i : in STD_LOGIC_VECTOR (2 downto 0);
+              S_dat_i : in STD_LOGIC_VECTOR (127 downto 0);                                  
                                                                     
               -- WISHBONE SLAVE OUTPUTS
               S_dat_o : out STD_LOGIC_VECTOR (127 downto 0);
@@ -143,6 +147,7 @@ architecture Behavioral of DMA_WISHBONE_TOPLEVEL_tb2 is
     signal dat2 : std_logic_vector(31 downto 0) := "11000000000000000000000000000000";-- := (31 downto 0 => '0');
     signal dat3 : std_logic_vector(31 downto 0) := "11100000000000000000000000000000";-- := (31 downto 0 => '0');
     signal dat128 : std_logic_vector(127 downto 0) := (127 downto 0 => '0');
+    signal Mdat128 : std_logic_vector(127 downto 0) := (127 downto 0 => '0'); -- Data input, directed to the master module
     
     -- Input data to slave registers
     signal RDAT : std_Logic_vector(31 downto 0) := (31 downto 0 => '0');
@@ -165,11 +170,11 @@ begin
             rst_i => reset,
             
             -- WB M I
-            dat_i => dat_i,
+            M_dat_i => M_dat_i,
             ack_i => ack_i,
             err_i => err_i,
             rty_i => rty_i,
-            tgd_i => tgd_i,
+            M_tgd_i => M_tgd_i,
             stall_i => stall_i,
               
             -- WB M O
@@ -193,6 +198,8 @@ begin
             tga_i => tga_i,
             tgc_i => tgc_i,
             we_i => we_i,
+            S_dat_i => S_dat_i,
+            S_tgd_i => S_tgd_i,
                     
             -- WB S O
             S_dat_o => S_dat_o,
@@ -306,12 +313,12 @@ begin
 	
 	
 	-- Setting up 128-bit signals
-    dat128 <= dat3 & dat2 & dat1 & dat0;
+    Mdat128 <= dat3 & dat2 & dat1 & dat0;
     RDAT128 <= RDAT & RDAT & RDAT & RDAT;
     SDAT128 <= SDAT & SDAT & SDAT & SDAT;
     LDAT128 <= LDAT & LDAT & LDAT & LDAT;
             
-	
+	M_dat_i <= Mdat128; --Always Mdat128 in M_dat_i
 
 	CLOCK_SYNTHESIS : process
     begin
@@ -328,7 +335,7 @@ begin
 	
 	   -- Phases: 0 - reset, 1 - Write to registers, 2 - read the registers, 3 - activate DMA, 4 - Handle interrupt and read registers 
 	
-	
+	  
 	   
 		-- PHASE 0
 		-- Resetting registers
@@ -344,8 +351,8 @@ begin
 		
 		wait for clock_period;
 		-- Write LDAT
-        adr_i <= "00000000000000000000000000010000"; --LREG0
-        dat_i <= LDAT128;
+        adr_i <= "00000000000000000000000000000000"; --LREG0
+        S_dat_i <= LDAT128;
         we_i <= '1';        
 		
 		wait for clock_period;
@@ -360,8 +367,8 @@ begin
                 
 		wait for clock_period;
 		-- Write SDAT
-        adr_i <= "00000000000000000000000000010100"; --SREG0
-        dat_i <= SDAT128;
+        adr_i <= "00000000000000000000000000000100"; --SREG0
+        S_dat_i <= SDAT128;
         we_i <= '1';        
                 
         wait for clock_period;
@@ -377,8 +384,8 @@ begin
         wait for clock_period;
                 
         -- Write RDAT
-        adr_i <= "00000000000000000000000000011000"; --SREG0
-        dat_i <= RDAT128;
+        adr_i <= "00000000000000000000000000001000"; --SREG0
+        S_dat_i <= RDAT128;
         we_i <= '1';        
                         
         wait for clock_period;
@@ -400,7 +407,7 @@ begin
         we_i <= '0';
         
         -- LDAT                         
-		adr_i <= "00000000000000000000000000010000"; --LREG0
+		adr_i <= "00000000000000000000000000000000"; --LREG0
 		wait for clock_period;
 		
 		cyc_i <= '1';
@@ -414,7 +421,7 @@ begin
         wait for clock_period;
 		
 		-- SDAT                         
-        adr_i <= "00000000000000000000000000010100"; --SREG0
+        adr_i <= "00000000000000000000000000000100"; --SREG0
         wait for clock_period;
                 
         cyc_i <= '1';
@@ -428,7 +435,7 @@ begin
         wait for clock_period;
                 
 		-- RDAT                         
-        adr_i <= "00000000000000000000000000011000"; --RREG0
+        adr_i <= "00000000000000000000000000001000"; --RREG0
         wait for clock_period;
                         
         cyc_i <= '1';
@@ -449,7 +456,7 @@ begin
 		
 		RDat(0) <= '1';
 		wait for clock_period;
-		dat_i <= RDAT128;
+		S_dat_i <= RDAT128;
 		we_i <= '1';
 		cyc_i <= '1';
         stb_i <= '1';
@@ -460,7 +467,7 @@ begin
         stb_i <= '0';
         we_i <= '0';
         transferActive <= '1'; -- For updating the inputs to dat_i per transfer
-        dat_i <= DAT128;
+        --dat_i <= DAT128;
 		                                                                 
         wait for clock_period * 30;                                                                                                                                     
 		
@@ -468,7 +475,7 @@ begin
 		-- Read R-register during transfer (will happen simultaneously with DMA transfer due to the test environment, will ideally happen alternately in real environment)
 		-- May happen optinally, but is not compulsory
 		
-        adr_i <= "00000000000000000000000000011000"; --RREG0
+        adr_i <= "00000000000000000000000000001000"; --RREG0
         wait for clock_period;
 		
         cyc_i <= '1';
@@ -485,7 +492,7 @@ begin
         -- Read R-register after transfer
         -- Should always happen at least once after interrupt due to DMA finished transfering data.
                 
-        adr_i <= "00000000000000000000000000011000"; --RREG0
+        adr_i <= "00000000000000000000000000001000"; --RREG0
         wait for clock_period;
                 
         cyc_i <= '1';

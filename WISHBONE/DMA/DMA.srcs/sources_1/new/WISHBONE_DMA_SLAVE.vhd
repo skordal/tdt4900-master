@@ -46,7 +46,7 @@ entity WISHBONE_DMA_SLAVE is
       adr_i : in STD_LOGIC_VECTOR (31 downto 0);      
       cyc_i : in STD_LOGIC;                           
       lock_i : in std_logic;                          
-      sel_i : in std_logic;                           
+      sel_i : in std_logic_vector(15 downto 0);                           
       stb_i : in std_logic;                           
       tga_i : in std_logic;                           
       tgc_i : in std_logic;                           
@@ -172,13 +172,13 @@ begin
             elsif wb_start_read = '1' then
                 case adr_i(11 downto 0) is
                     --WHEN TILEREG_DMA_LREG0 => 
-                    WHEN "000000010000" =>
+                    WHEN "000000000000" =>
                         readData32 <= LReg0;
                     --WHEN TILEREG_DMA_SREG0 =>
-                    WHEN "000000010100" =>
+                    WHEN "000000000100" =>
                         readData32 <= SReg0;
                     --WHEN TILEREG_DMA_RREG0 =>
-                    WHEN "000000011000" =>
+                    WHEN "000000001000" =>
                         readData32 <= RReg0;
                     WHEN OTHERS =>
                         readData32 <= (31 downto 0 => '0');
@@ -228,13 +228,13 @@ begin
             elsif wb_start_write = '1' then --Standard write to register
                 case adr_i(11 downto 0) is
                     --WHEN TILEREG_DMA_LREG0 => 
-                    WHEN "000000010000" =>
+                    WHEN "000000000000" =>
                         LReg0 <= writeData32;
                     --WHEN TILEREG_DMA_SREG0 =>
-                    WHEN "000000010100" =>
+                    WHEN "000000000100" =>
                         SReg0 <= writeData32;
                     --WHEN TILEREG_DMA_RREG0 =>
-                    WHEN "000000011000" =>
+                    WHEN "000000001000" =>
                         RReg0 <= writeData32;
                     WHEN OTHERS =>
                         -- Nothing happens.

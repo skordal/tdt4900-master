@@ -37,14 +37,16 @@ entity DMA_WISHBONE_Toplevel is
             -- WISHBONE COMMON INPUTS 
                clk_i : in STD_LOGIC;
               rst_i : in STD_LOGIC;
-              dat_i : in STD_LOGIC_VECTOR (127 downto 0);
-              tgd_i : in STD_LOGIC_VECTOR (2 downto 0);
+              --dat_i : in STD_LOGIC_VECTOR (127 downto 0);
+              --tgd_i : in STD_LOGIC_VECTOR (2 downto 0);
               
             -- WISHBONE MASTER INPUTS   
               ack_i : in STD_LOGIC;
               err_i : in STD_LOGIC;
               rty_i : in STD_LOGIC;
               stall_i: in STD_LOGIC;
+              M_dat_i: in std_logic_vector(127 downto 0);
+              M_tgd_i : in std_logic_vector(2 downto 0);
               
               -- WISHBONE MASTER OUTPUTS
               M_dat_o : out STD_LOGIC_VECTOR (127 downto 0);
@@ -52,7 +54,7 @@ entity DMA_WISHBONE_Toplevel is
               adr_o : out STD_LOGIC_VECTOR (31 downto 0);
               cyc_o : out STD_LOGIC;
               lock_o : out STD_LOGIC;
-              sel_o : out STD_LOGIC_VECTOR (1 downto 0);
+              sel_o : out STD_LOGIC_VECTOR (15 downto 0);
               stb_o : out STD_LOGIC;
               tga_o : out STD_LOGIC_VECTOR (2 downto 0);
               tgc_o : out STD_LOGIC_VECTOR (2 downto 0);
@@ -62,11 +64,13 @@ entity DMA_WISHBONE_Toplevel is
              adr_i : in STD_LOGIC_VECTOR (31 downto 0);
              cyc_i : in STD_LOGIC;
              lock_i : in std_logic;
-             sel_i : in std_logic;
+             sel_i : in std_logic_vector(15 downto 0);
              stb_i : in std_logic;
              tga_i : in std_logic;
              tgc_i : in std_logic;
              we_i : in std_logic;
+             S_dat_i: in std_logic_vector(127 downto 0);
+             S_tgd_i : in std_logic_vector(2 downto 0);
            
              -- WISHBONE SLAVE OUTPUTS
              S_dat_o : out STD_LOGIC_VECTOR (127 downto 0);
@@ -191,7 +195,7 @@ architecture Behavioral of DMA_WISHBONE_Toplevel is
                      dat_o : out STD_LOGIC_VECTOR (127 downto 0);
                      cyc_o : out STD_LOGIC;
                      lock_o : out STD_LOGIC;
-                     sel_o : out STD_LOGIC_VECTOR (1 downto 0);
+                     sel_o : out STD_LOGIC_VECTOR (15 downto 0);
                      stb_o : out STD_LOGIC;
                      tga_o : out STD_LOGIC_VECTOR (2 downto 0);
                      tgc_o : out STD_LOGIC_VECTOR (2 downto 0);
@@ -229,7 +233,7 @@ architecture Behavioral of DMA_WISHBONE_Toplevel is
                adr_i : in STD_LOGIC_VECTOR (31 downto 0);       
                cyc_i : in STD_LOGIC;                            
                lock_i : in std_logic;                           
-               sel_i : in std_logic;                            
+               sel_i : in std_logic_vector(15 downto 0);                            
                stb_i : in std_logic;                            
                tga_i : in std_logic;                            
                tgc_i : in std_logic;                            
@@ -279,11 +283,11 @@ begin
         -- WBM Inputs
         clk_i => clk_i,
         rst_i => rst_i,
-        dat_i => dat_i, 
+        dat_i => M_dat_i, 
         ack_i => ack_i, 
         err_i => err_i, 
         rty_i => rty_i, 
-        tgd_i => tgd_i, 
+        tgd_i => M_tgd_i, 
         
         -- WBM Outputs         
         adr_o => adr_o, 
@@ -319,8 +323,8 @@ begin
           -- WBS Inputs
          clk_i => clk_i,
          rst_i => rst_i,
-         dat_i => dat_i,
-         tgd_i => tgd_i,
+         dat_i => S_dat_i,
+         tgd_i => S_tgd_i,
     
          adr_i => adr_i,  
          cyc_i => cyc_i,
