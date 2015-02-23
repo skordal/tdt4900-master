@@ -19,6 +19,7 @@ TARGET_LDFLAGS +=  -Wl,--fix-v4bx -nostartfiles
 OBJECTS := \
 	exceptions.o \
 	main.o \
+	sha256.o \
 	shmac.o \
 	start.o
 
@@ -35,6 +36,8 @@ clean:
 
 # Manual dependency tracking for now:
 start.o: start.S
+main.o: main.c shmac.h
+sha256.o: sha256.c sha256.h shmac.h
 
 # Pattern rules:
 %.o: %.S
