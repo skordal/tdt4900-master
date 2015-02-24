@@ -7,6 +7,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
+#include "mutex.h"
 #include "shmac.h"
 
 // Tile register block:
@@ -14,10 +15,37 @@ static volatile uint32_t * tilereg = SHMAC_TILE_BASE;
 // System register block:
 static volatile uint32_t * sysreg = SHMAC_SYS_BASE;
 
+// I/O mutex:
+static mutex_t io_mutex = MUTEX_INITIALIZER;
+
+// Prints a character to the serial port.
+static void shmac_print_char(char c);
+// Prints a decimal number to the serial port:
+static void shmac_print_decimal(int n);
+// Prints a string to the serial port.
+static void shmac_print_string(const char * string);
+// Prints a hexadecimal number to the serial port.
+static void shmac_print_hex(uint32_t value);
+
+int shmac_get_tile_cpu_id(void)
+{
+	return tilereg[SHMAC_TILE_CPU_ID];
+}
+
+int shmac_get_cpu_count(void)
+{
+	return sysreg[SHMAC_SYS_CPU_COUNT];
+}
+
 void shmac_get_tile_loc(int * x, int * y)
 {
 	*x = tilereg[SHMAC_TILE_X];
 	*y = tilereg[SHMAC_TILE_Y];
+}
+
+void shmac_set_ready(void)
+{
+	sysreg[SHMAC_SYS_READY] = 1;
 }
 
 // Prints a string to the command line; basically all the I/O functions below
@@ -26,6 +54,8 @@ void shmac_printf(const char * format, ...)
 {
 	va_list arguments;
 	va_start(arguments, format);
+
+	mutex_lock(&io_mutex);
 
 	for(int i = 0; format[i] != 0; ++i)
 	{
@@ -59,16 +89,17 @@ void shmac_printf(const char * format, ...)
 			shmac_print_char(format[i]);
 	}
 
+	mutex_unlock(&io_mutex);
 	va_end(arguments);
 }
 
-void shmac_print_char(char c)
+static void shmac_print_char(char c)
 {
 	while(sysreg[SHMAC_SYS_INT_STATUS] & 2);
 	sysreg[SHMAC_SYS_OUT_DATA] = c;
 }
 
-void shmac_print_decimal(int n)
+static void shmac_print_decimal(int n)
 {
 	static char buffer[10];
 	bool inside_num = false;
@@ -99,13 +130,13 @@ void shmac_print_decimal(int n)
 	}
 }
 
-void shmac_print_string(const char * string)
+static void shmac_print_string(const char * string)
 {
 	for(int i = 0; string[i] != 0; ++i)
 		shmac_print_char(string[i]);
 }
 
-void shmac_print_hex(uint32_t value)
+static void shmac_print_hex(uint32_t value)
 {
 	const char * hex_digits = "0123456789abcdef";
 	for(int i = 28; i >= 0; i -= 4)

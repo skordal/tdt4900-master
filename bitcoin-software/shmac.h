@@ -14,18 +14,29 @@
 #define SHMAC_SYS_BASE	(volatile void *) 0xffff0000
 
 // SHMAC tile register offsets (in 32-bit words):
-#define SHMAC_TILE_X	(0x04 >> 2)
-#define SHMAC_TILE_Y	(0x08 >> 2)
+#define SHMAC_TILE_CPU_ID	(0x00 >> 2)
+#define SHMAC_TILE_X		(0x04 >> 2)
+#define SHMAC_TILE_Y		(0x08 >> 2)
 
 // SHMAC system register offsets (in 32-bit words):
 #define SHMAC_SYS_OUT_DATA	(0x00 >> 2)
 #define SHMAC_SYS_INT_STATUS	(0x20 >> 2)
-
+#define SHMAC_SYS_CPU_COUNT	(0x40 >> 2)
+#define SHMAC_SYS_READY		(0x50 >> 2)
 
 // -------------- TILE FUNCTIONS --------------
 
-// Gets the location of the current tile.
+// Gets the CPU ID of the current tile:
+int shmac_get_tile_cpu_id(void);
+
+// Gets the total number of CPUs in the system:
+int shmac_get_cpu_count(void);
+
+// Gets the location of the current tile:
 void shmac_get_tile_loc(int * x, int * y);
+
+// Starts the rest of the CPUs after CPU 0 is done initializing:
+void shmac_set_ready(void);
 
 // -------------- DEBUG FUNCTIONS --------------
 
@@ -35,16 +46,6 @@ void shmac_get_tile_loc(int * x, int * y);
 //	%s = prints a string
 //	%c = prints a character
 void shmac_printf(const char * format, ...);
-
-// Prints a character to the serial port.
-void shmac_print_char(char c);
-// Prints a decimal number to the serial port:
-void shmac_print_decimal(int n);
-// Prints a string to the serial port.
-void shmac_print_string(const char * string);
-// Prints a hexadecimal number to the serial port.
-void shmac_print_hex(uint32_t value);
-
 
 #endif
 
