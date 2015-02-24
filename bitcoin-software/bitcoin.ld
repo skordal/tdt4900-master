@@ -36,8 +36,9 @@ SECTIONS
 	__bss_end = ALIGN(4);
 	. = __bss_end;
 
-	/* Initial stack address: */
-	__initial_stack_top = 0x20000000;
+	/* Reserve 16 Mb for stack, like in the Benchmark linker script: */
+	. = . + 0x1000000;
+	__stack_top = .;
 
 	/DISCARD/ :
 	{

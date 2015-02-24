@@ -25,10 +25,42 @@ exception_vectors:
 @ C code.
 .global _start
 _start:
-	ldr sp, =__initial_stack_top @ Setup the initial stack pointer
+	@ Ensure we are in supervisor mode:
+	mov r0, #0x13
+	msr cpsr, r0
+
+.hidden setup_stacks
+setup_stacks:
+	@ Set up a 8096 byte stack beginning at an offset from the global
+	@ top-of-stack address dependent on the CPU ID in the system.
+	ldr r0, =__stack_top	@ Load the top-of-stack address from the linker script
+	ldr r1, =0xfffe0000	@ Address of the TILEREG_CPUID register
+	ldr r1, [r1]		@ Load the CPU ID of the current tile
+	sub sp, r0, r1, lsl 13	@ Subtract CPU ID times 8096 bytes from the global stack top
+
+	@ The bitcoin miner will only use the supervisor and IRQ modes.
+	@ If an abort exception or an undefined instruction exception is taken,
+	@ they will be handled in supervisor mode.
+	@ The upper 4096 bytes will be used as supervisor mode stack, this is set above.
+
+	@ The lower 4096 bytes will be used as the IRQ mode stack:
+	sub r0, sp, #4096
+
+	mrs r1, cpsr		@ Load status register
+	bic r1, #0x1f		@ Clear mode bits
+	orr r1, #0x12		@ Set IRQ mode
+	msr cpsr, r1		@ Actually switch to IRQ mode
+
+	mov sp, r0		@ Set the IRQ stack
+
+	mrs r1, cpsr		@ Switch back to supervisor mode
+	bic r1, #0x1f
+	orr r1, #0x13
+	msr cpsr, r1
 
 	@ TODO: Enable caches
 
+.hidden clear_bss
 clear_bss:
 	ldr r4, =__bss_start
 	ldr r5, =__bss_end
