@@ -1,0 +1,32 @@
+// The Great Heterogenous Bitcoin Miner Project
+// Written as part of their master's thesis by:
+// 	Kristian Klomsten Skordal <kristian.skordal@wafflemail.net>
+//	Torbjørn Langland <torbljan@stud.ntnu.no>
+// Read the report on <https://github.com/skordal/tdt4102-master>
+
+#ifndef MUTEX_H
+#define MUTEX_H
+
+#include <stdbool.h>
+
+#define MUTEX_INITIALIZER	0
+
+// This mutex module is based on the previous mutex code already found in the
+// SHMAC repo under software/shmac_test_* and software/benchmarks.
+
+typedef volatile int mutex_t;
+
+// Initializes a variable for use as a mutex:
+void mutex_initialize(mutex_t * mutex);
+
+// Attempts to lock a mutex, enters a busy-wait loop until it succeeds:
+void mutex_lock(mutex_t * mutex);
+
+// Attempts to lock a mutex, returns whether it succeeded:
+bool mutex_trylock(mutex_t * mutex);
+
+// Unlocks a mutex:
+void mutex_unlock(mutex_t * mutex);
+
+#endif
+

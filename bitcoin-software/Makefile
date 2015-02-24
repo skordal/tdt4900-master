@@ -13,12 +13,13 @@ TARGET_LD ?= $(TARGET_PREFIX)-ld
 TARGET_OBJCOPY ?= $(TARGET_PREFIX)-objcopy
 TARGET_SIZE ?= $(TARGET_PREFIX)-size
 
-TARGET_CFLAGS += -march=armv2a -std=gnu99 -O2 -Wall -ffreestanding -mno-unaligned-access -mno-thumb-interwork
+TARGET_CFLAGS += -march=armv4t -std=gnu99 -O2 -Wall -Werror=implicit-function-declaration -ffreestanding -mno-thumb-interwork
 TARGET_LDFLAGS +=  -Wl,--fix-v4bx -nostartfiles
 
 OBJECTS := \
 	exceptions.o \
 	main.o \
+	mutex.o \
 	sha256.o \
 	shmac.o \
 	start.o
@@ -37,6 +38,7 @@ clean:
 # Manual dependency tracking for now:
 start.o: start.S
 main.o: main.c shmac.h
+shmac.o: shmac.c shmac.h mutex.h
 sha256.o: sha256.c sha256.h shmac.h
 
 # Pattern rules:
