@@ -40,6 +40,7 @@ start.o: start.S
 main.o: main.c shmac.h
 shmac.o: shmac.c shmac.h mutex.h
 sha256.o: sha256.c sha256.h shmac.h
+dma.o: dma.c dma.h shmac.h
 
 # Pattern rules:
 %.o: %.S
