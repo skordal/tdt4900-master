@@ -8,6 +8,7 @@
 
 #include "sha256.h"
 #include "shmac.h"
+#include "dma.h"
 
 void main(void)
 {
