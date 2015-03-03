@@ -44,7 +44,7 @@ void main(void)
 	dma_reset();
 	//shmac_printf("ok\n\r");
 	
-	int data_count = 16;
+	int data_count = 16; //Change this, depending on own taste
 	uint32_t* load, load_location, load_test, store, store_location, store_test, request, request_test;
 	uint32_t data[data_count];
 	uint32_t data_test[data_count];
@@ -76,7 +76,7 @@ void main(void)
 	load_location = 0x10000000;
 	uint32_t
 	for(i =0; i<data_count; i++){
-		load_location[i*4] = data[i];	
+		load_location[i] = data[i];	 //TODO: I believe jumps should be 32 bytes per i, since i and the pointer load_location is of uint32_t. Change with i*4 if wrong 
 	}
 	
 	shmac_printf("Activating DMA: Count: 16 (15 + start), Byte addressing high, ON high. Hex value: 0x00F8 0001\n");
@@ -102,7 +102,7 @@ void main(void)
 	
 	store_location = 0x40000000;
 	for(i =0; i<data_count; i++){
-		data_test[i] = store_location[i*4];	
+		data_test[i] = store_location[i];	//TODO: I believe jumps should be 32 bytes per i, since i and the pointer load_location is of uint32_t. Change with i*4 if wrong 
 	}
 	
 	shmac_printf("Now printing out data from old and new location\n");
