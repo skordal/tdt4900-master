@@ -36,9 +36,8 @@ SECTIONS
 	__bss_end = ALIGN(4);
 	. = __bss_end;
 
-	/* Reserve 16 Mb for stack, like in the Benchmark linker script: */
-	. = . + 0x1000000;
-	__stack_top = .;
+	/* Use the top of the DRAM as the top of the global stack space: */
+	__stack_top = 0x40000000;
 
 	/DISCARD/ :
 	{
