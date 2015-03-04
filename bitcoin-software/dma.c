@@ -10,17 +10,17 @@ static volatile uint32_t * module = DMA_BASE;
 
 void dma_reset(void);
 
-void dma_get_load_address0(uint8_t * load);
-void dma_get_store_address0(uint8_t * store);
-void dma_get_request_details0(uint8_t * request);
-//void dma_get_load_address1(uint8_t * load);
-//void dma_get_store_address1(uint8_t * store);
-//void dma_get_request_details1(uint8_t * request);
+void dma_get_load_address0(uint32_t * load);
+void dma_get_store_address0(uint32_t * store);
+void dma_get_request_details0(uint32_t * request);
+//void dma_get_load_address1(uint32_t * load);
+//void dma_get_store_address1(uint32_t * store);
+//void dma_get_request_details1(uint32_t * request);
 
 // Sets the the starting load addresses, storing addresses, and request details (including on/off) from the dma slave.
-void dma_set_load_address0(uint8_t * load);
-void dma_set_store_address0(uint8_t * store);
-void dma_set_request_details0(uint8_t * request);
+void dma_set_load_address0(uint32_t * load);
+void dma_set_store_address0(uint32_t * store);
+void dma_set_request_details0(uint32_t * request);
 
 void dma_reset(void){
 	//EMPTY
@@ -28,7 +28,6 @@ void dma_reset(void){
 
 // Gets
 void dma_get_load_address0(uint32_t* load){
-	
 	*load = module[DMA_SLAVE_LREG0];
 }
 

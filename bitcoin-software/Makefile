@@ -24,7 +24,8 @@ OBJECTS := \
 	mutex.o \
 	sha256.o \
 	shmac.o \
-	start.o
+	start.o \
+	dma.o
 
 LINKER_SCRIPT ?= bitcoin.ld
 
