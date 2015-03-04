@@ -59,7 +59,7 @@ void main(void)
 	shmac_printf("This is the load address gotten: %x\n", *load_test);
 	
 	shmac_printf("Setting Store address: 0x4000 0000 \n");
-	*store = 0x40000000;
+	*store = 0x20000000;
 	dma_set_load_address0(load);
 	
 	shmac_printf("Getting Store address:\n");
@@ -100,7 +100,7 @@ void main(void)
 		
 	}
 	
-	store_location = 0x40000000;
+	store_location = 0x20000000;
 	for(i =0; i<data_count; i++){
 		data_test[i] = store_location[i];	//TODO: I believe jumps should be 32 bytes per i, since i and the pointer load_location is of uint32_t. Change with i*4 if wrong 
 	}
