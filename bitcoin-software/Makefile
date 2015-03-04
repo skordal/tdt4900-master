@@ -20,12 +20,14 @@ TARGET_LDFLAGS +=  -nostartfiles
 
 OBJECTS := \
 	exceptions.o \
+	irq.o \
 	main.o \
 	mutex.o \
 	sha256.o \
 	shmac.o \
 	start.o \
-	dma.o
+	dma.o \
+	timer.o
 
 LINKER_SCRIPT ?= bitcoin.ld
 

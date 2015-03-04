@@ -16,7 +16,7 @@ static volatile uint32_t * tilereg = SHMAC_TILE_BASE;
 static volatile uint32_t * sysreg = SHMAC_SYS_BASE;
 
 // I/O mutex:
-static mutex_t io_mutex = MUTEX_INITIALIZER;
+static mutex_t * io_mutex = (volatile void *) 0xf8000000;
 
 // Prints a character to the serial port.
 static void shmac_print_char(char c);
@@ -26,6 +26,12 @@ static void shmac_print_decimal(int n);
 static void shmac_print_string(const char * string);
 // Prints a hexadecimal number to the serial port.
 static void shmac_print_hex(uint32_t value);
+
+void shmac_initialize(void)
+{
+	if(shmac_get_tile_cpu_id() == 0)
+		mutex_initialize(io_mutex);
+}
 
 int shmac_get_tile_cpu_id(void)
 {
@@ -55,7 +61,7 @@ void shmac_printf(const char * format, ...)
 	va_list arguments;
 	va_start(arguments, format);
 
-	mutex_lock(&io_mutex);
+	mutex_lock(io_mutex);
 
 	for(int i = 0; format[i] != 0; ++i)
 	{
@@ -89,7 +95,7 @@ void shmac_printf(const char * format, ...)
 			shmac_print_char(format[i]);
 	}
 
-	mutex_unlock(&io_mutex);
+	mutex_unlock(io_mutex);
 	va_end(arguments);
 }
 
