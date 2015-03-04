@@ -33,7 +33,7 @@ void main(void)
 
 //		shmac_set_ready();
 	}
-
+	/*
 	shmac_printf("CPU%d: CPU %d of %d checking in!\n\r", shmac_get_tile_cpu_id(),
 		shmac_get_tile_cpu_id() + 1, shmac_get_cpu_count());
 
@@ -45,11 +45,11 @@ void main(void)
 	
 	// DMA Part:
 	
-	shmac_printf("THIS IS A CHAIR!!!\n");
-	shmac_printf("THIS IS A CHAIR!!!\n");
-	shmac_printf("THIS IS A CHAIR!!!\n");
+	shmac_printf("THIS IS A CHAIR!!!\n\r");
+	shmac_printf("THIS IS A CHAIR!!!\n\r");
+	shmac_printf("THIS IS A CHAIR!!!\n\r");
 	
-	//shmac_printf("Resetting DMA Module (And I resent the use of ...)");
+	//shmac_printf("Resetting DMA Module (And I resent the use of ...)\r");
 	/*dma_reset();
 	//shmac_printf("ok\n\r");
 	
@@ -58,23 +58,23 @@ void main(void)
 	uint32_t data[data_count];
 	uint32_t data_test[data_count];
 	
-	shmac_printf("Setting Load address: 0x1000 0000 \n");
+	shmac_printf("Setting Load address: 0x1000 0000 \n\r");
 	*load = 0x10000000;
 	dma_set_load_address0(load);
 	
-	shmac_printf("Getting Load address:\n");
+	shmac_printf("Getting Load address:\n\r");
 	dma_get_load_address0(load_test);
-	shmac_printf("This is the load address gotten: %x\n", *load_test);
+	shmac_printf("This is the load address gotten: %x\n\r", *load_test);
 	
-	shmac_printf("Setting Store address: 0x4000 0000 \n");
+	shmac_printf("Setting Store address: 0x4000 0000 \n\r");
 	*store = 0x20000000;
 	dma_set_load_address0(load);
 	
 	shmac_printf("Getting Store address:\n");
 	dma_get_store_address0(store_test);
-	shmac_printf("This is the store address gotten: %x\n", *store_test);
+	shmac_printf("This is the store address gotten: %x\n\r", *store_test);
 	
-	shmac_printf("Setting up raw data from loading addresses, with following square numbers: 1-4-9-16-25.... (16 in total)\n");
+	shmac_printf("Setting up raw data from loading addresses, with following square numbers: 1-4-9-16-25.... (16 in total)\n\r");
 	
 	uint32_t i;
 	for(i =0; i<data_count; i++){
@@ -86,7 +86,7 @@ void main(void)
 		load_location[i] = data[i];	 //TODO: I believe jumps should be 32 bytes per i, since i and the pointer load_location is of uint32_t. Change with i*4 if wrong 
 	}
 	
-	shmac_printf("Activating DMA: Count: 16 (15 + start), Byte addressing high, ON high. Hex value: 0x00F8 0001\n");
+	shmac_printf("Activating DMA: Count: 16 (15 + start), Byte addressing high, ON high. Hex value: 0x00F8 0001\n\r");
 	*request = 0x00F80001;
 	
 	dma_set_request_details0(request);
@@ -98,10 +98,10 @@ void main(void)
 		dma_get_request_details0(request_test); //TODO: Also test with much larger count if DMA is too fast
 		
 		if(request_test[3] == 0x00){
-			shmac_printf("DMA transfer complete\n");
+			shmac_printf("DMA transfer complete\n\r");
 			on = false;
 		} else {
-			shmac_printf("DMA active. Run through giant for-loop\n");
+			shmac_printf("DMA active. Run through giant for-loop\n\r");
 			for(a = 0; 0<1000000000; a++){
 				// A man walked into a bar. Ouch!
 			}
@@ -114,7 +114,7 @@ void main(void)
 		data_test[i] = store_location[i];	//TODO: I believe jumps should be 32 bytes per i, since i and the pointer load_location is of uint32_t. Change with i*4 if wrong 
 	}
 	
-	shmac_printf("Now printing out data from old and new location\n");
+	shmac_printf("Now printing out data from old and new location\n\r");
 	for(i=0; i<data_count; i++){
 		shmac_printf("Old: %d, New: %d\n", data[i], data_test[i]);
 	}
