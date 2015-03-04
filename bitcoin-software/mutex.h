@@ -11,6 +11,11 @@
 
 #define MUTEX_INITIALIZER	0
 
+// Use the defines below to choose a mutex implementation to use;
+// the "classic" mutexes are
+//#define USE_CLASSIC_MUTEXES	1
+//#define USE_IMPROVED_MUTEXES	1
+
 // This mutex module is based on the previous mutex code already found in the
 // SHMAC repo under software/shmac_test_* and software/benchmarks.
 

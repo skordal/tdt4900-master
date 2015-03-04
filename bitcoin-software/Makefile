@@ -13,8 +13,10 @@ TARGET_LD ?= $(TARGET_PREFIX)-ld
 TARGET_OBJCOPY ?= $(TARGET_PREFIX)-objcopy
 TARGET_SIZE ?= $(TARGET_PREFIX)-size
 
-TARGET_CFLAGS += -march=armv4t -std=gnu99 -O2 -Wall -Werror=implicit-function-declaration -ffreestanding -mno-thumb-interwork
-TARGET_LDFLAGS +=  -Wl,--fix-v4bx -nostartfiles
+TARGET_CFLAGS += -march=armv4t -std=gnu99 -O2 -Wall \
+	-Werror=implicit-function-declaration -ffreestanding \
+	-mno-thumb-interwork -DUSE_CLASSIC_MUTEXES -DNUM_CPUS=4
+TARGET_LDFLAGS +=  -nostartfiles
 
 OBJECTS := \
 	exceptions.o \
