@@ -18,11 +18,19 @@
 #define SHMAC_TILE_X		(0x04 >> 2)
 #define SHMAC_TILE_Y		(0x08 >> 2)
 
+// SHMAC Interrupt controller 0 register offsets:
+#define SHMAC_IC_IRQ_STATUS	(0x
+
 // SHMAC system register offsets (in 32-bit words):
 #define SHMAC_SYS_OUT_DATA	(0x00 >> 2)
 #define SHMAC_SYS_INT_STATUS	(0x20 >> 2)
 #define SHMAC_SYS_CPU_COUNT	(0x40 >> 2)
 #define SHMAC_SYS_READY		(0x50 >> 2)
+
+// -------------- INITIALIZATION FUNCTION --------------
+
+// Initializes the SHMAC library, use this before any of the functions below!
+void shmac_initialize(void);
 
 // -------------- TILE FUNCTIONS --------------
 
