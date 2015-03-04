@@ -62,6 +62,12 @@ setup_stacks:
 
 .hidden clear_bss
 clear_bss:
+	@ Ensure only CPU 0 clears the .bss section:
+	ldr r0, =0xfffe0000
+	ldr r0, [r0, #0]
+	cmp r0, #0
+	bne 2f
+
 	ldr r4, =__bss_start
 	ldr r5, =__bss_end
 	mov r6, #0
