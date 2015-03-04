@@ -47,7 +47,13 @@ int_data_abort:
 
 .global int_irq
 int_irq:
-	@ Handle IRQ here
+	@ Set the correct return address
+	push {r0-r5, r12, lr}
+
+	@ Call the IRQ handler:
+	bl irq_handler
+
+	pop {r0 - r5, r12, lr}
 	subs pc, lr, #4 @ Jump to the aborted instruction
 
 .global int_fiq
