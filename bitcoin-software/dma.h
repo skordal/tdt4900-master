@@ -15,11 +15,11 @@
 
 // DMA register names and offsets:
 #define DMA_SLAVE_LREG0		0x000
-#define DMA_SLAVE_SREG0		0x004
-#define DMA_SLAVE_RREG0		0x008
-//#define DMA_SLAVE_LREG1		0x00c
-//#define DMA_SLAVE_SREG1		0x010
-//#define DMA_SLAVE_RREG1		0x014
+#define DMA_SLAVE_SREG0		(0x004 >> 2)
+#define DMA_SLAVE_RREG0		(0x008 >> 2)
+//#define DMA_SLAVE_LREG1		(0x00c >> 2)
+//#define DMA_SLAVE_SREG1		(0x010 >> 2)
+//#define DMA_SLAVE_RREG1		(0x014 >> 2)
 
 // SHA256 control register bitnames:
 #define DMA_SLAVE_ENABLE	0
@@ -27,8 +27,19 @@
 // Resets the DMA Module.
 void dma_reset(void);
 
+uint32_t dma_get_load_address0();
+uint32_t dma_get_store_address0();
+uint32_t dma_get_request_details0();
+
+void dma_set_load_address0(uint32_t load);
+void dma_set_store_address0(uint32_t store);
+void dma_set_request_details0(uint32_t request);
+
+
+
+
 // Retrieves the starting load addresses, storing addresses, and request details (including on/off) from the dma slave.
-void dma_get_load_address0(uint32_t * load);
+/*void dma_get_load_address0(uint32_t * load);
 void dma_get_store_address0(uint32_t * store);
 void dma_get_request_details0(uint32_t * request);
 //void dma_get_load_address1(uint32_t * load);
@@ -41,7 +52,9 @@ void dma_set_store_address0(uint32_t * store);
 void dma_set_request_details0(uint32_t * request);
 //void dma_get_load_address1(uint32_t * load);
 //void dma_get_store_address1(uint32_t * store);
-//void dma_get_request_details1(uint32_t * request);
+//void dma_get_request_details1(uint32_t * request);*/
+
+void printDMADetails(); //TODO: Remove when done
 
 #endif
 
