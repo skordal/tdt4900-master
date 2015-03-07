@@ -15,17 +15,10 @@ static volatile uint32_t * irq_controller = IRQ_IC0_BASE;
 // IRQ handler function:
 void irq_handler(void)
 {
-	shmac_printf("CPU%d: Interrupt!\n\r", shmac_get_tile_cpu_id());
-
 	uint32_t irq_status = irq_controller[IRQ_IC_STATUS];
 	for(int i = 0; i < IRQ_MAXNUM; ++i)
-	{
 		if(((irq_status >> i) & 1) && handlers[i][shmac_get_tile_cpu_id()] != 0)
-		{
-			shmac_printf("CPU%d: Interrupt %d asserted!\n\r", shmac_get_tile_cpu_id(), i);
 			handlers[i][shmac_get_tile_cpu_id()](i);
-		}
-	}
 }
 
 // Clears the interrupt mask, called from start.S:
