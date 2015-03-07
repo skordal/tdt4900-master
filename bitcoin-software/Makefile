@@ -22,6 +22,7 @@ OBJECTS := \
 	exceptions.o \
 	irq.o \
 	main.o \
+	mm.o \
 	mutex.o \
 	sha256.o \
 	shmac.o \

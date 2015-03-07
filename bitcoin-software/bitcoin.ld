@@ -36,6 +36,8 @@ SECTIONS
 	__bss_end = ALIGN(4);
 	. = __bss_end;
 
+	__dataspace_end = 0x30000000; /* Reserve the uppermost 256 Mb for stack. */
+
 	/* Use the top of the DRAM as the top of the global stack space: */
 	__stack_top = 0x40000000;
 
