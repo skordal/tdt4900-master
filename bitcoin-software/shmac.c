@@ -78,6 +78,7 @@ void shmac_printf(const char * format, ...)
 				case 's':
 					shmac_print_string(va_arg(arguments, const char *));
 					break;
+				case 'p':
 				case 'x':
 					shmac_print_string("0x");
 					shmac_print_hex(va_arg(arguments, uint32_t));

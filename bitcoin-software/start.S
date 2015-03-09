@@ -86,6 +86,10 @@ enable_interrupts:
 	bic r1, #0x80
 	msr cpsr, r1
 
+.hidden initialize_mm
+initialize_mm:
+	bl mm_initialize
+
 .hidden start_main
 start_main:
 	bl main
