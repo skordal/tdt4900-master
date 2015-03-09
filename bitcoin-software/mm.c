@@ -6,7 +6,7 @@
 #include "shmac.h"
 
 #ifndef MINIMUM_BLOCK_SIZE
-#define MINIMUM_BLOCK_SIZE	MM_DEFAULT_ALIGNMENT
+#define MINIMUM_BLOCK_SIZE	4
 #endif
 
 // Virtual memory block:
@@ -61,12 +61,10 @@ void mm_initialize(void)
 	total_free_memory = first_block->size;
 }
 
-void * mm_allocate(unsigned int size, unsigned int alignment, unsigned int flags)
+void * mm_allocate(unsigned int size)
 {
+	unsigned int alignment = 4;
 	void * retval = 0;
-
-	if(alignment < MM_DEFAULT_ALIGNMENT)
-		alignment = MM_DEFAULT_ALIGNMENT;
 
 	if(size < MINIMUM_BLOCK_SIZE)
 		size = MINIMUM_BLOCK_SIZE;

@@ -8,17 +8,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-/** Flag specifying normal memory. */
-#define MM_MEM_NORMAL		0
-
-/** Default memory alignment. */
-#ifndef MM_DEFAULT_ALIGNMENT
-#define MM_DEFAULT_ALIGNMENT	4
-#endif
-
-/** Maximum physical block size. */
-#define MM_MAXIMUM_PHYSICAL_BLOCK_SIZE	(1 << (CONFIG_BUDDY_MAX_ORDER + log2(CONFIG_PAGE_SIZE)))
-
 /** Initializes the memory manager. */
 void mm_initialize(void);
 
@@ -32,8 +21,7 @@ void print_blocks(void);
  * @param flags additional properties of the memory area.
  * @return the allocated memory area or `NULL` if no memory was available.
  */
-void * mm_allocate(unsigned int size, unsigned int alignment, unsigned int flags)
-	__attribute((malloc));
+void * mm_allocate(unsigned int size) __attribute((malloc));
 
 /**
  * Frees an area of kernel memory. Null pointers can be freed, in which case
