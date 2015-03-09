@@ -92,7 +92,15 @@ begin
     stb_o <= active; -- Works for Single Cycle. May change on more advanced implementation
     adr_o <= addrReg;
     --dat_o <= datReg;
-    sel_o <= sel_internal;
+    --sel_o <= sel_internal;
+    sel_o <= (15 downto 0 => '0');
+    lock_o <= '0';
+    tga_o <= "000";
+    tgc_o <= "000";
+    tgd_o <= "000";
+    
+    
+    
     
     DMADataIn <= inputDataBuffer; -- Connect data input directly to DMA Module
     DMAAddressIn <= addrReg; -- Use loading address register to store Load ID with assosiated data to the DMA MOdule

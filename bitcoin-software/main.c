@@ -67,7 +67,7 @@ void main(void)
 	dma_set_load_address0(load);
 	
 	shmac_printf("Getting Load address:\n\r");
-	dma_get_load_address0(load_test);
+	load_test = dma_get_load_address0();
 	//shmac_printf("This is the load address gotten: %x\n\r", *load_test);
 	shmac_printf("This is the load address gotten: %x\n\r", load_test);
 	
