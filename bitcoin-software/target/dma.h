@@ -39,20 +39,20 @@ void dma_set_request_details0(uint32_t request);
 
 
 // Retrieves the starting load addresses, storing addresses, and request details (including on/off) from the dma slave.
-/*void dma_get_load_address0(uint32_t * load);
-void dma_get_store_address0(uint32_t * store);
-void dma_get_request_details0(uint32_t * request);
+//void dma_get_load_address0(uint32_t * load);
+//void dma_get_store_address0(uint32_t * store);
+//void dma_get_request_details0(uint32_t * request);
 //void dma_get_load_address1(uint32_t * load);
 //void dma_get_store_address1(uint32_t * store);
 //void dma_get_request_details1(uint32_t * request);
 
 // Sets the the starting load addresses, storing addresses, and request details (including on/off) from the dma slave.
-void dma_set_load_address0(uint32_t * load);
-void dma_set_store_address0(uint32_t * store);
-void dma_set_request_details0(uint32_t * request);
+//void dma_set_load_address0(uint32_t * load);
+//void dma_set_store_address0(uint32_t * store);
+//void dma_set_request_details0(uint32_t * request);
 //void dma_get_load_address1(uint32_t * load);
 //void dma_get_store_address1(uint32_t * store);
-//void dma_get_request_details1(uint32_t * request);*/
+//void dma_get_request_details1(uint32_t * request);
 
 void printDMADetails(); //TODO: Remove when done
 

@@ -53,7 +53,7 @@ void dma_set_request_details0(uint32_t request){
 	module[DMA_SLAVE_RREG0] = request;
 }
 
-/*
+#if 0
 
 void dma_get_load_address0(uint32_t * load);
 void dma_get_store_address0(uint32_t * store);
@@ -69,9 +69,9 @@ void dma_set_request_details0(uint32_t * request);
 
 // Gets
 void dma_get_load_address0(uint32_t* load){
-	//*load = module[DMA_SLAVE_LREG0];
+	// *load = module[DMA_SLAVE_LREG0];
 	//int32_t * address = 0xfffe4000;
-	//*load = *address;
+	// *load = *address;
 	
 	shmac_printf("Let's print a series of numbers for debugging:\n\r");
 	shmac_printf("\n\r");
@@ -123,7 +123,9 @@ void dma_set_request_details0(uint32_t* request){
 	//uint32_t * address = 0xfffe4008;
 	//*address = *request;
 }
-*/
+
+#endif
+
 void printDMADetails(){ //TODO: Remove when debug is over
 	shmac_printf("DMA_BASE: %x, DMA_SLAVE_LREG0: %x, DMA_SLAVE_SREG0: %x, DMA_SLAVE_RREG0: %x\n\r", DMA_BASE, DMA_SLAVE_LREG0, DMA_SLAVE_SREG0, DMA_SLAVE_RREG0);
 }
