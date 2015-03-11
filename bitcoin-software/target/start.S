@@ -78,17 +78,17 @@ clear_bss:
 
 2:
 
+.hidden init_sw
+init_sw:
+	bl mm_initialize
+	bl irq_initialize
+	bl timer_initialize
+
 .hidden enable_interrupts
 enable_interrupts:
-	bl irq_initialize
-
 	mrs r1, cpsr
 	bic r1, #0x80
 	msr cpsr, r1
-
-.hidden initialize_mm
-initialize_mm:
-	bl mm_initialize
 
 .hidden start_main
 start_main:

@@ -24,10 +24,10 @@
 typedef void (*irq_handler_func)(int irq);
 
 // Sets an IRQ handler:
-void irq_set_handler(int irq, int cpu, irq_handler_func handler);
+void irq_set_handler(int irq, irq_handler_func handler);
 
 // Removes an IRQ handler:
-void irq_remove_handler(int irq, int cpu);
+void irq_remove_handler(int irq);
 
 #endif
 
