@@ -21,8 +21,8 @@
 
 typedef volatile int mutex_t;
 
-// Initializes a variable for use as a mutex:
-void mutex_initialize(mutex_t * mutex);
+// Allocates a new mutex. Mutexes cannot be freed, so make sure your really need one.
+mutex_t * mutex_new(void);
 
 // Attempts to lock a mutex, enters a busy-wait loop until it succeeds:
 void mutex_lock(mutex_t * mutex);

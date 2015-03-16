@@ -10,9 +10,13 @@
 #warning "No mutex implementation selected!"
 #endif
 
-void mutex_initialize(mutex_t * mutex)
+mutex_t * next_mutex = (void *) 0xf8000000;
+
+mutex_t * mutex_new(void)
 {
-	*mutex = MUTEX_INITIALIZER;
+	mutex_t * retval = next_mutex++;
+	*retval = MUTEX_INITIALIZER;
+	return retval;
 }
 
 void mutex_lock(mutex_t * mutex)
