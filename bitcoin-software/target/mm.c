@@ -3,6 +3,7 @@
 // Report bugs and issues on <http://github.com/skordal/mordax/issues>
 
 #include "mm.h"
+#include "mutex.h"
 #include "shmac.h"
 
 #ifndef MINIMUM_BLOCK_SIZE
@@ -21,6 +22,9 @@ struct memory_block
 // Imported from the linker script:
 extern void * __bss_end;
 extern void * __dataspace_end;
+
+// Memory manager mutex:
+static mutex_t * mutex;
 
 // Head of the list of memory blocks:
 struct memory_block * memory_list = (void *) &__bss_end;
@@ -49,6 +53,8 @@ void print_blocks(void)
 
 void mm_initialize(void)
 {
+	mutex = mutex_new();
+
 	struct memory_block * first_block = memory_list;
 	for(int i = 0; i < sizeof(struct memory_block); ++i)
 	{
@@ -74,6 +80,7 @@ void * mm_allocate(unsigned int size)
 	while(total_free_memory <= size)
 		return 0;
 
+	mutex_lock(mutex);
 	struct memory_block * current = memory_list;
 	do {
 		if(current->size >= size && !current->used)
@@ -110,12 +117,16 @@ void * mm_allocate(unsigned int size)
 		current = current->next;
 	} while(current != 0);
 
+	mutex_unlock(mutex);
 	return retval;
 }
 
 void mm_free(void * area)
 {
 	struct memory_block * block = (void *) ((uint32_t) area - sizeof(struct memory_block));
+
+	mutex_lock(mutex);
+
 	block->used = false;
 	total_free_memory += block->size;
 
@@ -139,6 +150,8 @@ void mm_free(void * area)
 			block->next->next->prev = block;
 		block->next = block->next->next;
 	}
+
+	mutex_unlock(mutex);
 }
 
 static struct memory_block * mm_split(struct memory_block * block, unsigned offset)
