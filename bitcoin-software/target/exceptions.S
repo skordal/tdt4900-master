@@ -28,7 +28,7 @@ int_prefetch_abort:
 	@ Handle prefetch abort (instruction load fault) here
 
 	ldr r0, =prefetch_abt_msg
-	sub r0, lr, #4
+	sub r1, lr, #4
 	bl shmac_printf
 	b .
 
@@ -39,7 +39,7 @@ int_data_abort:
 	@ Handle data abort (data load/write fault) here
 
 	ldr r0, =data_abt_msg
-	sub r0, lr, #8
+	sub r1, lr, #8
 	bl shmac_printf
 	b .
 
@@ -48,7 +48,7 @@ int_data_abort:
 .global int_irq
 int_irq:
 	@ Set the correct return address
-	push {r0-r5, r12, lr}
+	push {r0 - r5, r12, lr}
 
 	@ Call the IRQ handler:
 	bl irq_handler
