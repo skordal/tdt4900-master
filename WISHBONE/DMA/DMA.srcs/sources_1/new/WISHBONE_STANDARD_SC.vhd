@@ -92,8 +92,7 @@ begin
     stb_o <= active; -- Works for Single Cycle. May change on more advanced implementation
     adr_o <= addrReg;
     --dat_o <= datReg;
-    --sel_o <= sel_internal;
-    sel_o <= (15 downto 0 => '0');
+    sel_o <= sel_internal;
     lock_o <= '0';
     tga_o <= "000";
     tgc_o <= "000";
@@ -210,41 +209,52 @@ begin
    -- Version using addreReg instead of selInternal (byte addressing only)
     selectDatSpace : process(active, typeReg, addrReg, dat_i, datReg)
         variable dat_var : std_logic_vector (31 downto 0);
+        variable sel_var : std_logic_vector (15 downto 0);
     begin
         dat_var := (31 downto 0 => '0');
+        sel_var := (15 downto 0 => '0');
         if active = '1' then -- No point if active is low
             if typereg = "00" then -- LOADS
             if addrReg(3 downto 2) = "00" then
             dat_var := dat_i(31 downto 0);
+            sel_var := "0000000000001111";
         elsif addrReg(3 downto 2) = "01" then
             dat_var := dat_i(63 downto 32);
+            sel_var := "0000000011110000";
         elsif addrReg(3 downto 2) = "10" then
             dat_var := dat_i(95 downto 64);
+            sel_var := "0000111100000000";
         else
             dat_var := dat_i(127 downto 96);
+            sel_var := "1111000000000000";
         end if;
     
     elsif typereg = "01" then -- STORES
         if addrReg(3 downto 2) = "00" then
             dat_o(127 downto 32) <= (127 downto 32 => '0');
             dat_o(31 downto 0) <= datReg;
+            sel_var := "0000000000001111";
         elsif addrReg(3 downto 2) = "01" then
             dat_o(127 downto 64) <= (127 downto 64 => '0');
             dat_o(63 downto 32) <= datReg;
             dat_o(31 downto 0) <= (31 downto 0 => '0');
+            sel_var := "0000000011110000";
         elsif addrReg(3 downto 2) = "10" then
             dat_o(127 downto 96) <= (127 downto 96 => '0');
             dat_o(95 downto 64) <= datReg;
             dat_o(63 downto 0) <= (63 downto 0 => '0');
+            sel_var := "0000111100000000";
         else
             dat_o(127 downto 96) <= datReg;
             dat_o(95 downto 0) <= (95 downto 0 => '0');
+            sel_var := "1111000000000000";
         end if;
     end if;
 else
-    dat_o <= (127 downto 0 => '-'); -- Attempt at don't care, in order to avoid crash with Slave module
+    dat_o <= (127 downto 0 => '0');
 end if;
 dat_selected <= dat_var;
+sel_internal <= sel_var;
 end process;
 
 

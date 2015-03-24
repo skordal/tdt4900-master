@@ -7,14 +7,14 @@ INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTE
 INFO: [VRFC 10-307] analyzing entity countCheck
 INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sources_1/new/adder.vhd" into library xil_defaultlib
 INFO: [VRFC 10-307] analyzing entity adder
+INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sources_1/imports/src/arbiterController.vhd" into library xil_defaultlib
+INFO: [VRFC 10-307] analyzing entity arbiterController
 INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sources_1/imports/src/storeChannel.vhd" into library xil_defaultlib
 INFO: [VRFC 10-307] analyzing entity storeChannel
 INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sources_1/imports/src/loadChannel.vhd" into library xil_defaultlib
 INFO: [VRFC 10-307] analyzing entity loadChannel
 INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sources_1/imports/src/dataMux.vhd" into library xil_defaultlib
 INFO: [VRFC 10-307] analyzing entity dataMux
-INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sources_1/imports/src/arbiterController.vhd" into library xil_defaultlib
-INFO: [VRFC 10-307] analyzing entity arbiterController
 INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sources_1/new/AMMux.vhd" into library xil_defaultlib
 INFO: [VRFC 10-307] analyzing entity AMMux
 INFO: [VRFC 10-163] Analyzing VHDL file "C:/Users/Sygnious/Documents/Skole/MASTER/VHDL/Vivado/DMA/DMA.srcs/sources_1/imports/src/adrMux.vhd" into library xil_defaultlib

@@ -40,6 +40,10 @@ architecture arch of arbiterController is
 	signal next_LRL : std_logic := '0';
 	signal next_LRS : std_logic := '0'; 
 	
+	signal dataOpt_reg : std_logic := '0';
+    signal adrOpt_reg : std_logic_vector(2 downto 0):= "000";
+	
+	
 begin
 	
 	-- Concatinating the inputs and the outputs for simpler treatment in the case statements
@@ -49,6 +53,9 @@ begin
 	storeAck1 <= allAckOutputs(2);
 	loadAck0 <= allAckOutputs(1);
 	loadAck1 <= allAckOutputs(0);
+	
+	dataOpt <= dataOpt_reg;
+	adrOpt <= adrOpt_reg;
 	
 	
 	update_register : process (clk, next_LRL, next_LRS)
@@ -132,40 +139,38 @@ begin
            var_LRS := LRS;    
 	   if blockReq = '1' then -- Blocking request
 			allAckOutputs <= "00000";
-			dataOpt <= '-';
-			adrOpt <= "---";
 		elsif interruptReq = '1' then -- Interrupt request
 			allAckOutputs <= "10000";
-			dataOpt <='0'; 
-			adrOpt <= "000"; 
+			dataOpt_reg <='0'; 
+			adrOpt_reg <= "000"; 
 		elsif (storeReq0 = '1' OR storeReq1 = '1') then 
 		-- NOTE: Both channels requesting store data should not happen in channel system with common data buffer. May only happen in private buffer system.
 		
 			if (storeReq0 = '1' AND (storeReq1 = '0' OR LRS = '1')) then -- If only channel 0 requests, or both channels but channel 1 was least recent, then choose channel 0
 				allAckOutputs <="01000";
-				adrOpt <= "001";
+				adrOpt_reg <= "001";
 				var_LRS := '0';
 			else --(storeReq1 = '1' AND (storeReq0 = '0' OR LRS = '0')) then -- If only channel 1 requests, or both channels but channel 0 was least recent, then choose channel 1
 				allAckOutputs <="00100";
-				adrOpt <= "010";
+				adrOpt_reg <= "010";
 				var_LRS := '1';
 			end if;
-			dataOpt <= '1';
+			dataOpt_reg <= '1';
 		elsif (loadReq0 = '1' OR loadReq1 = '1') then
 			if (loadReq0 = '1' AND (loadReq1 = '0' OR LRL = '1')) then -- If only channel 0 requests, or both channels but channel 1 was least recent, then choose channel 0
 				allAckOutputs <="00010";
-				adrOpt <= "011";
+				adrOpt_reg <= "011";
 				var_LRL :='0';
 			else --(loadReq1 = '1' AND (loadReq0 = '0' OR LRL = '0')) then -- If only channel 1 requests, or both channels but channel 0 was least recent, then choose channel 1
 				allAckOutputs <="00001";
-				adrOpt <= "100";
+				adrOpt_reg <= "100";
 				var_LRL :='1';
 			end if;
-			dataOpt <= '0';
+			dataOpt_reg <= '0';
 		else -- No requests, or other unforseen combinations that somehow does not fit into previous conditions
 			allAckOutputs <= "00000";
-			adrOpt <= "---";
-			dataOpt <= '0';
+			adrOpt_reg <= "000";
+			dataOpt_reg <= '0';
 		end if;
 		next_LRL <= var_LRL;
 		next_LRS <= var_LRS;

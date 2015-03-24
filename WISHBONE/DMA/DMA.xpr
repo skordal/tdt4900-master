@@ -45,6 +45,14 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PSRCDIR/sources_1/imports/src/arbiterController.vhd">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../../VHDL/Vivado/DMA2/DMA2.srcs/sources_1/imports/src/arbiterController.vhd"/>
+          <Attr Name="ImportTime" Val="1416221594"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PSRCDIR/sources_1/imports/src/storeChannel.vhd">
         <FileInfo>
           <Attr Name="ImportPath" Val="$PPRDIR/../../../../VHDL/Vivado/DMA2/DMA2.srcs/sources_1/imports/src/storeChannel.vhd"/>
@@ -65,14 +73,6 @@
         <FileInfo>
           <Attr Name="ImportPath" Val="$PPRDIR/../../../../VHDL/Vivado/DMA2/DMA2.srcs/sources_1/imports/src/dataMux.vhd"/>
           <Attr Name="ImportTime" Val="1413573262"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/imports/src/arbiterController.vhd">
-        <FileInfo>
-          <Attr Name="ImportPath" Val="$PPRDIR/../../../../VHDL/Vivado/DMA2/DMA2.srcs/sources_1/imports/src/arbiterController.vhd"/>
-          <Attr Name="ImportTime" Val="1416221594"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>

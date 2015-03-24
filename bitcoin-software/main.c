@@ -62,7 +62,7 @@ void main(void)
 	uint32_t *load_location, *store_location;
 	
 	shmac_printf("Setting Load address: 0x1000 0000 \n\r");
-	//*load = 0x10000000;
+	/*//*load = 0x10000000;
 	load = 0x10000000;
 	dma_set_load_address0(load);
 	
@@ -141,7 +141,7 @@ void main(void)
 	for(i=0; i<data_count; i++){
 		shmac_printf("Old: %d, New: %d\n\r", data[i], data_test[i]);
 	}
-	
+	*/
 	shmac_printf("\n\rEnd programme.\n\r");
 	shmac_printf("CPU%d: End of main.\n\r", shmac_get_tile_cpu_id());
 	

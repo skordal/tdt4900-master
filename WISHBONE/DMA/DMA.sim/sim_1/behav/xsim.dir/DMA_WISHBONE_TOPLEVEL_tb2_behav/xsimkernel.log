@@ -1,5 +1,5 @@
-Running: xsim.dir/DMA_WISHBONE_TOPLEVEL_tb2_behav/xsimk.exe -simmode gui -wdb DMA_WISHBONE_TOPLEVEL_tb2_behav.wdb -simrunnum 0 -socket 50691
+Running: xsim.dir/DMA_WISHBONE_TOPLEVEL_tb2_behav/xsimk.exe -simmode gui -wdb DMA_WISHBONE_TOPLEVEL_tb2_behav.wdb -simrunnum 0 -socket 49300
 Design successfully loaded
-Design Loading CPU Usage: 498 ms
+Design Loading CPU Usage: 514 ms
 Simulation completed
-Simulation CPU Usage: 810 ms
+Simulation CPU Usage: 530 ms
