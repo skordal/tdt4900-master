@@ -54,6 +54,7 @@ setup_stacks:
 	mov sp, r0		@ Set the IRQ stack
 
 	mrs r1, cpsr		@ Switch back to system mode
+	bic r1, #0x1f
 	orr r1, #0x1f
 	msr cpsr, r1
 
@@ -84,6 +85,7 @@ init_sw:
 	bl mm_initialize
 	bl irq_initialize
 	bl timer_initialize
+	bl shmac_initialize
 
 .hidden enable_interrupts
 enable_interrupts:

@@ -40,26 +40,29 @@ static void timer_irq_handler(int irq)
 
 void timer_initialize(void)
 {
-	timer_infos = mm_allocate(sizeof(struct timer_info *) * shmac_get_cpu_count());
-	for(int i = 0; i < shmac_get_cpu_count(); ++i)
+	if(shmac_get_tile_cpu_id() == 0)
 	{
-		timer_infos[i] = mm_allocate(sizeof(struct timer_info) * 3);
-		for(int j = 0; j < 3; ++j)
+		timer_infos = mm_allocate(sizeof(struct timer_info *) * shmac_get_cpu_count());
+		for(int i = 0; i < shmac_get_cpu_count(); ++i)
 		{
-			switch(j)
+			timer_infos[i] = mm_allocate(sizeof(struct timer_info) * 3);
+			for(int j = 0; j < 3; ++j)
 			{
-				case 0:
-					timer_infos[i][j].irq = TIMER0_IRQ;
-					timer_infos[i][j].memory = TIMER0_BASE;
-					break;
-				case 1:
-					timer_infos[i][j].irq = TIMER1_IRQ;
-					timer_infos[i][j].memory = TIMER1_BASE;
-					break;
-				case 2:
-					timer_infos[i][j].irq = TIMER2_IRQ;
-					timer_infos[i][j].memory = TIMER2_BASE;
-					break;
+				switch(j)
+				{
+					case 0:
+						timer_infos[i][j].irq = TIMER0_IRQ;
+						timer_infos[i][j].memory = TIMER0_BASE;
+						break;
+					case 1:
+						timer_infos[i][j].irq = TIMER1_IRQ;
+						timer_infos[i][j].memory = TIMER1_BASE;
+						break;
+					case 2:
+						timer_infos[i][j].irq = TIMER2_IRQ;
+						timer_infos[i][j].memory = TIMER2_BASE;
+						break;
+				}
 			}
 		}
 	}

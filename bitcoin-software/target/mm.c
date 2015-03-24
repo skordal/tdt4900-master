@@ -53,18 +53,21 @@ void print_blocks(void)
 
 void mm_initialize(void)
 {
-	mutex = mutex_new();
-
-	struct memory_block * first_block = memory_list;
-	for(int i = 0; i < sizeof(struct memory_block); ++i)
+	if(shmac_get_tile_cpu_id() == 0)
 	{
-		char * temp = (char *) first_block;
-		temp[i] = 0;
-	}
+		//mutex = mutex_new();
 
-	first_block->start = (void *) ((uint32_t) memory_list + sizeof(struct memory_block));
-	first_block->size = ((uint32_t) &__dataspace_end - (uint32_t) &__bss_end - sizeof(struct memory_block));
-	total_free_memory = first_block->size;
+		struct memory_block * first_block = memory_list;
+		for(int i = 0; i < sizeof(struct memory_block); ++i)
+		{
+			char * temp = (char *) first_block;
+			temp[i] = 0;
+		}
+
+		first_block->start = (void *) ((uint32_t) memory_list + sizeof(struct memory_block));
+		first_block->size = ((uint32_t) &__dataspace_end - (uint32_t) &__bss_end - sizeof(struct memory_block));
+		total_free_memory = first_block->size;
+	}
 }
 
 void * mm_allocate(unsigned int size)
@@ -80,7 +83,8 @@ void * mm_allocate(unsigned int size)
 	while(total_free_memory <= size)
 		return 0;
 
-	mutex_lock(mutex);
+	//mutex_lock(mutex);
+
 	struct memory_block * current = memory_list;
 	do {
 		if(current->size >= size && !current->used)
@@ -117,7 +121,7 @@ void * mm_allocate(unsigned int size)
 		current = current->next;
 	} while(current != 0);
 
-	mutex_unlock(mutex);
+	//mutex_unlock(mutex);
 	return retval;
 }
 
@@ -125,7 +129,7 @@ void mm_free(void * area)
 {
 	struct memory_block * block = (void *) ((uint32_t) area - sizeof(struct memory_block));
 
-	mutex_lock(mutex);
+	//mutex_lock(mutex);
 
 	block->used = false;
 	total_free_memory += block->size;
@@ -151,7 +155,7 @@ void mm_free(void * area)
 		block->next = block->next->next;
 	}
 
-	mutex_unlock(mutex);
+	//mutex_unlock(mutex);
 }
 
 static struct memory_block * mm_split(struct memory_block * block, unsigned offset)
