@@ -8,6 +8,7 @@
 
 SECTIONS
 {
+	ENTRY(_start)
 	. = 0x00000000; /* Base address for all CPUs tiles. */
 
 	.text :
