@@ -23,6 +23,7 @@
 
 // SHMAC system register offsets (in 32-bit words):
 #define SHMAC_SYS_OUT_DATA	(0x00 >> 2)
+#define SHMAC_SYS_IN_DATA	(0x10 >> 2)
 #define SHMAC_SYS_INT_STATUS	(0x20 >> 2)
 #define SHMAC_SYS_CPU_COUNT	(0x40 >> 2)
 #define SHMAC_SYS_READY		(0x50 >> 2)
@@ -54,6 +55,9 @@ void shmac_set_ready(void);
 //	%s = prints a string
 //	%c = prints a character
 void shmac_printf(const char * format, ...);
+
+// Reads a character from the serial port:
+char shmac_getc(void);
 
 #endif
 

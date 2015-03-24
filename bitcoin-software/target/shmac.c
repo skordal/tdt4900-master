@@ -100,6 +100,12 @@ void shmac_printf(const char * format, ...)
 	va_end(arguments);
 }
 
+char shmac_getc(void)
+{
+	while(!(sysreg[SHMAC_SYS_INT_STATUS] & 1));
+	return sysreg[SHMAC_SYS_IN_DATA];
+}
+
 static void shmac_print_char(char c)
 {
 	while(sysreg[SHMAC_SYS_INT_STATUS] & 2);
