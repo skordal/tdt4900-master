@@ -41,6 +41,9 @@ enum timer_scale_factor
 // Timer callback function:
 typedef void (*timer_callback_func)(void * data);
 
+// Initializes the timer module:
+void timer_initialize(void);
+
 // Starts a timer; arguments:
 // * timer - which timer to use, 0, 1 or 2
 // * count - which count to load into the timer.
