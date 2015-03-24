@@ -7,6 +7,7 @@
 #ifndef MUTEX_H
 #define MUTEX_H
 
+#include <stdint.h>
 #include <stdbool.h>
 
 #define MUTEX_INITIALIZER	0
@@ -19,7 +20,7 @@
 // This mutex module is based on the previous mutex code already found in the
 // SHMAC repo under software/shmac_test_* and software/benchmarks.
 
-typedef volatile int mutex_t;
+typedef volatile uint32_t mutex_t;
 
 // Allocates a new mutex. Mutexes cannot be freed, so make sure your really need one.
 mutex_t * mutex_new(void);
