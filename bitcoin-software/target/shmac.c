@@ -108,6 +108,8 @@ char shmac_getc(void)
 
 static void shmac_print_char(char c)
 {
+	if(c == '\n')
+		shmac_print_char('\r');
 	while(sysreg[SHMAC_SYS_INT_STATUS] & 2);
 	sysreg[SHMAC_SYS_OUT_DATA] = c;
 }
