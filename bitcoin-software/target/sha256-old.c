@@ -4,19 +4,9 @@
 //	Torbjørn Langland <torbljan@stud.ntnu.no>
 // Read the report on <https://github.com/skordal/tdt4102-master>
 
-#include <string.h>
-
-#include "mm.h"
 #include "sha256.h"
 
-#define htobe32(n)	((uint32_t) ((n << 24) | ((n << 8) & 0xff0000) | ((n >> 8) & 0xff00) | (n >> 24)))
-
-// Software SHA256 module, The Curse of the Big Endian
-
-struct sha256_context
-{
-	uint32_t intermediate[8];
-};
+#ifdef SHA256_DISABLE_ACCELERATOR
 
 static uint32_t initial[] =
 {
@@ -35,6 +25,8 @@ static uint32_t constants[] =
 	0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
 	0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 };
+
+static uint32_t intermediate[8];
 
 static inline uint32_t rotate_right(uint32_t x, int n)
 {
@@ -112,89 +104,106 @@ static void compress(uint32_t * i, uint32_t W, uint32_t K)
 	i[7] = h;
 }
 
-struct sha256_context * sha256_new(void)
-{
-	struct sha256_context * retval = mm_allocate(sizeof(struct sha256_context));
-	sha256_reset(retval);
-	return retval;
-}
-
-void sha256_free(struct sha256_context * ctx)
-{
-	mm_free(ctx);
-}
-
-void sha256_reset(struct sha256_context * ctx)
+void sha256_reset(void)
 {
 	for(int i = 0; i < 8; ++i)
-		ctx->intermediate[i] = initial[i];
+		intermediate[i] = initial[i];
 }
 
-void sha256_hash_block(struct sha256_context * ctx, const uint32_t * data)
+void sha256_clear_irq(void)
+{
+
+}
+
+void sha256_update(void)
+{
+
+}
+
+void sha256_get_hash(uint8_t * hash)
+{
+	for(int i = 0; i < 8; ++i)
+	{
+		hash[i * 4 + 3] = intermediate[i] >> 0 & 0xff;
+		hash[i * 4 + 2] = intermediate[i] >> 8 & 0xff;
+		hash[i * 4 + 1] = intermediate[i] >> 16 & 0xff;
+		hash[i * 4 + 0] = intermediate[i] >> 24 & 0xff;
+	}
+}
+
+void sha256_set_data(uint32_t * data)
 {
 	uint32_t W[64];
 	uint32_t temp[8];
 
-	memcpy(temp, ctx->intermediate, 8 * sizeof(uint32_t));
+	for(int i = 0; i < 8; ++i)
+		temp[i] = intermediate[i];
 
 	for(int i = 0; i < 64; ++i)
 	{
 		uint32_t v = i < 16 ? data[i] : 0;
 		W[i] = schedule(v, W, i);
 		compress(temp, W[i], constants[i]);
-
-		// printf("t = %d: 0x%08x  0x%08x  0x%08x  0x%08x  0x%08x 0x %08x  0x%08x  0x%08x\n\r",
-		//	i, temp[0], temp[1], temp[2], temp[3], temp[4],
-		//	temp[5], temp[6], temp[7]);
+#ifdef SHA256_SOFTHASH_DEBUG
+		shmac_printf("t = %d: %x  %x  %x  %x  %x  %x  %x  %x\n\r",
+			i, temp[0], temp[1], temp[2], temp[3], temp[4],
+			temp[5], temp[6], temp[7]);
+#endif
 	}
 
 	for(int i = 0; i < 8; ++i)
-		ctx->intermediate[i] += temp[i];
+		intermediate[i] += temp[i];
 }
 
-void sha256_hash_hash(struct sha256_context * ctx, const uint8_t * hash)
+#else
+
+static volatile uint32_t * module = SHA256_BASE;
+
+void sha256_reset(void)
 {
-	uint32_t data[16];
-	for(int i = 0; i < 32; ++i)
-		((uint8_t *) data)[i] = hash[i];
-	sha256_pad_le_block((uint8_t *) data, 32, 32);
-	sha256_hash_block(ctx, data);
+	// Toggle the reset bits in the control register to reset the module:
+	module[SHA256_CTRL] = 1 << SHA256_CTRL_IRQCLR | 1 << SHA256_CTRL_ENABLE | 1 << SHA256_CTRL_RESET;
+	module[SHA256_CTRL] = 1 << SHA256_CTRL_ENABLE;
 }
 
-void sha256_pad_le_block(uint8_t * block, int block_length, uint64_t total_length)
+void sha256_clear_irq(void)
 {
-	block[block_length] = 0x80; // Add a one to the end of the message;
-	for(int i = block_length + 1; i < 64; ++i)
-		block[i] = 0;
-
-	((uint32_t *) block)[14] = total_length * 8 >> 32;
-	((uint32_t *) block)[15] = total_length * 8 & 0xffffffff;
-
-	// Convert the block to big-endian:
-	for(int i = 0; i < 14; ++i)
-		((uint32_t *) block)[i] = htobe32(((uint32_t *) block)[i]);
+	module[SHA256_CTRL] |= 1 << SHA256_CTRL_IRQCLR;
+	module[SHA256_CTRL] &= ~(1 << SHA256_CTRL_IRQCLR);
 }
 
-void sha256_get_hash(const struct sha256_context * ctx, uint8_t * hash)
+void sha256_get_hash(uint8_t * hash)
 {
 	for(int i = 0; i < 8; ++i)
 	{
-		// Return the hash in little-endian format:
-		hash[i * 4 + 3] = ctx->intermediate[i] >>  0 & 0xff;
-		hash[i * 4 + 2] = ctx->intermediate[i] >>  8 & 0xff;
-		hash[i * 4 + 1] = ctx->intermediate[i] >> 16 & 0xff;
-		hash[i * 4 + 0] = ctx->intermediate[i] >> 24 & 0xff;
+		uint32_t value = module[SHA256_OUTPUT(i)];
+		hash[i * 4 + 0] = (value >> 24) & 0xff;
+		hash[i * 4 + 1] = (value >> 16) & 0xff;
+		hash[i * 4 + 2] = (value >>  8) & 0xff;
+		hash[i * 4 + 3] = (value >>  0) & 0xff;
 	}
 }
+
+void sha256_set_data(uint32_t * data)
+{
+	for(int i = 0; i < 16; ++i)
+		module[SHA256_INPUT(i)] = data[i];
+}
+
+void sha256_update(void)
+{
+	module[SHA256_CTRL] |= 1 << SHA256_CTRL_UPDATE;
+	module[SHA256_CTRL] &= ~(1 << SHA256_CTRL_UPDATE);
+}
+
+#endif
 
 void sha256_format_hash(const uint8_t * hash, char * output)
 {
 	static const char * hex_digits = "0123456789abcdef";
-	for(int i = 0; i < 32; i++)
+	for(int i = 0; i < 32; ++i)
 	{
 		uint8_t h = hash[i];
-
-		//printf("%02x", *(output + i) & 0xff);
 
 		output[i * 2 + 0] = hex_digits[(h >> 4) & 0xf];
 		output[i * 2 + 1] = hex_digits[h & 0xf];

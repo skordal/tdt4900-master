@@ -8,56 +8,30 @@
 #define SHA256_H
 
 #include <stdint.h>
-#include "shmac.h"
 
-// Set this define to use a software hash algorithm instead of the accelerator:
-#define SHA256_DISABLE_ACCELERATOR	1
+struct sha256_context;
 
-// Set this define to debug the software hash algorithm:
-//#define SHA256_SOFTHASH_DEBUG	1
+// Creates a new SHA256 context:
+struct sha256_context * sha256_new(void);
+// Frees a SHA256 context:
+void sha256_free(struct sha256_context *);
 
-// Base address of the SHA256 accelerator:
-#define SHA256_BASE	((volatile void *) SHMAC_TILE_BASE + 0x3000)
+// Resets a SHA256 context:
+void sha256_reset(struct sha256_context * ctx);
 
-// Interrupt number of the accelerator:
-#define SHA256_IRQ	5
+// Hash a block of data:
+void sha256_hash_block(struct sha256_context * ctx, const uint32_t * data);
 
-// SHA256 register names and offsets:
-#define SHA256_CTRL		0x000
-#define SHA256_STATUS		0x000
-#define SHA256_INPUT(x)		((0x08 + (x << 2)) >> 2)
-#define SHA256_OUTPUT(x)	((0x48 + (x << 2)) >> 2)
+// Hashes a hash:
+void sha256_hash_hash(struct sha256_context * ctx, const uint8_t * hash);
 
-// SHA256 control register bitnames:
-#define SHA256_CTRL_ENABLE	0
-#define SHA256_CTRL_UPDATE	1
-#define SHA256_CTRL_RESET	2
-#define SHA256_CTRL_IRQCLR	3
+// Pad a block of data to hash:
+void sha256_pad_le_block(uint8_t * block, int block_length, uint64_t total_length);
 
-// SHA256 status register bitnames:
-#define SHA256_STATUS_READY	0
-#define SHA256_STATUS_UPDATE	1
-#define SHA256_STATUS_RESET	2
-#define SHA256_STATUS_ENABLED	3
+// Get the hash from a SHA256 context:
+void sha256_get_hash(const struct sha256_context * ctx, uint8_t * hash);
 
-// Resets the SHA256 accelerator.
-void sha256_reset(void);
-
-// Clears the IRQ signal:
-void sha256_clear_irq(void);
-
-// Retrieves the hash from the accelerator.
-void sha256_get_hash(uint8_t * hash);
-
-// Sets the input data to the accelerator.
-void sha256_set_data(uint32_t * data);
-
-// Starts the hashing accelerator.
-void sha256_update(void);
-
-// Converts a hash into a printable C string.
-// Note that the output argument should be preallocated with enough space for
-// a terminating NULL character.
+// Formats a hash for printing:
 void sha256_format_hash(const uint8_t * hash, char * output);
 
 #endif
