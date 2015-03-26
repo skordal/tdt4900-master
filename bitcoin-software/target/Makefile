@@ -15,10 +15,11 @@ TARGET_SIZE ?= $(TARGET_PREFIX)-size
 
 TARGET_CFLAGS += -march=armv4t -std=gnu99 -O2 -Wall \
 	-Werror=implicit-function-declaration -ffreestanding \
-	-mno-thumb-interwork -DUSE_CLASSIC_MUTEXES -DNUM_CPUS=4
-TARGET_LDFLAGS +=  -nostartfiles
+	-mno-thumb-interwork -DUSE_IMPROVED_MUTEXES #-DUSE_CLASSIC_MUTEXES
+TARGET_LDFLAGS +=  -nostartfiles -Wl,--fix-v4bx
 
 OBJECTS := \
+	enonce2.o \
 	exceptions.o \
 	irq.o \
 	main.o \
@@ -27,8 +28,8 @@ OBJECTS := \
 	sha256.o \
 	shmac.o \
 	start.o \
-	dma.o \
-	timer.o
+	timer.o \
+	worker.o
 
 LINKER_SCRIPT ?= bitcoin.ld
 
