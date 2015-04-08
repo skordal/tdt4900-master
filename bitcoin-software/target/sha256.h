@@ -8,6 +8,31 @@
 #define SHA256_H
 
 #include <stdint.h>
+#include "shmac.h"
+
+// Set to 1 to use hardware acceleration:
+#define SHA256_USE_HARDWARE	0
+
+// Base address of the hardware module:
+#define SHA256_ACC_BASE	((volatile void *) SHMAC_TILE_BASE + 0x3000)
+
+// SHA256 register names and offsets:
+#define SHA256_CTRL		0x000
+#define SHA256_STATUS		0x000
+#define SHA256_INPUT(x)		((0x08 + (x << 2)) >> 2)
+#define SHA256_OUTPUT(x)	((0x48 + (x << 2)) >> 2)
+
+// SHA256 control register bitnames:
+#define SHA256_CTRL_ENABLE	0
+#define SHA256_CTRL_UPDATE	1
+#define SHA256_CTRL_RESET	2
+#define SHA256_CTRL_IRQCLR	3
+
+// SHA256 status register bitnames:
+#define SHA256_STATUS_READY	0
+#define SHA256_STATUS_UPDATE	1
+#define SHA256_STATUS_RESET	2
+#define SHA256_STATUS_ENABLED	3
 
 struct sha256_context;
 

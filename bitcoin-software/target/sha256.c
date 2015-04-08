@@ -15,7 +15,11 @@
 
 struct sha256_context
 {
-	uint32_t intermediate[8];
+	bool accelerated;
+	union {
+		uint32_t intermediate[8];	// Used for software hashing
+		volatile uint32_t * module;	// Used for hardware hashing
+	};
 };
 
 static uint32_t initial[] =
@@ -115,41 +119,61 @@ static void compress(uint32_t * i, uint32_t W, uint32_t K)
 struct sha256_context * sha256_new(void)
 {
 	struct sha256_context * retval = mm_allocate(sizeof(struct sha256_context));
+	retval->accelerated = SHA256_USE_HARDWARE;
 	sha256_reset(retval);
 	return retval;
 }
 
 void sha256_free(struct sha256_context * ctx)
 {
+	if(ctx->accelerated)
+		ctx->module[SHA256_CTRL] = 0; // Disable SHA256 accelerator
 	mm_free(ctx);
 }
 
 void sha256_reset(struct sha256_context * ctx)
 {
-	for(int i = 0; i < 8; ++i)
-		ctx->intermediate[i] = initial[i];
+	if(ctx->accelerated)
+	{
+		ctx->module = SHA256_ACC_BASE;
+		ctx->module[SHA256_CTRL] =
+			1 << SHA256_CTRL_IRQCLR | 1 << SHA256_CTRL_ENABLE | 1 << SHA256_CTRL_RESET;
+		ctx->module[SHA256_CTRL] = 1 << SHA256_CTRL_ENABLE;
+
+	} else {
+		for(int i = 0; i < 8; ++i)
+			ctx->intermediate[i] = initial[i];
+	}
 }
 
 void sha256_hash_block(struct sha256_context * ctx, const uint32_t * data)
 {
-	uint32_t W[64];
-	uint32_t temp[8];
-
-	memcpy(temp, ctx->intermediate, 8 * sizeof(uint32_t));
-
-	for(int i = 0; i < 64; ++i)
+	if(!ctx->accelerated)
 	{
-		uint32_t v = i < 16 ? data[i] : 0;
-		W[i] = schedule(v, W, i);
-		compress(temp, W[i], constants[i]);
+		uint32_t W[64];
+		uint32_t temp[8];
 
-		// printf("t = %d: 0x%08x  0x%08x  0x%08x  0x%08x  0x%08x 0x %08x  0x%08x  0x%08x\n\r",
-		//	i, temp[0], temp[1], temp[2], temp[3], temp[4],
-		//	temp[5], temp[6], temp[7]);
+		memcpy(temp, ctx->intermediate, 8 * sizeof(uint32_t));
+
+		for(int i = 0; i < 64; ++i)
+		{
+			uint32_t v = i < 16 ? data[i] : 0;
+			W[i] = schedule(v, W, i);
+			compress(temp, W[i], constants[i]);
+
+			// printf("t = %d: 0x%08x  0x%08x  0x%08x  0x%08x  0x%08x 0x %08x  0x%08x  0x%08x\n\r",
+			//	i, temp[0], temp[1], temp[2], temp[3], temp[4],
+			//	temp[5], temp[6], temp[7]);
+		}
+
+		for(int i = 0; i < 8; ++i)
+			ctx->intermediate[i] += temp[i];
+	} else {
+		for(int i = 0; i < 16; ++i)
+			ctx->module[SHA256_INPUT(i)] = data[i];
+		ctx->module[SHA256_CTRL] |= 1 << SHA256_CTRL_UPDATE;
+		ctx->module[SHA256_CTRL] &= ~(1 << SHA256_CTRL_UPDATE);
 	}
-
-	for(int i = 0; i < 8; ++i)
-		ctx->intermediate[i] += temp[i];
 }
 
 void sha256_hash_hash(struct sha256_context * ctx, const uint8_t * hash)
@@ -177,13 +201,25 @@ void sha256_pad_le_block(uint8_t * block, int block_length, uint64_t total_lengt
 
 void sha256_get_hash(const struct sha256_context * ctx, uint8_t * hash)
 {
-	for(int i = 0; i < 8; ++i)
+	if(ctx->accelerated)
 	{
-		// Return the hash in little-endian format:
-		hash[i * 4 + 3] = ctx->intermediate[i] >>  0 & 0xff;
-		hash[i * 4 + 2] = ctx->intermediate[i] >>  8 & 0xff;
-		hash[i * 4 + 1] = ctx->intermediate[i] >> 16 & 0xff;
-		hash[i * 4 + 0] = ctx->intermediate[i] >> 24 & 0xff;
+		for(int i = 0; i < 8; ++i)
+		{
+			uint32_t value = ctx->module[SHA256_OUTPUT(i)];
+			hash[i * 4 + 0] = (value >> 24) & 0xff;
+			hash[i * 4 + 1] = (value >> 16) & 0xff;
+			hash[i * 4 + 2] = (value >>  8) & 0xff;
+			hash[i * 4 + 3] = (value >>  0) & 0xff;
+		}
+	} else {
+		for(int i = 0; i < 8; ++i)
+		{
+			// Return the hash in little-endian format:
+			hash[i * 4 + 3] = ctx->intermediate[i] >>  0 & 0xff;
+			hash[i * 4 + 2] = ctx->intermediate[i] >>  8 & 0xff;
+			hash[i * 4 + 1] = ctx->intermediate[i] >> 16 & 0xff;
+			hash[i * 4 + 0] = ctx->intermediate[i] >> 24 & 0xff;
+		}
 	}
 }
 
