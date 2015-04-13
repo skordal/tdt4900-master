@@ -140,50 +140,9 @@ Tunnel field-effect transistors (TFET) and nanoelectromechanical system (NEMS) s
 
 \section{The Bitcoin Currency}
 \label{sec:bitcoins}
-Bitcoin is a decentralized currency using a peer-to-peer network to replace
-the financial institutions that are used to process transactions in conventional
-currency systems.
-
-The network keeps a ledger of all transactions in a linked list of blocks, called the
-block-chain. Each block contains a list of all transactions executed since the last
-block was published. Blocks are generated periodically through a process
-called ``mining'', described in \ref{sec:bitcoin-mining}. This is due to the fact that
-a valid block must satisfy the requirement that the hash of the block must be below a certain value,
-called the ``target'' value, which is determined by a variable difficulty value used to limit the number
-of blocks being generated each hour \cite{bitcoin}.
-
-As an incentive to keep generating new blocks, a reward is offered on each new block
-generated. This reward is currently at 25~bitcoins (467~USD as of the 9th of November, 2014).
-This reward is why bitcoin mining is a popular activity, and a reason for why
-there are many initiatives to improve the performance of bitcoin mining systems.
 
 \subsection{Mining Bitcoins}
 \label{sec:bitcoin-mining}
-The process of creating a new block in the bitcoin network is called ``mining''. The basic
-principle of bitcoin mining is to create a block that generates a SHA-256 hash with
-a value lower than the preset target value.
-
-Since bitcoin mining is an NP-hard problem \cite{bitcoin-np}, the search for a block with a valid
-hash has to be done by brute-force search. The block header contains several fields
-that can be varied to produce different hashes, and it is also possible to include
-or exclude transactions from the block in order to produce a hash with the desired
-value.
-
-Mining performance is measured in hashes per second, denoted H/s. Hashing is the
-most computing intensive part of the algorithm for mining bitcoins, which is
-why accelerating hashing is a priority.
-
-\section{Cryptographic Hashing}
-
-A cryptographic hash function, also commonly referred to as a digital signature or
-a message digest, is a function that takes input data of varying size and
-produces an output value of a constant size \cite{hashing-overview}.
-% That article is a pain to read, it pains me to cite it
-
-Cryptographic hash functions are designed to be one-way, meaning it should
-not be computationally feasible to find the input data given the hash value,
-and collision resistant, meaning that it should not be practical to find two
-different sets of input data that produces the same output hash \cite{sha-spec}.
 
 \subsection{The SHA-256 Hashing Algorithm}
 \label{sec:hashing-algo}
