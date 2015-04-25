@@ -185,7 +185,8 @@ pass.
 Before the first block is processed, the initial hash value is set to a predefined
 value. The entire message that is to be hashed is then padded by adding a 1~bit to
 the end of the message and then appending zeroes until the length of the final block
-is 448̃~bits. Then the length of the entire message, without padding, is added as a
+%is 448̃~bits. Then the length of the entire message, without padding, is added as a
+is 448-bits. Then the length of the entire message, without padding, is added as a
 64-bit big-endian integer to the end of the block.
 
 Then, each input block is split into a 64 times 32-bit long expanded message block, where

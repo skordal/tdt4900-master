@@ -14,19 +14,28 @@ void dma_reset(void);
 uint32_t dma_get_load_address0();
 uint32_t dma_get_store_address0();
 uint32_t dma_get_request_details0();
-//void dma_get_load_address1(uint32_t * load);
-//void dma_get_store_address1(uint32_t * store);
-//void dma_get_request_details1(uint32_t * request);
+
+uint32_t dma_get_load_address1();
+uint32_t dma_get_store_address1();
+uint32_t dma_get_request_details1();
 
 // Sets the the starting load addresses, storing addresses, and request details (including on/off) from the dma slave.
 void dma_set_load_address0(uint32_t load);
 void dma_set_store_address0(uint32_t store);
 void dma_set_request_details0(uint32_t request);
 
+void dma_set_load_address1(uint32_t load);
+void dma_set_store_address1(uint32_t store);
+void dma_set_request_details1(uint32_t request);
+
+
+
 
 void dma_reset(void){
 	//EMPTY
 }
+
+// Getters, channel 0
 uint32_t dma_get_load_address0(){
 	return module[DMA_SLAVE_LREG0];
 }
@@ -39,7 +48,22 @@ uint32_t dma_get_request_details0(){
 	return module[DMA_SLAVE_RREG0]; 
 }
 
-// Sets
+
+// Getters, channel 1
+uint32_t dma_get_load_address1(){
+	return module[DMA_SLAVE_LREG1];
+}
+
+uint32_t dma_get_store_address1(){
+	return module[DMA_SLAVE_SREG1];
+}
+
+uint32_t dma_get_request_details1(){
+	return module[DMA_SLAVE_RREG1]; 
+}
+
+
+// Setters, channel 0
 
 void dma_set_load_address0(uint32_t load){
 	module[DMA_SLAVE_LREG0] = load;
@@ -52,6 +76,22 @@ void dma_set_store_address0(uint32_t store){
 void dma_set_request_details0(uint32_t request){
 	module[DMA_SLAVE_RREG0] = request;
 }
+
+
+// Setters, channel 1
+
+void dma_set_load_address1(uint32_t load){
+	module[DMA_SLAVE_LREG1] = load;
+}
+
+void dma_set_store_address1(uint32_t store){
+	module[DMA_SLAVE_SREG1] = store;
+}
+
+void dma_set_request_details1(uint32_t request){
+	module[DMA_SLAVE_RREG1] = request;
+}
+
 
 #if 0
 
