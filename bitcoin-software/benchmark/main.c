@@ -31,7 +31,7 @@ void main(void)
 		for(int i = 0; i < shmac_get_cpu_count(); ++i)
 			stats[i] = 0;
 
-		shmac_printf("READY %d/%d\n", shmac_get_tile_cpu_id(),
+		shmac_printf("READY %d\n", shmac_get_tile_cpu_id(),
 			shmac_get_cpu_count());
 		timer_start(0, 48828, TIMER_SCALE_1, true, print_stats, NULL);
 		shmac_set_ready();
@@ -44,8 +44,6 @@ void main(void)
 static void benchmark_process(int cpu)
 {
 #if BENCHMARK_PASSES == 1
-//	shmac_printf("Hashing started for CPU %d\n", cpu);
-
 	struct sha256_context * ctx = sha256_new();
 	uint8_t block[64] = {'a', 'b', 'c'};
 	uint8_t hash[32];
@@ -59,9 +57,7 @@ static void benchmark_process(int cpu)
 		sha256_get_hash(ctx, hash);
 		++stats[cpu];
 	}
-#else
-	shmac_printf("Hashing started for CPU %d\n", cpu);
-
+#elif BENCHMARK_PASSES == 2
 	struct sha256_context * ctx = sha256_new();
 	uint8_t block[64] = {'a', 'b', 'c'};
 	uint8_t hash[32];
@@ -80,6 +76,8 @@ static void benchmark_process(int cpu)
 
 		++stats[cpu];
 	}
+#else
+#	error "BENCHMARK_PASSES can only be 1 or 2!"
 #endif
 }
 

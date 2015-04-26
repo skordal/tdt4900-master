@@ -62,7 +62,6 @@ void shmac_printf(const char * format, ...)
 	va_start(arguments, format);
 
 	mutex_lock(io_mutex);
-
 	for(int i = 0; format[i] != 0; ++i)
 	{
 		if(format[i] == '%')
@@ -95,8 +94,8 @@ void shmac_printf(const char * format, ...)
 		} else
 			shmac_print_char(format[i]);
 	}
-
 	mutex_unlock(io_mutex);
+
 	va_end(arguments);
 }
 
@@ -123,7 +122,7 @@ static void shmac_print_decimal(int n)
 	// a positive number:
 	if(n & 0x80000000)
 	{
-		n = ~n + 1;
+		n = -n;
 		shmac_print_char('-');
 	}
 

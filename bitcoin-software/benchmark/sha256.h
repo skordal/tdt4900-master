@@ -12,7 +12,7 @@
 
 // Set to 1 to use hardware acceleration:
 #ifndef SHA256_USE_HARDWARE
-#define SHA256_USE_HARDWARE	1
+#define SHA256_USE_HARDWARE	0
 #endif
 
 // Base address of the hardware module:
