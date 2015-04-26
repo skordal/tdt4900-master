@@ -10,7 +10,7 @@
 #warning "No mutex implementation selected!"
 #endif
 
-static mutex_t * next_mutex = (void *) 0xf8000000;
+static mutex_t * next_mutex = (volatile void *) 0xf8000000;
 
 void mutex_initialize(void)
 {
