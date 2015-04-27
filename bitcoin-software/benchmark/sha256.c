@@ -14,15 +14,6 @@
 
 // Software SHA256 module, or "The Curse of the Big Endian"
 
-struct sha256_context
-{
-	bool accelerated;
-	union {
-		uint32_t intermediate[8];	// Used for software hashing
-		volatile uint32_t * module;	// Used for hardware hashing
-	};
-};
-
 static uint32_t initial[] =
 {
 		0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,

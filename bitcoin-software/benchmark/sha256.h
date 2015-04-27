@@ -12,7 +12,7 @@
 
 // Set to 1 to use hardware acceleration:
 #ifndef SHA256_USE_HARDWARE
-#define SHA256_USE_HARDWARE	0
+#define SHA256_USE_HARDWARE	1
 #endif
 
 // Base address of the hardware module:
@@ -36,7 +36,14 @@
 #define SHA256_STATUS_RESET	2
 #define SHA256_STATUS_ENABLED	3
 
-struct sha256_context;
+struct sha256_context
+{
+	bool accelerated;
+	union {
+		uint32_t intermediate[8];	// Used for software hashing
+		volatile uint32_t * module;	// Used for hardware hashing
+	};
+};
 
 // Creates a new SHA256 context:
 struct sha256_context * sha256_new(void);
