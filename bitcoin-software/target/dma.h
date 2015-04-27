@@ -40,7 +40,12 @@ uint32_t dma_get_request_details1();
 // Setters, channel 0
 void dma_set_load_address0(uint32_t load);
 void dma_set_store_address0(uint32_t store);
+// FORMAT: 31-20: Individual transactions, minus base (Example: Set to 8 if you want 9 transfers, 0 if you want 1)
+// 2: Job finished
+// 1: Flip endian bytes
+// 0: ON/OFF
 void dma_set_request_details0(uint32_t request);
+
 
 // Setters, channel 1
 void dma_set_load_address1(uint32_t load);
