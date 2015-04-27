@@ -33,6 +33,17 @@ void shmac_initialize(void)
 		io_mutex = mutex_new();
 }
 
+void shmac_enable_caches(void)
+{
+	asm volatile(
+		"mov r0, #0x00ffffff\n"
+		"mcr p15, 0, r0, cr3, cr0, 0\n"
+		"mov r0, #1\n"
+		"mcr p15, 0, r0, cr2, cr0, 0\n"
+		"nop\nnop\n\nnop\nnop\nnop\n"
+		::: "r0", "cc", "memory");
+}
+
 int shmac_get_tile_cpu_id(void)
 {
 	return tilereg[SHMAC_TILE_CPU_ID];

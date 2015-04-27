@@ -33,6 +33,9 @@
 // Initializes the SHMAC library, use this before any of the functions below!
 void shmac_initialize(void);
 
+// Enables the SHMAC caches:
+void shmac_enable_caches(void);
+
 // -------------- TILE FUNCTIONS --------------
 
 // Gets the CPU ID of the current tile:
