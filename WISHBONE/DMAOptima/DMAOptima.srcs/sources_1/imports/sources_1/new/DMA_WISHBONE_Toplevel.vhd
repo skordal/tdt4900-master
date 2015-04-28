@@ -226,6 +226,7 @@ architecture Behavioral of DMA_WISHBONE_Toplevel is
                err_o : out std_logic;                           
                rty_o : out std_logic;                           
                stall_o : out std_logic;
+               interrupt : out std_logic;
                
                -- Inputs to DMA
                transferDetails0 : out std_logic_vector(95 downto 0);
@@ -332,6 +333,7 @@ begin
         err_o => err_o,
         rty_o => rty_o,
         stall_o => stall_o,
+        interrupt => interrupt,
         
         -- Input from WBM
         clear0 => clear0, 
@@ -350,7 +352,7 @@ begin
 
     -- Combinatoric signals
     DMADataInTotal <= DMAAddressInToDMA & DMADAtaInToDMA;
-    interrupt <= clear0 OR clear1;
+    --interrupt <= clear0 OR clear1;
     
     
     

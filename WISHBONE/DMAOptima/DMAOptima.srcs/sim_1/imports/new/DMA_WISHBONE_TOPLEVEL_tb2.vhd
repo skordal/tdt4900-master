@@ -351,7 +351,7 @@ begin
 	
 	   -- Phases: 0 - reset, 1 - Write to registers, 2 - read the registers, 3 - activate DMA channels 0 and 1, 4 - Read registers during transfer
 	   -- 5 - Handle interrupt and read registers, 6 - activate channel 0, with big endian word-switching (needed by SHA256-hasing module)
-	
+	   -- 7 attempt at write to RRegX(2) from external source (should be denied).
 	  
 	   
 		-- PHASE 0
@@ -700,6 +700,65 @@ begin
                                               we_i <= '0';
                                               
                                          
+         wait for clock_period * 600;
+         
+         -- PHASE 7:
+         -- Test protection of bit 2 in RReg0 and RReg1 (only DMA Master should write to it, when job finished.
+         -- Attempt to write '1' to all bits (except 0, to avoid activating DMAs).
+         
+         phase <= 7;
+         
+         -- Write
+         RDAT <= (31 downto 1 => '1') & '0';
+         wait for clock_period * 2;  
+         adr_i <= "00000000000000000000000000001000"; --RREG0
+         S_dat_i <= RDAT128;
+         we_i <= '1';
+         cyc_i <= '1';
+         stb_i <= '1';
+                 
+         wait for clock_period * 2;
+                                                
+         cyc_i <= '0';
+         stb_i <= '0';
+         we_i <= '0';
+         RDAT(31) <= '0';                       
+         wait for clock_period * 2;  
+         S_Dat_i <= RDAT128;
+         adr_i <= "00000000000000000000000000010100"; --RREG1
+         we_i <= '1';
+         cyc_i <= '1';
+         stb_i <= '1';
+                                        
+         wait for clock_period * 2;
+                                                                       
+         cyc_i <= '0';
+         stb_i <= '0';
+         we_i <= '0';
+         
+         wait for clock_period * 2;                                              
+         
+         -- Read
+         
+         adr_i <= "00000000000000000000000000001000"; --RREG0
+         
+         cyc_i <= '1';
+         stb_i <= '1';
+                          
+         wait for clock_period * 2;
+                                                         
+         cyc_i <= '0';
+         stb_i <= '0';
+                                         
+         wait for clock_period * 2;  
+         adr_i <= "00000000000000000000000000010100"; --RREG1
+         cyc_i <= '1';
+         stb_i <= '1';
+                                                 
+         wait for clock_period * 2;
+                                                                                
+         cyc_i <= '0';
+         stb_i <= '0';
                        
          wait;
 		

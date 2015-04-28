@@ -57,6 +57,7 @@ entity WISHBONE_DMA_SLAVE is
       err_o : out std_logic;                          
       rty_o : out std_logic;                          
       stall_o : out std_logic;
+      interrupt : out std_logic;
       
        -- Inputs to DMA (1 channel only)              
       transferDetails0 : out std_logic_vector(95 downto 0);
@@ -75,12 +76,12 @@ architecture Behavioral of WISHBONE_DMA_SLAVE is
     -- Channel 0 register
     signal LReg0 : std_logic_vector(31 downto 0) := (31 downto 0 => '0'); -- Loading Register
     signal SReg0 : std_logic_vector(31 downto 0) := (31 downto 0 => '0'); -- Storing Register
-    signal RReg0 : std_logic_vector(31 downto 0) := (31 downto 0 => '0'); -- Request Register: Count (31-20), Twist Endian bytes in words(1), ON/OFF (0)
+    signal RReg0 : std_logic_vector(31 downto 0) := (31 downto 0 => '0'); -- Request Register: Count (31-20), Job Finished (interrupt) (2), Twist Endian bytes in words(1), ON/OFF (0)
     
     -- Channel 1 register
     signal LReg1 : std_logic_vector(31 downto 0) := (31 downto 0 => '0'); -- Loading Register
     signal SReg1 : std_logic_vector(31 downto 0) := (31 downto 0 => '0'); --
-    signal RReg1 : std_logic_vector(31 downto 0) := (31 downto 0 => '0'); -- Request Register: Count (31-20), Twist Endian bytes in words(1), ON/OFF (0)
+    signal RReg1 : std_logic_vector(31 downto 0) := (31 downto 0 => '0'); -- Request Register: Count (31-20), Job Finished (interrupt) (2),  Twist Endian bytes in words(1), ON/OFF (0)
         
     
     
@@ -150,7 +151,7 @@ begin
     transferDetails0 <= LReg0 & SReg0 & RReg0;
     transferDetails1 <= LReg1 & SReg1 & RReg1;
 
-    ack_o_signal <= stb_i AND (wb_start_write OR wb_start_read_d1);
+    ack_o_signal <= stb_i AND (wb_start_write OR wb_start_read_d1);-- AND NOT (clear0 OR clear1);
     ack_o <= ack_o_signal;
     
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -256,7 +257,7 @@ begin
                         SReg0 <= writeData32;
                     --WHEN TILEREG_DMA_RREG0 =>
                     WHEN "000000001000" =>
-                        RReg0 <= writeData32;
+                        RReg0 <= writeData32(31 downto 3) & '0' & writeData32(1 downto 0); --Bit 2 flag for job done, set to 0 if written by system, otherwise set by DMA master
                     --WHEN TILEREG_DMA_LREG0 => 
                     WHEN "000000001100" =>
                         LReg1 <= writeData32;
@@ -265,18 +266,26 @@ begin
                         SReg1 <= writeData32;
                     --WHEN TILEREG_DMA_RREG0 =>
                     WHEN "000000010100" =>
-                        RReg1 <= writeData32;
+                        RReg1 <= writeData32(31 downto 3) & '0' & writeData32(1 downto 0); --Bit 2 flag for job done, set to 0 if written by system, otherwise set by DMA master
 
                     WHEN OTHERS =>
                         -- Nothing happens.
                 end case;
             elsif clear0 = '1' then --Interrupt due to finished work from DMA-module. 
                 RReg0(0) <= '0';
+                RReg0(2) <= '1';
             elsif clear1 = '1' then
                 RReg1(0) <= '0';
+                RReg1(2) <= '1';
             end if;
             
         end if;
     end process;
+    
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------        INTERRUPT OUTPUT         ---------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    interrupt <= RReg0(2) or RReg1(2); 
     
 end Behavioral;
