@@ -1,8 +1,9 @@
 \chapter{Background}
 \label{cha:background}
 
-Insert smart intro here
+Insert smart intro here:
 
+"I'm SMAAAART!!!"
 
 \section{Rise of Dark Silicon, and the four areas of solution}
 \label{sec:dark-silicon}
@@ -137,8 +138,44 @@ Tunnel field-effect transistors (TFET) and nanoelectromechanical system (NEMS) s
 \section{Heterogeneous Architectures}
 \label{sec:heterogeneous}
 
+
 \subsection{The Single-ISA Heterogeneous MAny-core Computer}
 \label{sec:shmac}
+The Single-ISA Heterogeneous MAny-core Computer is a proposed infrastructure by NTNU for investigating heterogeneous systems at all abstraction levels, as illustrated in figure \ref{fig:shmacAbstractionLevels}.
+The point is to create a flexible framework in which different heterogeneous processors can be created from a collection of processing elements and accelerators.
+The programming model is kept constant across SHMAC-instances, while underlying implementation changes.
+This way, software design space exploration is facilitated.
+It is a tile-based architecture with a mesh interconnect.
+All processor tiles implement the same ARM ISA and the same memory model, in order to achieve a common programming model.\ref{shmac-plan}.
+An illustration of SHMAC can be seen in figure \ref{fig:shmac}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Figures/Heterogeneous/SHMACAbstractionLevels}
+    \caption{All levels of abstraction in computing systems, as seen in \ref{shmac-plan}.}
+    \label{fig:shmacAbstracionLevels}
+\end{figure}
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/SHMAC}
+    \caption{High-Level Architecture of ARM-based SHMAC, as seen in \ref{shmac-plan}.}
+    \label{fig:shmac}
+\end{figure}
+
+\todo{PROBLEM: This paragraph is way too similar to original text. Must fix, one way or another. }NTNU argues that the SHMAC-approach gives the right tools to reach the research goles outlined in the plan in \ref{shmac-plan}.
+For software research, SHMAC, makes it possible to explore substantially more diverse systems than the ones currently provided by the industry.
+Furthermore, SHMAC-architectures realized in FPGAs will be significatly faster than using simulators.
+It is expected that co-developing software and hardware will result in substantial cross-fertilization that gives insight into both hardware and software issues.
+And finally, micro- and macro-architecture components can be combined with novel transistor technologies and ASIC realizations to reach research goals at the lower abstraction levels.
+
+%Original source, kept for source comparison
+%We believe that the SHMAC-approach gives us the right tools to reach the research goals outlined in this plan. For software research, SHMAC makes it possible to explore substantially more diverse systems than those cur- rently provided by the industry. At the same time, SHMAC-architectures realized in FPGAs will be significantly faster than simulator-based approaches. We expect that co-developing software and hardware result in substan- tial cross-fertilization that gives insights into both hardware and software issues. Finally, the SHMAC micro- and macro-architecture components can be combined with novel transistor technologies and ASIC realizations to reach research goals at the lower abstraction levels.
+
+\subsubsection{SHMAC Architecture}
+
+\subsubsection{Work packages}
+
 
 \section{The Bitcoin Currency}
 \label{sec:bitcoins}

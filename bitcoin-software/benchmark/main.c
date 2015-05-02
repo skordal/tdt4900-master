@@ -27,6 +27,7 @@ static void print_stats(void * unused);
 static uint8_t global_block[64] = {'a', 'b', 'c'};
 static uint8_t ** buffers;
 static struct sha256_context * contexts;
+static volatile uint32_t rregData;
 
 static void hash_handler(int unused)
 {
@@ -34,6 +35,24 @@ static void hash_handler(int unused)
 	++stats[shmac_get_tile_cpu_id()];
 	sha256_reset(&contexts[shmac_get_tile_cpu_id()]);
 	sha256_hash_block(&contexts[shmac_get_tile_cpu_id()], (uint32_t *) global_block);
+}
+
+static void dma_handler(int unused)
+{
+	rregData = dma_get_request_details0();
+	if ((rregData << 31) & 0x80000000){
+		shmac_printf("Elvis has left the building!\r\n");
+		dma_set_request_details0(0x00000000);
+		//looplock = 0;
+	}
+	
+	rregData = dma_get_request_details1();
+	if ((rregData << 31) & 0x80000000){
+		shmac_printf("Bohemian rapsody!\r\n");
+		dma_set_request_details0(0x00000000);
+		//looplock = 0;
+	}
+	
 }
 
 void main(void)
@@ -74,6 +93,7 @@ void main(void)
 #ifdef USE_INTERRUPTS
 	sha256_reset(&contexts[shmac_get_tile_cpu_id()]);
 	irq_set_handler(5, hash_handler);
+	irq_set_handler(6, dma_handler);
 #else
 	benchmark_process(shmac_get_tile_cpu_id());
 #endif

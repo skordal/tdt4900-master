@@ -15,10 +15,11 @@ TARGET_SIZE ?= $(TARGET_PREFIX)-size
 
 TARGET_CFLAGS += -march=armv4t -std=gnu99 -O3 -fomit-frame-pointer -Wall \
 	-Werror=implicit-function-declaration -ffreestanding \
-	-mno-unaligned-access -DUSE_IMPROVED_MUTEXES #-DUSE_INTERRUPTS
+	-mno-unaligned-access -DUSE_IMPROVED_MUTEXES -DUSE_INTERRUPTS
 TARGET_LDFLAGS +=  -nostartfiles -Wl,--fix-v4bx
 
 OBJECTS := \
+	dma.o \
 	exceptions.o \
 	irq.o \
 	main.o \
@@ -28,6 +29,8 @@ OBJECTS := \
 	shmac.o \
 	start.o \
 	timer.o
+
+
 
 LINKER_SCRIPT ?= bitcoin.ld
 
