@@ -37,6 +37,7 @@ static void hash_handler(int unused)
 	sha256_hash_block(&contexts[shmac_get_tile_cpu_id()], (uint32_t *) global_block);
 }
 
+#if 0
 static void dma_handler(int unused)
 {
 	rregData = dma_get_request_details0();
@@ -54,6 +55,7 @@ static void dma_handler(int unused)
 	}
 	
 }
+#endif
 
 void main(void)
 {
@@ -93,7 +95,7 @@ void main(void)
 #ifdef USE_INTERRUPTS
 	sha256_reset(&contexts[shmac_get_tile_cpu_id()]);
 	irq_set_handler(5, hash_handler);
-	irq_set_handler(6, dma_handler);
+	//irq_set_handler(6, dma_handler);
 #else
 	benchmark_process(shmac_get_tile_cpu_id());
 #endif
@@ -104,6 +106,7 @@ void main(void)
 		*((volatile uint32_t *) (0xf8000020 + (i * 4))) = i;
 	dma_set_load_address0(0xf8000020);
 	dma_set_store_addresss(0xf800060);
+	// Wait for transaction to finish.
 */
 	while(1) asm volatile("nop\n"); // Burn cycles, use dat power
 }
