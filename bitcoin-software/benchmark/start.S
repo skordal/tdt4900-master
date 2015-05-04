@@ -94,7 +94,7 @@ clear_bss:
 
 .hidden init_sw
 init_sw:
-	bl mutex_initialize
+	bl bram_initialize
 	bl mm_initialize
 	bl irq_initialize
 	bl timer_initialize

@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include "bram.h"
 #include "dma.h"
 #include "irq.h"
 #include "mm.h"
@@ -19,7 +20,7 @@
 
 #define BENCHMARK_PASSES	1
 
-static volatile unsigned int * stats = (volatile void *) 0xf8000060;
+static volatile unsigned int * stats; //= (volatile void *) 0xf8000060;
 static unsigned int * previous_stats;
 static void benchmark_process(int cpu);
 static void print_stats(void * unused);
@@ -44,7 +45,8 @@ void main(void)
 {
 	if(shmac_get_tile_cpu_id() == 0)
 	{
-		// Allocate statistics structure:
+		// Allocate statistics structures:
+		stats = bram_allocate(0, sizeof(unsigned int));
 		previous_stats = mm_allocate(sizeof(int) * shmac_get_cpu_count());
 		for(int i = 0; i < shmac_get_cpu_count(); ++i)
 		{

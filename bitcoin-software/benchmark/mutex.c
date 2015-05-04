@@ -4,21 +4,16 @@
 //	Torbjørn Langland <torbljan@stud.ntnu.no>
 // Read the report on <https://github.com/skordal/tdt4102-master>
 
+#include "bram.h"
 #include "mutex.h"
 
 #if !defined(USE_CLASSIC_MUTEXES) && !defined(USE_IMPROVED_MUTEXES)
 #warning "No mutex implementation selected!"
 #endif
 
-static mutex_t * next_mutex = (volatile void *) 0xf8000000;
-
-void mutex_initialize(void)
-{
-}
-
 mutex_t * mutex_new(void)
 {
-	mutex_t * retval = next_mutex++;
+	mutex_t * retval = bram_allocate(0, sizeof(mutex_t *));
 	*retval = MUTEX_INITIALIZER;
 
 	return retval;
