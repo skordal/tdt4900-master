@@ -18,6 +18,10 @@
 #include "shmac.h"
 #include "timer.h"
 
+#ifndef ENABLE_NUM_CORES
+#define ENABLE_NUM_CORES	20000
+#endif
+
 #define BENCHMARK_PASSES	1
 
 static volatile unsigned int * stats; //= (volatile void *) 0xf8000060;
@@ -74,15 +78,21 @@ void main(void)
 		shmac_set_ready();
 	}
 
-
+	if(shmac_get_tile_cpu_id() < ENABLE_NUM_CORES)
+	{
 #ifdef USE_INTERRUPTS
-	sha256_reset(&contexts[shmac_get_tile_cpu_id()]);
-	irq_set_handler(5, hash_handler);
-	shmac_enable_caches();
+		sha256_reset(&contexts[shmac_get_tile_cpu_id()]);
+		irq_set_handler(5, hash_handler);
+#	ifdef USE_CACHES
+		shmac_enable_caches();
+#	endif
 #else
-	shmac_enable_caches();
-	benchmark_process(shmac_get_tile_cpu_id());
+#	ifdef USE_CACHES
+		shmac_enable_caches();
+#	endif
+		benchmark_process(shmac_get_tile_cpu_id());
 #endif
+	}
 
 #if 0
 	// Do a simple DMA test:

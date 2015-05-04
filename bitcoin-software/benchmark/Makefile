@@ -16,7 +16,7 @@ TARGET_SIZE ?= $(TARGET_PREFIX)-size
 TARGET_CFLAGS += -march=armv4t -std=gnu99 -O3 -fomit-frame-pointer -Wall \
 	-Werror=implicit-function-declaration -ffreestanding \
 	-mno-unaligned-access -DUSE_IMPROVED_MUTEXES -DSHA256_USE_HARDWARE=1 \
-	-DNUM_SCRATCHPADS=1 #-DUSE_INTERRUPTS
+	-DNUM_SCRATCHPADS=1 -DUSE_CACHES -DENABLE_NUM_CORES=1 #-DUSE_INTERRUPTS
 TARGET_LDFLAGS +=  -nostartfiles -Wl,--fix-v4bx
 
 OBJECTS := \
