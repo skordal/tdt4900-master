@@ -155,10 +155,26 @@ void sha256_hash_block(struct sha256_context * ctx, const uint32_t * data)
 		for(int i = 0; i < 8; ++i)
 			ctx->intermediate[i] += temp[i];
 	} else {
+
+#ifdef USE_DMA
+	
+		dma_set_src_address0(data);
+		dma_set_dest_address0(ctx->module[SHA256_INPUT(0)]);
+		dma_set_request_details0(0x00F00001);
+	
+		uint32_t poll = dma_get_request_details0();
+		while ((poll & 0x00000004) == 0x4){
+				poll = dma_get_request_details0();
+			}
+		dma_set_request_details0(0x00000000);
+		
+#else 
 		for(int i = 0; i < 16; ++i)
 			ctx->module[SHA256_INPUT(i)] = data[i];
+#endif
 		ctx->module[SHA256_CTRL] = 1 << SHA256_CTRL_UPDATE | 1 << SHA256_CTRL_ENABLE;
 		ctx->module[SHA256_CTRL] = 1 << SHA256_CTRL_ENABLE;
+	
 	}
 }
 
@@ -166,8 +182,22 @@ void sha256_hash_hash(struct sha256_context * ctx, const uint8_t * hash)
 {
 	if(ctx->accelerated)
 	{
+
+#ifdef USE_DMA
+		dma_set_src_address0((uint32_t) hash);
+		dma_set_dest_address0(ctx->module[SHA256_INPUT(0)]);
+		dma_set_request_details0(0x00700001);
+	
+		uint32_t poll = dma_get_request_details0();
+		while ((poll & 0x00000004) == 0x4){
+				poll = dma_get_request_details0();
+			}
+		dma_set_request_details0(0x00000000);
+		
+#else 
 		for(int i = 0; i < 8; ++i)
 			ctx->module[SHA256_INPUT(i)] = ((const uint32_t *) hash)[i];
+#endif
 		for(int i = 8; i < 15; ++i)
 			ctx->module[SHA256_INPUT(i)] = 0;
 		ctx->module[SHA256_INPUT(15)] = 32 * 8;
@@ -198,9 +228,23 @@ void sha256_pad_le_block(uint8_t * block, int block_length, uint64_t total_lengt
 
 void sha256_get_hash(const struct sha256_context * ctx, uint8_t * hash)
 {
+				
 	if(ctx->accelerated)
 	{
 		while(!(ctx->module[SHA256_STATUS] & (1 << SHA256_STATUS_READY)));
+#ifdef USE_DMA
+	
+		dma_set_src_address1(ctx->module[SHA256_OUTPUT(0)]);
+		dma_set_dest_address1((uint32_t)hash);
+		dma_set_request_details1(0x00700003);
+	
+		uint32_t poll = dma_get_request_details1();
+		while ((poll & 0x00000004) == 0x4){
+				poll = dma_get_request_details1());
+			}
+		dma_set_request_details1(0x00000000);
+		
+#else 
 		for(int i = 0; i < 8; ++i)
 		{
 			uint32_t value = ctx->module[SHA256_OUTPUT(i)];
@@ -209,7 +253,10 @@ void sha256_get_hash(const struct sha256_context * ctx, uint8_t * hash)
 			hash[i * 4 + 2] = (value >>  8) & 0xff;
 			hash[i * 4 + 3] = (value >>  0) & 0xff;
 		}
-	} else {
+#endif
+	} else 
+	
+	{
 		for(int i = 0; i < 8; ++i)
 		{
 			// Return the hash in little-endian format:
@@ -219,6 +266,8 @@ void sha256_get_hash(const struct sha256_context * ctx, uint8_t * hash)
 			hash[i * 4 + 0] = ctx->intermediate[i] >> 24 & 0xff;
 		}
 	}
+	
+
 }
 
 void sha256_format_hash(const uint8_t * hash, char * output)
