@@ -24,11 +24,13 @@ static unsigned int * previous_stats;
 static void benchmark_process(int cpu);
 static void print_stats(void * unused);
 
+#ifdef USE_INTERRUPTS
 static uint8_t global_block[64] = {'a', 'b', 'c'};
 static uint8_t ** buffers;
 static struct sha256_context * contexts;
-static volatile uint32_t rregData;
+#endif
 
+#ifdef USE_INTERRUPTS
 static void hash_handler(int unused)
 {
 	sha256_get_hash(&contexts[shmac_get_tile_cpu_id()], buffers[shmac_get_tile_cpu_id()]);
@@ -36,31 +38,13 @@ static void hash_handler(int unused)
 	sha256_reset(&contexts[shmac_get_tile_cpu_id()]);
 	sha256_hash_block(&contexts[shmac_get_tile_cpu_id()], (uint32_t *) global_block);
 }
-
-static void dma_handler(int unused)
-{
-	rregData = dma_get_request_details0();
-	if ((rregData << 31) & 0x80000000){
-		shmac_printf("Elvis has left the building!\r\n");
-		dma_set_request_details0(0x00000000);
-		//looplock = 0;
-	}
-	
-	rregData = dma_get_request_details1();
-	if ((rregData << 31) & 0x80000000){
-		shmac_printf("Bohemian rapsody!\r\n");
-		dma_set_request_details0(0x00000000);
-		//looplock = 0;
-	}
-	
-}
+#endif
 
 void main(void)
 {
 	if(shmac_get_tile_cpu_id() == 0)
 	{
 		// Allocate statistics structure:
-	//	stats = mm_allocate(sizeof(int) * shmac_get_cpu_count());
 		previous_stats = mm_allocate(sizeof(int) * shmac_get_cpu_count());
 		for(int i = 0; i < shmac_get_cpu_count(); ++i)
 		{
@@ -88,23 +72,36 @@ void main(void)
 		shmac_set_ready();
 	}
 
-	shmac_enable_caches();
 
 #ifdef USE_INTERRUPTS
 	sha256_reset(&contexts[shmac_get_tile_cpu_id()]);
 	irq_set_handler(5, hash_handler);
-	irq_set_handler(6, dma_handler);
+	shmac_enable_caches();
 #else
+	shmac_enable_caches();
 	benchmark_process(shmac_get_tile_cpu_id());
 #endif
 
-/*
+#if 0
 	// Do a simple DMA test:
+	shmac_printf("Setting up DMA test...\n");
 	for(int i = 0; i < 10; ++i)
 		*((volatile uint32_t *) (0xf8000020 + (i * 4))) = i;
 	dma_set_load_address0(0xf8000020);
-	dma_set_store_addresss(0xf800060);
-*/
+	dma_set_store_address0(0xf8000060);
+	dma_set_request_details0(9 << 20 | 1);
+
+	while(!(dma_get_request_details0() & 4));
+	shmac_printf("Finished!\n");
+
+	for(int i = 0; i < 100; ++i)
+		asm volatile("nop\n");
+
+	for(int i = 0; i < 10; ++i)
+		shmac_printf("%d ", *((volatile uint32_t *) (0xf8000060 + (i * 4))));
+	shmac_printf("\n");
+#endif
+
 	while(1) asm volatile("nop\n"); // Burn cycles, use dat power
 }
 
@@ -113,8 +110,8 @@ static void benchmark_process(int cpu)
 #if BENCHMARK_PASSES == 1
 	//struct sha256_context * ctx = sha256_new();
 	struct sha256_context ctx;
-//	ctx.accelerated = SHA256_USE_HARDWARE;
-	ctx.accelerated = 1;
+	ctx.accelerated = SHA256_USE_HARDWARE;
+//	ctx.accelerated = 1;
 
 	uint8_t block[64] = {'a', 'b', 'c'};
 	uint8_t hash[32];
