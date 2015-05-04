@@ -7,7 +7,7 @@ Insert smart intro here:
 
 \section{Rise of Dark Silicon, and the four areas of solution}
 \label{sec:dark-silicon}
-As Taylor\ref{dark-silicon} points out, transistor density on a CMOS chip continue to double every two years, according to Moore's Law.
+As Taylor\cite{dark-silicon} points out, transistor density on a CMOS chip continue to double every two years, according to Moore's Law.
 Native transistor speed also increases with a factor of 1,4x.
 Energy efficiency on the other hands improves only with 1,4x, and under a constant power budget, it will cause a 2x shortfall in energy budget to power a chip at its native frequency.
 The utulization of a chip's potential is thus falling expentionally by 2x per generation.
@@ -29,8 +29,8 @@ Considered optional for now.
 If written, should contain the details of why there is the Utulization Wall that leads to dark silicon. 
 
 \subsection{The four horsemen: Approaches to the dark silicon problem}
-Taylor explains a taxonomy called "The four horsemen" \ref{dark-silicon}.
-These are four proposed responses that are emerging as solutions as one transition beyond the transitional multicore stop-gap solution. \ref{dark-silicon2}
+Taylor explains a taxonomy called "The four horsemen" \cite{dark-silicon}.
+These are four proposed responses that are emerging as solutions as one transition beyond the transitional multicore stop-gap solution. \cite{dark-silicon2}
 When looking back, these responses appeared to be unlikely candidates from the beginning, bringing with them unwelcome burdens in design, manufacturing and programming.
 From an aestethic engineering point of view, none of them would appear ideal.
 Henceforth the term "Horsemen".
@@ -41,7 +41,7 @@ The four horsemen are called The Shrinking Horseman, The Dim Horseman, The Speci
 
 \subsubsection{The Shrinking Horseman}
 Instead of having dark silicon on the chip, one may simply shrink the chip itself.
-Taylor\ref{dark-silicon} views these "shrinking chips" as the most pessimistic outcome.
+Taylor\cite{dark-silicon} views these "shrinking chips" as the most pessimistic outcome.
 Although all chips may eventually shrink somewhat, the ones that shrink the most will be those where dark silicon cannot be applied fruitfully to improve the product.
 \todo{Nært overflødig?}These chips will rapidly turn into low-margin businesses for which further generations of Moore’s law provide small benefit.
 Futhermore, there are other effects: Exponentially smaller chips are not exponentially cheaper, since mask cost, design cost and I/O pad aread cannot be amortized. 
@@ -63,7 +63,7 @@ Meeting the temperature limit will reduce the scaling below the nominal 1,4x exp
 
 \subsubsection{The Dim Horseman}
 %\todo{This subchapter ended up long. Try to see if it can be reduced. Especially NTV}
-According to Taylor\ref{dark-silicon}, as exponentially larger fractions of a chip’s transistors become dark transistors, silicon area becomes an exponentially cheaper resource relative to power and energy consumption.
+According to Taylor\cite{dark-silicon}, as exponentially larger fractions of a chip’s transistors become dark transistors, silicon area becomes an exponentially cheaper resource relative to power and energy consumption.
 Therefore new architectural techniques that spend area to buy energy efficiency is called for.
 Instead of shrinking silicon, one may consider populating dark silicon area with logic that is used only part of the time, and interesting new design possibilities occurs.The term "dim silicon" refers to techniques that put large amounts of otherwise-dark silicon area to productive use by employing heavy underclocking or infrequent use to meet the power budget.
 The architecture has to strategically managing the chip-wide transistor duty cycle to enforce the overall power constraint. 
@@ -96,7 +96,7 @@ Whereas early 90-nm designs such as Cell and Prescott were dimmed because actual
 %\end{itemize}
 
 \subsubsection{The Specialized Horseman}
-This is the use of dark silicon to implement a host of specialized processors\ref{dark-silicon}.
+This is the use of dark silicon to implement a host of specialized processors\cite{dark-silicon}.
 They can be more energy efficient, or much faster than a general purpose processor.
 Programs are executed where it is most efficient.
 Unused cores are power- and clock gated in order to keep them from wasting energy.
@@ -125,7 +125,7 @@ In addition, adoption problems are also caused by the excessive costs of program
 %\end{itemize}
 
 \subsubsection{The Dues Ex Machina Horseman}
-Taylor notes that this one is the most unpredictable\ref{dark-silicon}.
+Taylor notes that this one is the most unpredictable\cite{dark-silicon}.
 He uses the termology "Deus ex machina" from literature or theater, in which the protagonists seem increasingly doomed until the very last moment, when something completely unexpected comes out of nowhere to save the day.
 In the case for dark silicon, one deus ex machina would be a breakthrough in semiconductor devices.
 The required breakthrough would have to be very fundamental, making it possible to build transistors out of devices other than MOSFETs. 
@@ -141,29 +141,29 @@ Tunnel field-effect transistors (TFET) and nanoelectromechanical system (NEMS) s
 
 \subsection{The Single-ISA Heterogeneous MAny-core Computer}
 \label{sec:shmac}
-The Single-ISA Heterogeneous MAny-core Computer is a proposed infrastructure by NTNU for investigating heterogeneous systems at all abstraction levels, as illustrated in figure \ref{fig:shmacAbstractionLevels}.
+The Single-ISA Heterogeneous MAny-core Computer is a proposed infrastructure by NTNU for investigating heterogeneous systems at all abstraction levels, as illustrated in figure \cite{fig:shmacAbstractionLevels}.
 The point is to create a flexible framework in which different heterogeneous processors can be created from a collection of processing elements and accelerators.
 The programming model is kept constant across SHMAC-instances, while underlying implementation changes.
 This way, software design space exploration is facilitated.
 It is a tile-based architecture with a mesh interconnect.
-All processor tiles implement the same ARM ISA and the same memory model, in order to achieve a common programming model.\ref{shmac-plan}.
-An illustration of SHMAC can be seen in figure \ref{fig:shmac}.
+All processor tiles implement the same ARM ISA and the same memory model, in order to achieve a common programming model.\cite{shmac-plan}.
+An illustration of SHMAC can be seen in figure \cite{fig:shmac}.
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.5\textwidth]{Figures/Heterogeneous/SHMACAbstractionLevels}
-    \caption{All levels of abstraction in computing systems, as seen in \ref{shmac-plan}.}
+    \caption{All levels of abstraction in computing systems, as seen in \cite{shmac-plan}.}
     \label{fig:shmacAbstracionLevels}
 \end{figure}
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/SHMAC}
-    \caption{High-Level Architecture of ARM-based SHMAC, as seen in \ref{shmac-plan}.}
+    \caption{High-Level Architecture of ARM-based SHMAC, as seen in \cite{shmac-plan}.}
     \label{fig:shmac}
 \end{figure}
 
-\todo{PROBLEM: This paragraph is way too similar to original text. Must fix, one way or another. }NTNU argues that the SHMAC-approach gives the right tools to reach the research goles outlined in the plan in \ref{shmac-plan}.
+\todo{PROBLEM: This paragraph is way too similar to original text. Must fix, one way or another. }NTNU argues that the SHMAC-approach gives the right tools to reach the research goles outlined in the plan in \cite{shmac-plan}.
 For software research, SHMAC, makes it possible to explore substantially more diverse systems than the ones currently provided by the industry.
 Furthermore, SHMAC-architectures realized in FPGAs will be significatly faster than using simulators.
 It is expected that co-developing software and hardware will result in substantial cross-fertilization that gives insight into both hardware and software issues.

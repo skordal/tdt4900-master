@@ -52,25 +52,25 @@ With the presence of a Wishbone Master in the DMA Module, the tile has now two m
 Arbritation is therefore required.
 
 For this project, the ARB0001a: 4 Level, Round-robin Arbiter from WISHBONE Public Domain Library for VHDL has been taken in use.
-Figure \ref{fig:WBArbiter} shows how the arbitration works, with Round-robin.
+Figure \cite{fig:WBArbiter} shows how the arbitration works, with Round-robin.
 The arbiter will in turn check each input master for bus requests, and grants access thereby.
 If a master has no request, the arbiter will continue to the next.
 For this project, only two masters are present.
 Arbitration normally take a full clock cycle.
-See \ref{WBLibrary} for detailed implementation.
+See \cite{WBLibrary} for detailed implementation.
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1.0\textwidth]{Figures/Tile/WBArbiter}
-    \caption{Wishbone Round-robin Aribter, as seen in \ref{WBLibrary}.}
+    \caption{Wishbone Round-robin Arbiter, as seen in \cite{WBLibrary}.}
     \label{fig:WBArbiter}
 \end{figure}
 
 \todo{Discussion of alternatives. The following may be moved to future work.}Round-robin arbiters work well in data acquisition systems where data is collected and placed into shared memory, since peripherals must often off-load data to memory on an equal basis.
 The choice of this arbiter is due to using an already established Wishbone arbiter cuts away time from designing a new one, \todo{Hmm.... Sounds uncalled for}which may even end up less efficient in worse case.
 An alternative to round-robin arbiters is priority arbiters.
-They are usually disadvantagous in said systems, but does not have the arbitration overhead \ref{WBLibrary}.
+They are usually disadvantagous in said systems, but does not have the arbitration overhead \cite{WBLibrary}.
 
 In the case of arbitration between a CPU and a DMA Module, a priority arbiter may be used to achieve either burst mode, where DMA gets the full right on the bus until the transfer is finished, or transparent mode, where the CPU always has first right.
-The latter mode gives the slowest DMA transfer, but has shown to give best overall system performance. \todo{Find those book sources again, if time. Current source does not validate claim of overall performance} \ref{DMA-lecture}.
+The latter mode gives the slowest DMA transfer, but has shown to give best overall system performance. \todo{Find those book sources again, if time. Current source does not validate claim of overall performance} \cite{DMA-lecture}.
 
