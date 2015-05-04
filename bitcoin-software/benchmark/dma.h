@@ -41,6 +41,11 @@ void dma_set_src_address0(uint32_t src);
 void dma_set_src_address1(uint32_t src);
 void dma_set_dest_address0(uint32_t dest);
 void dma_set_dest_address1(uint32_t dest);
+
+ //Bits 31-20: Individual transfers by word (minus base. Example: Set to 0 for 1 transfer, 15 for 16 transfers, 29 for 30 transfers)
+ //Bit 2: Transfer complete (set by DMA)
+ //Bit 1: Endian byte switch 
+ //Bit 0: ON/OFF
 void dma_set_request_details0(uint32_t request);
 void dma_set_request_details1(uint32_t request);
 
