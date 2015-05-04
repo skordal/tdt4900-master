@@ -13,6 +13,9 @@
 // Base address of the DMA Slave accelerator:
 #define DMA_BASE	((volatile void *) SHMAC_TILE_BASE + 0x4000)
 
+// Interrupt value of DMA Module
+#define DMA_irq		6
+
 // DMA register names and offsets:
 #define DMA_SLAVE_LREG0		0x000
 #define DMA_SLAVE_SREG0		(0x004 >> 2)
@@ -27,31 +30,19 @@
 // Resets the DMA Module.
 void dma_reset(void);
 
-// Getters, channel 0
-uint32_t dma_get_load_address0();
-uint32_t dma_get_store_address0();
+uint32_t dma_get_src_address0();
+uint32_t dma_get_src_address1();
+uint32_t dma_get_dest_address0();
+uint32_t dma_get_dest_address1();
 uint32_t dma_get_request_details0();
-
-// Getters, channel 1
-uint32_t dma_get_load_address1();
-uint32_t dma_get_store_address1();
 uint32_t dma_get_request_details1();
 
-// Setters, channel 0
-void dma_set_load_address0(uint32_t load);
-void dma_set_store_address0(uint32_t store);
-// FORMAT: 31-20: Job length in words, subtract 1
-// 2: Job finished
-// 1: Flip endian bytes
-// 0: ON/OFF
+void dma_set_src_address0(uint32_t src);
+void dma_set_src_address1(uint32_t src);
+void dma_set_dest_address0(uint32_t dest);
+void dma_set_dest_address1(uint32_t dest);
 void dma_set_request_details0(uint32_t request);
-
-
-// Setters, channel 1
-void dma_set_load_address1(uint32_t load);
-void dma_set_store_address1(uint32_t store);
 void dma_set_request_details1(uint32_t request);
-
 
 #endif
 
