@@ -58,21 +58,6 @@ setup_stacks:
 	orr r1, #0x1f
 	msr cpsr, r1
 
-/*.hidden enable_cache
-enable_cache:
-	mov r0, #0x00ffffff
-	mcr p15, 0, r0, cr3, cr0, 0
-	mov r0, #1
-	mcr p15, 0, r0, cr2, cr0, 0
-
-	@ Wait for the pipeline to empty just in case:
-	nop
-	nop
-	nop
-	nop
-	nop
-*/
-
 .hidden clear_bss
 clear_bss:
 	@ Ensure only CPU 0 clears the .bss section:
