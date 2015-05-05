@@ -50,7 +50,7 @@ void main(void)
 	if(shmac_get_tile_cpu_id() == 0)
 	{
 		// Allocate statistics structures:
-		stats = bram_allocate(0, sizeof(unsigned int));
+		stats = bram_allocate(1, shmac_get_cpu_count() * sizeof(unsigned int));
 		previous_stats = mm_allocate(sizeof(int) * shmac_get_cpu_count());
 		for(int i = 0; i < shmac_get_cpu_count(); ++i)
 		{
