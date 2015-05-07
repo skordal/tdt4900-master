@@ -1,9 +1,86 @@
 \chapter{Background}
 \label{cha:background}
 
-Insert smart intro here:
+In order to understand how and why heterogeneous systems can be applied to the problem of
+bitcoin mining, it is first important to obtain an understanding of how the bitcoin system
+works and what heterogeneous computing is.
 
-"I'm SMAAAART!!!"
+\section{The Bitcoin Currency}
+\label{sec:bitcoins}
+
+Bitcoin, often abbreviated BTC, is a digital currency, using a peer-to-peer network to provide
+a decentralized currency, not relying on banks or financial institutions to process transactions
+or maintain accounts.
+
+At the core of the bitcoin system is the block chain, a distributed, linked list consisting of blocks
+which contains the transactions that have been executed on the network since the previous block was
+generated.
+
+A block is only valid if the arithmetic value of the double SHA-256 hash of its header is below
+a certain target value. Finding a block that has such a header is computing intensive, and prevents
+the network from being flooded with new blocks. The target value is decided by the network ``difficulty''
+and is set to such a value that, on average, six new blocks are generated per hour.
+
+To get people to participate in creating new blocks, a reward is offered to whomever manages to
+create a block. This reward also ensures that more money is added into circulation. The size of
+the reward decreases over time until a predetermined number of bitcoins have entered circulation.
+The reward is currently 25 bitcoins and halves every 210~000 blocks. The total number of bitcoins
+that is to be generated is 21~000~000 bitcoins. \cite{bitcoin}
+
+\subsection{Mining Bitcoins}
+\label{sec:bitcoin-mining}
+
+The process of creating a new block for the bitcoin blockchain is often referred to as \textit{mining},
+refering to the fact that a lot of energy may need to be expended in order to find a valid block.
+
+The process begins with the creation of a transaction that transfers the reward for generating the block
+into the account of the miner. This transaction is often called the coinbase or generation transaction.
+All transactions transmitted to the bitcoin network since the last block was generated are gathered and
+the hash of each transaction is inserted into a merkle tree.
+
+The root of the merkle tree is inserted into the header for the new block together with the hash of the
+previous block and various other fields specified by the standard. If the hash of the header is below the
+target value, the block is successfully mined and transmitted to the network. If the hash does not satisy
+the demands of the network, a 32-bit field in the block header, called the \textit{nonce}, can be changed
+to produce a new hash. In addition, transactions can be excluded in order to produce a different merkle
+root for the header.
+
+If more than one new block is pushed to the network at about the same time, the block chain diverges.
+This situtation is resolved when the next block is generated; the longest block chain is then accepted
+as the proper block chain. \cite{bitcoin}
+
+\subsection{Pooled Bitcoin Mining}
+
+Because an increasing amount of computing power is being used to mine bitcoins, the difficulty of finding
+a block has increased to such a level that no single bitcoin miner can hope to mine. The current total
+hashing rate is about 396,5~EH/s ($396,5\cdot 10^{18}$ H/s) according to the statistics available from
+\texttt{blockchain.info}.
+
+To overcome this problem, mining pools were invented. A bitcoin mining pool is a service that distributes
+work between miners. The work that is distributed has a lower target value than does the bitcoin network
+itself, meaning that each participating miner can find valid blocks faster. Although most of the blocks
+submitted to a pool does not fulfill the network requirements, sometimes a block does fulfill both the
+pools difficulty requirements as well as the network requirements; in that case the new block is
+submitted to the bitcoin network and all the miners who submitted work towards finding the block
+is rewarded according to their contribution.
+
+As such, pooled mining lets anyone with weaker hardware, such as regular CPUs or GPUs, participate
+in bitcoin mining in exchange for a small reward.
+
+\section{Existing Bitcoin Hardware}
+
+Due to bitcoin's popularity and the possibility of profits, various specialized hardware has been used
+to accelerate the process. Starting with simple programmes running on general-purpose processors,
+bitcoin miners soon turned to GPUs in order to improve the performance and power efficiency of the
+process. GPUs provide the possibility of running many hashing processes in parallel, in some cases
+exceeding 1 GH/s\cite{bitcoin-hardware-cmp}. FPGA-based bitcoin mining hardware provide
+better power efficiency than GPUs due to the possibility of tailoring the hardware design to
+bitcoin mining.
+
+However, as bitcoin mining have become more profitable, ASIC-based bitcoin miners have taken over
+the market and currently dominates in terms of performance and power efficiency, with performance
+exceeding 200 GH/s\todo{reference http://www.spondoolies-tech.com/products/sp35-yukon-power-shipping-from-stock}
+per chip\todo{Power?} \cite{bespoke-silicon}.
 
 \section{Rise of Dark Silicon, and the four areas of solution}
 \label{sec:dark-silicon}
@@ -177,29 +254,3 @@ And finally, micro- and macro-architecture components can be combined with novel
 \subsubsection{Work packages}
 
 
-\section{The Bitcoin Currency}
-\label{sec:bitcoins}
-
-Bitcoin is a new currency, based on cryptographic stuffz\todo{Eloquence}.
-
-At the core of the bitcoin system is the block chain, a distributed linked-list consisting of blocks
-which contains the transactions that have been executed since the previous block was generated.
-
-A block is only valid if the arithmetic value of the double SHA-256 hash of its header is below
-a certain target value. The target value is decided by the network and is set to such a value that
-on average six new blocks are generated per hour. \cite{bitcoin}
-
-\subsection{Mining Bitcoins}
-\label{sec:bitcoin-mining}
-
-The process of creating a new block for the bitcoin blockchain is often referred to as \textit{mining}.
-
-The process begins with the creation of a transaction that transfers the reward for generating the block
-into the account of the miner. This transaction is called the coinbase transaction. All transactions
-transmitted to the bitcoin network since the last block was generated are gathered and a merkle tree
-is constructed by combining the hashes of these transactions\todo{Explain merkle trees}.
-
-The root of the merkle tree is inserted into the header for the new block together with the hash of the
-previous block and various other fields specified by the standard. If the hash is below a target value,
-determined by the current network difficulty, the block is successfully mined and transmitted to the
-network.
