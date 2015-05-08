@@ -1,9 +1,86 @@
 \chapter{Background}
 \label{cha:background}
 
-Insert smart intro here:
+In order to understand how and why heterogeneous systems can be applied to the problem of
+bitcoin mining, it is first important to obtain an understanding of how the bitcoin system
+works and what heterogeneous computing is.
 
-"I'm SMAAAART!!!"
+\section{The Bitcoin Currency}
+\label{sec:bitcoins}
+
+Bitcoin, often abbreviated BTC, is a digital currency, using a peer-to-peer network to provide
+a decentralized currency, not relying on banks or financial institutions to process transactions
+or maintain accounts.
+
+At the core of the bitcoin system is the block chain, a distributed, linked list consisting of blocks
+which contains the transactions that have been executed on the network since the previous block was
+generated.
+
+A block is only valid if the arithmetic value of the double SHA-256 hash of its header is below
+a certain target value. Finding a block that has such a header is computing intensive, and prevents
+the network from being flooded with new blocks. The target value is decided by the network ``difficulty''
+and is set to such a value that, on average, six new blocks are generated per hour.
+
+To get people to participate in creating new blocks, a reward is offered to whomever manages to
+create a block. This reward also ensures that more money is added into circulation. The size of
+the reward decreases over time until a predetermined number of bitcoins have entered circulation.
+The reward is currently 25 bitcoins and halves every 210~000 blocks. The total number of bitcoins
+that is to be generated is 21~000~000 bitcoins. \cite{bitcoin}
+
+\subsection{Mining Bitcoins}
+\label{sec:bitcoin-mining}
+
+The process of creating a new block for the bitcoin blockchain is often referred to as \textit{mining},
+refering to the fact that a lot of energy may need to be expended in order to find a valid block.
+
+The process begins with the creation of a transaction that transfers the reward for generating the block
+into the account of the miner. This transaction is often called the coinbase or generation transaction.
+All transactions transmitted to the bitcoin network since the last block was generated are gathered and
+the hash of each transaction is inserted into a merkle tree.
+
+The root of the merkle tree is inserted into the header for the new block together with the hash of the
+previous block and various other fields specified by the standard. If the hash of the header is below the
+target value, the block is successfully mined and transmitted to the network. If the hash does not satisy
+the demands of the network, a 32-bit field in the block header, called the \textit{nonce}, can be changed
+to produce a new hash. In addition, transactions can be excluded in order to produce a different merkle
+root for the header.
+
+If more than one new block is pushed to the network at about the same time, the block chain diverges.
+This situtation is resolved when the next block is generated; the longest block chain is then accepted
+as the proper block chain. \cite{bitcoin}
+
+\subsection{Pooled Bitcoin Mining}
+
+Because an increasing amount of computing power is being used to mine bitcoins, the difficulty of finding
+a block has increased to such a level that no single bitcoin miner can hope to mine. The current total
+hashing rate is about 396,5~EH/s ($396,5\cdot 10^{18}$ H/s) according to the statistics available from
+\texttt{blockchain.info}.
+
+To overcome this problem, mining pools were invented. A bitcoin mining pool is a service that distributes
+work between miners. The work that is distributed has a lower target value than does the bitcoin network
+itself, meaning that each participating miner can find valid blocks faster. Although most of the blocks
+submitted to a pool does not fulfill the network requirements, sometimes a block does fulfill both the
+pools difficulty requirements as well as the network requirements; in that case the new block is
+submitted to the bitcoin network and all the miners who submitted work towards finding the block
+is rewarded according to their contribution.
+
+As such, pooled mining lets anyone with weaker hardware, such as regular CPUs or GPUs, participate
+in bitcoin mining in exchange for a small reward.
+
+\section{Existing Bitcoin Hardware}
+
+Due to bitcoin's popularity and the possibility of profits, various specialized hardware has been used
+to accelerate the process. Starting with simple programmes running on general-purpose processors,
+bitcoin miners soon turned to GPUs in order to improve the performance and power efficiency of the
+process. GPUs provide the possibility of running many hashing processes in parallel, in some cases
+exceeding 1 GH/s\cite{bitcoin-hardware-cmp}. FPGA-based bitcoin mining hardware provide
+better power efficiency than GPUs due to the possibility of tailoring the hardware design to
+bitcoin mining.
+
+However, as bitcoin mining have become more profitable, ASIC-based bitcoin miners have taken over
+the market and currently dominates in terms of performance and power efficiency, with performance
+exceeding 200 GH/s\todo{reference http://www.spondoolies-tech.com/products/sp35-yukon-power-shipping-from-stock}
+per chip\todo{Power?} \cite{bespoke-silicon}.
 
 \section{Rise of Dark Silicon, and the four areas of solution}
 \label{sec:dark-silicon}
@@ -233,112 +310,3 @@ Six tile types are supported, prior to this project\cite{shmac-plan}:
 %\subsubsection{Work packages}
 
 
-\section{The Bitcoin Currency}
-\label{sec:bitcoins}
-
-Bitcoin is a new currency, based on cryptographic stuffz\todo{Eloquence}.
-
-At the core of the bitcoin system is the block chain, a distributed linked-list consisting of blocks
-which contains the transactions that have been executed since the previous block was generated.
-
-A block is only valid if the arithmetic value of the double SHA-256 hash of its header is below
-a certain target value. The target value is decided by the network and is set to such a value that
-on average six new blocks are generated per hour. \cite{bitcoin}
-
-\subsection{Mining Bitcoins}
-\label{sec:bitcoin-mining}
-
-The process of creating a new block for the bitcoin blockchain is often referred to as \textit{mining}.
-
-The process begins with the creation of a transaction that transfers the reward for generating the block
-into the account of the miner. This transaction is called the coinbase transaction. All transactions
-transmitted to the bitcoin network since the last block was generated are gathered and a merkle tree
-is constructed by combining the hashes of these transactions\todo{Explain merkle trees}.
-
-The root of the merkle tree is inserted into the header for the new block together with the hash of the
-previous block and various other fields specified by the standard. If the hash is below a target value,
-determined by the current network difficulty, the block is successfully mined and transmitted to the
-network.
-
-\subsection{The SHA-256 Hashing Algorithm}
-\label{sec:hashing-algo}
-
-The SHA-256 algorithm is a member of a set of algorithms referred to as the SHA-2 standard.
-These are described in \cite{fips180-4} and consists of algorithms for producing hashes with lengths of 224, 256, 384 and 512 bits.
-The algorithms use simple operations, limited to shifts, rotates, xor, and unsigned additions,
-common single-cycle operations for general purpose CPUs, in addition to a lookup-table of constants.
-This allows for high-speed implementations in both software and hardware. The different SHA-2 algorithms
-differ in how and with what parameters the various operations are invoked.
-
-SHA-256 is the algorithm used in cryptocoin mining. It operates on blocks of 512~bits and keeps
-a 256~bits long intermediate hash value as state. Bitcoin uses a double pass SHA-256 hash, which
-first calculates the hash of a block of the data to be hashed and then hashes the hash of the first
-pass.
-
-Before the first block is processed, the initial hash value is set to a predefined
-value. The entire message that is to be hashed is then padded by adding a 1~bit to
-the end of the message and then appending zeroes until the length of the final block
-%is 448̃~bits. Then the length of the entire message, without padding, is added as a
-is 448-bits. Then the length of the entire message, without padding, is added as a
-64-bit big-endian integer to the end of the block.
-
-Then, each input block is split into a 64 times 32-bit long expanded message block, where
-each 32-bit word $W_j$ is defined according to the formula
-
-\[ W_j = \left\{
-	\begin{array}{l l}
-		M_j & \quad j \in \left[0, 15\right]\\
-		\sigma_1(W_{j - 2}) + W_{j - 7} + \sigma_0(W-{j - 15}) + W_{j - 15} & \quad j \in \left[16, 63\right]
-	\end{array}
-\right.\]
-
-\noindent where $M_j$ is the $j$th word of the input message block and the functions
-$\sigma_0$ and $\sigma_1$ are defined as
-
-\[\sigma_0 = R^7(x) \oplus R^{18}(x) \oplus S^3(x)\]
-\[\sigma_1 = R^{17}(x) \oplus R^{19}(x) \oplus S^{10}(x)\]
-
-\noindent where the operator $R^n$ means right rotation by $n$ bits and $S^n$ means right shift by $n$
-bits \footnote{Curiously, \cite{sha-spec} defines the operator $R$ as shift and $S$ as rotate.
-We use the more intuitive definitions.}.
-
-\subsubsection{The Compression Function}
-\label{sec:sha-compr}
-The compression function is the core of the SHA-256 algorithm. It uses a look-up table
-of 64 constants, $K_j$, and the following functions when calculating the new intermediate
-hash values:
-
-\[Ch(x,y,z) = (x \wedge y) \oplus (\neg x \wedge z)\]
-\[Maj(x, y, z) = (x \wedge y) \oplus (x \wedge z) \oplus (y \wedge z)\]
-\[\Sigma_0(x) = R^2(x) \oplus R^{13}(x) \oplus R^{22}(x)\]
-\[\Sigma_1(x) = R^6(x) \oplus R^{11}(x) \oplus R^{25}(x)\]
-
-Before starting the iterations with the compression function, the intermediate
-hash values from the previous message block are assigned to the variables $a$--$h$.
-
-At the beginning of each iteration of the compression function, two temporary
-values are calculated:
-
-\[T_1 = h + \Sigma_1(e) + Ch(e, f, g) + K_j + W_j\]
-\[T_2 = \Sigma_0(a) + Maj(a, b, c)\]
-
-The new hash values are then assigned as follows:
-
-\[\begin{array}{l}
-	h \leftarrow g \\
-	g \leftarrow f \\
-	f \leftarrow e \\
-	e \leftarrow d + T_1\\
-	d \leftarrow c \\
-	c \leftarrow b \\
-	b \leftarrow a \\
-	a \leftarrow T_1 + T_2 \\
-\end{array}\]
-
-The compression function is run 64 times, once for each word in the extended message block,
-$W_j$. Afterwards, the intermediate hash for the message is updated by adding the
-variables $a$--$h$ to the corresponding values of the intermediate hash values from
-the previous message block.
-
-When the final input block has been processed, the final hash is composed by
-concatenating the intermediate hash values \cite{sha-spec}.
