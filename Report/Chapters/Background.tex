@@ -174,7 +174,63 @@ And finally, micro- and macro-architecture components can be combined with novel
 
 \subsubsection{SHMAC Architecture}
 
-\subsubsection{Work packages}
+SHMAC is a tile-based architecture, with the processing elements laid out in a rectangular grid with neighbour-to-neighbour connection, using mesh interconnection.
+Six tile types are supported, prior to this project\cite{shmac-plan}:
+
+\todo{Entire following list pretty much rip-off, except Amber and Turbo Amber. Sources from elsewhere needed.}
+\begin{description}
+  \item[Amber Processor Tile] Processor tile that contains an ARM Amber processor, caches, peripherals and optional accelerators.
+  It can be seen in figure \ref{fig:shmac-cpu}.
+  \todo{This and next 2 sentences rip-off.}Currently, the peripherals consists of interrupt controller, timers and tile registers.
+  The tile registers are per-tile memory that store local information like the processor ID, the coordinates of the tile, etc. 
+  The caches, router and peripherals are connected to a Wishbone bus.
+  
+  \todo{IMPORTANT! Affected our results!}Caches reduce the average memory latency, but adding caches also add the possibility for coherence problems.
+  This is currently solved by placing shared data in uncachable memory regions, through software. 
+  
+  The processor tile can be equipped with optional accelerators, designed to execute a specified computation in a very effective way.
+  
+  
+  \item[Turbo Amber Processor Tile] \todo{Suggest source needed from Redmine or the internet}Same as previous, but has an ARM Turbo Amber processor with \todo{Needs to be confirmed} higher performance.
+  \item[Scratchpad Tile] Includes memory and a router, but no processing element. 
+  It is is an on-chip memory where the contents are managed by software (e.g. programmer, compiler, system software, etc.).
+  Each scratchpad tile is given a 128 MB address space.
+  The number of scratchpad tiles depends on a number of factors like the amount of block RAM available on the chosen FPGA, the desired access latency, the amount of block RAM used for caches in the processor tiles and the possibility of access contention\cite{shmac-plan}.
+  The memory layout for SHMAC is seen in figure \ref{fig:shmac_memory}.
+  \item[Main Memory Tile] Memory controller tile that gives SHMAC access to off-chip memory.
+  \item[APB Interface] This tile implements the Advanced Peripherals Bus (APB) slave which gives the host processor on the Versatile boards access to SHMACs memory space. 
+  In addition, the APB contains system registers which are used for managing communication with the host system.
+  \item[Dummy Tile] Contains only a router and is used to fill remaining tiles when there is not enough resources available in the target FPGA to fill all tiles with tiles that implement functionality.
+\end{description}
+
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/SHMAC}
+    \caption{SHMAC Processor tile, as seen in \cite{shmac-plan}.}
+    \label{fig:shmac-cpu}
+\end{figure}
+
+
+%\subsubsection{SHMAC Memory Map}
+%
+%Figure \ref{fig:shmac-memory} shows how the memory is mapped in ARM-based SHMAC.
+%
+%The Exception table contains 8 instructions, one for each exception type described on \todo{Not mentioned so far in this document. Consider inclusion}Redmine.
+%\todo{Rip-off}The high end of the memory space is reserved for system registers and tile registers. 
+%The tile registers are private for each tile and contain information like the tiles coordinates and other useful data while the system registers are used for communication with the host system.
+%
+%The scratchpad tiles have been given a 128 MB address space. The SHMAC architecture supports 1 to k scratchpad tiles where k can be chosen independently of the number of tiles in the SHMAC instance. The number of scratchpad tiles depends on a number of factors like the amount of block RAM available on the chosen FPGA, the desired access latency, the amount of block RAM used for caches in the processor tiles and the possibility of access contention.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/SHMACMemory}
+    \caption{Memory map of ARM-based SHMAC, as seen in \cite{shmac-plan}.}
+    \label{fig:shmac-memory}
+\end{figure}
+
+
+%\subsubsection{Work packages}
 
 
 \section{The Bitcoin Currency}
