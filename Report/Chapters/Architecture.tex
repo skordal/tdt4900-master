@@ -5,21 +5,48 @@
 
 \section{Hashing tile with DMA module}
 
-For this project, a new tile has been made for SHMAC, which can be seen in figure \ref{fig:SHA-Tile}.
+In order to test the effects of accelerating SHA256 hashing, a new tile has been developed for
+SHMAC, which can be seen in figure \ref{fig:SHA-Tile}.
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1.0\textwidth]{Figures/Tile/HashingTile}
-    \caption{New SHMAC-tile, consisting of a unique SHA-256 hashing tile, a DMA Module and a Wishbone Arbiter.}
+    \caption{SHMAC tile with SHA256 accelerator and DMA, with a wishbone arbiter added to arbitrate between the two wishbone masters}
     \label{fig:SHA-Tile}
 \end{figure}
 
-The tile is based on the Turbo Amber tile, which consists of a Turbo Amber core, tile registers, timer module and interrupt controller.
-The new components for this tile are the SHA-256 hashing module, the DMA Module, and the Wishbone Bus Arbiter, all marked in red.
+The new tile is derived from the existing CPU tile for SHMAC, the Turbo Amber tile, which contains
+a ``Turbo Amber'' CPU, which is an improved version of the open-source Amber CPU, providing various
+performance optimizations over the original Amber and supporting the ARMv4t instruction set \cite{turboamber}.
+
+In addition, the tile provides two timer modules and an interrupt controller, in addition to required
+tile interfaces and a router module.\todo{Consider adding this to figure?}
 
 \subsection{SHA-256 Hashing Module}
-\todo{KRISTIAAAAAAAAANN!!!!!}HÆSJÆSJÆSJÆSJ!!!
 
+The hashing module made for this project is a simple implementation of the algorithm described in
+appendix \ref{app:hashing-algo}. It uses 65 cycles to compute the hash of its input data, running
+one iteration of the SHA256 compression function every cycle except cycle 65, which is used to
+form new intermediate hash values from the results of the compression function.
+
+The module is controlled by the processor using a memory-mapped interface. This allows the use
+of a DMA to offload data transfer between memory and the hashing module. The memory-mapped interface
+provides registers for 512 bits of input and 256 bits of output data, in addition to control and
+status registers. This interface can also be used for accelerators of other cryptographic hash
+functions which processes input data of the same length and returns a hash of 256 bits or less,
+such as RIPEMD-160 or RIPEMD-256 \cite{ripemd} or the still popular MD5 algorithm \cite{md5}.
+
+With some work, the interface could be made even more generic in order to support algorithms
+with other input and output sizes; a possibility would be to eliminate the input and output
+registers completely in favour of using a DMA built into the module to move data of arbitrary
+sizes into and out of the module.
+
+Another, alternative interface to the module that was considered was using the co-processor interface
+of the CPU to communicate with the module. The ARM instruction set supports up to 16 coprocessors,
+which can be communicated with using the \texttt{mrc} and \texttt{mcr} instructions. Using this
+interface for the hashing module would, however, have made it impossible to use a DMA to transfer
+data to and from the module, making the hashing process much more dependent on the CPU, limiting
+its benefits as an accelerator for offloading work from the processor.
 
 \subsection{DMA Module}
 Originally made for the \todo{would need a reference} project during the Autumn 2014 at NTNU, the DMA Module has been modified further for use in this project.
