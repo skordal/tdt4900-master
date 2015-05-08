@@ -59,15 +59,15 @@ void main(void)
 		}
 
 #ifdef USE_INTERRUPTS
-		contexts = (void *) (stats + shmac_get_cpu_count());
+		contexts = (void *) bram_allocate(0, shmac_get_cpu_count() * sizeof(struct sha256_context));//(stats + shmac_get_cpu_count());
 		for(int i = 0; i < shmac_get_cpu_count(); ++i)
 			contexts[i].accelerated = 1;
 
-		buffers = (void *) (contexts + shmac_get_cpu_count());
+		buffers = (void *) bram_allocate(0, shmac_get_cpu_count() * sizeof(uint32_t));//(contexts + shmac_get_cpu_count());
 		for(int i = 0; i < shmac_get_cpu_count(); ++i)
 		{
-			buffers[i] = (void *) ((unsigned int) (buffers + shmac_get_cpu_count())
-				+ (unsigned int) (64 * i));
+			buffers[i] = bram_allocate(0, 64);//(void *) ((unsigned int) (buffers + shmac_get_cpu_count())
+				//+ (unsigned int) (64 * i));
 		}
 
 		sha256_pad_le_block(global_block, 3, 3);
