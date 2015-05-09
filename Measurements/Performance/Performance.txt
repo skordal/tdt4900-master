@@ -1,0 +1,12 @@
+VTTTT
+TTRTT
+TTDRT
+TTTTT
+
+VTTT
+TRTT
+TDRT
+TTTT
+
+
+5X4 = 20. 16 tiles are CPU.
