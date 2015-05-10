@@ -180,5 +180,15 @@ It is clear that it is important to take uncore power into account for schedulin
 
 \section{Heterogenity and Bitcoin Mining}
 
-Heterogeneous systems may, depending on their hardware configuration, be well suited for bitcoin mining. 
+Heterogeneous systems may be configured to include bitcoin mining as an application. This can be
+done by either making a complete, separate bitcoin mining core in a heterogeneous computer
+or by incorporating an accelerator into an existing core or as a peripheral in such a system.
+
+The Zedboard is a platform using a Zynq-7020 system-on-chip from Xilinx, which consists of
+two Cortex-A9 processors, various peripherals and an FPGA area. This platform was evaluated in \cite{xcell-bitcoin}
+and \cite{standridge-master} as a possible bitcoin mining platform, by using a separate bitcoin mining
+accelerator. The accelerator included hardware for accelerating both the double SHA-256 calculation
+and for comparing the result with the target value. At 50 MHz they obtained a performance of about
+0.8~MdH/s\footnote{Mega doublehashes per second}. Because of this accelerators specialization compared
+to the accelerator implemented in this project it is hard to compare the figures directly. \cite{xcell-bitcoin}
 
