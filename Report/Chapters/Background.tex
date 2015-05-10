@@ -2,7 +2,7 @@
 \label{cha:background}
 
 In order to understand how and why heterogeneous systems can be applied to the problem of
-bitcoin mining, it is first important to obtain an understanding of how the bitcoin system
+bitcoin mining, it is first important to obtain an understanding of how the bitcoin currency
 works and what heterogeneous computing is.
 
 \section{The Bitcoin Currency}
@@ -64,8 +64,8 @@ pools difficulty requirements as well as the network requirements; in that case 
 submitted to the bitcoin network and all the miners who submitted work towards finding the block
 is rewarded according to their contribution.
 
-As such, pooled mining lets anyone with weaker hardware, such as regular CPUs or GPUs, participate
-in bitcoin mining in exchange for a small reward.
+As such, pooled mining lets anyone with weaker hardware participate in bitcoin mining in exchange for
+a small reward.
 
 \section{Existing Bitcoin Hardware}
 
@@ -75,46 +75,48 @@ bitcoin miners soon turned to GPUs in order to improve the performance and power
 process. GPUs provide the possibility of running many hashing processes in parallel, in some cases
 exceeding 1 GH/s\cite{bitcoin-hardware-cmp}. FPGA-based bitcoin mining hardware provide
 better power efficiency than GPUs due to the possibility of tailoring the hardware design to
-bitcoin mining.
+bitcoin mining.\todo{Move to related work?}
 
 However, as bitcoin mining have become more profitable, ASIC-based bitcoin miners have taken over
 the market and currently dominates in terms of performance and power efficiency, with performance
-exceeding 200 GH/s\todo{reference http://www.spondoolies-tech.com/products/sp35-yukon-power-shipping-from-stock}
+exceeding 200 GH/s \todo{reference http://www.spondoolies-tech.com/products/sp35-yukon-power-shipping-from-stock}
 per chip\todo{Power?} \cite{bespoke-silicon}.
 
-\section{Rise of Dark Silicon, and the four areas of solution}
+\section{Heterogenity and Dark Silicon}
 \label{sec:dark-silicon}
-As Taylor\cite{dark-silicon} points out, transistor density on a CMOS chip continue to double every two years, according to Moore's Law.
-Native transistor speed also increases with a factor of 1,4x.
-Energy efficiency on the other hands improves only with 1,4x, and under a constant power budget, it will cause a 2x shortfall in energy budget to power a chip at its native frequency.
-The utulization of a chip's potential is thus falling expentionally by 2x per generation.
+
+Moore's law states that transistor density on integrated chips continue to double every
+two years. In addition, native transistor speeds are increasing with a factor of 1,4.
+According to Dennar scaling, which predicted that the power density of transistors, that
+ism the voltage and current used to operate the transistor, would scale down with the
+size of the transistors, this would not be a problem; however, the energy efficiency
+of transistors are only improving by a factor of 1.4, not keeping up with the scaling
+of transistor sizes.
+
+Under a constant power-budget, there is a shortfall of a factor of 2 in the energy budget,
+and this the utilization potential of a chip is falling exponentially by 2 times each generation.
 If the power limitation were to be based on the current generation, then designs would be 93,75\% dark in eight years.
-This gives the rise to the term "Dark Silicon", the chip must either be underclocked, or parts of it turned off in order to keep within a set power budget.
-This is essentially true for chips where \todo{Hmmm.... sounds cliche} traditional cooling no longer can be efficient enough to \todo{source needed}remove generated heat from a fully powered chip.
+This gives rise to the term ``dark silicon'', where a chip must either be underclocked or parts of
+it turned off, giving rise to ``dark'' areas of the chip, in order to keep to a set power budget.
+This is especially true for chips where the cooling solutions are no longer efficient enough to remove
+the generated heat from a fully powered chip.
 
-According to Dennard scaling, progress were measured by the improvement in transistor speed and count, while according to the new post-Dennard scaling the progress will now be measured by improvement in transistor energy efficiency.
-While reducing delays have been the previous focus, the focus will now be to utilize as much joule from the transistors as possible.
-
-The transistion from single-core to multicore processors in 2005 was a direct response from the industry to this problem, but adding multiple cores does not circumvent the problem on a longer run.
+In order to work around this problem, the industry moved to using multicore processors around 2005.
+However, adding multiple cores does not circumvent the problem in the long run.
 Multicore chips will not scale as transistors shrink, and the fraction of a chip that can be filled with cores running at full frequency is dropping exponentially with each processor generation. 
-Large fractions of the chip will be left dark - either idle for a long time, or significantly underclocked.
-Hence new designs are required, where new architectural techniques "spend" area to "buy" energy efficiency.
+Large fractions of the chip will be left dark - either switched off for a long time, or significantly underclocked.
+Hence new designs are required, where new architectural techniques spend area to buy energy efficiency. \cite{dark-silicon}
 
-\subsection{The Utilization Wall}
-\todo{Tror dette blir overflødig, men har lagt av plass sånn i tilfelle}
-Considered optional for now.
-If written, should contain the details of why there is the Utulization Wall that leads to dark silicon. 
+\subsection{Approaches to the Problem of Dark Silicon}
+The need to work around the problem of dark silicon has lead to several approaches
+being suggested as solutions. In \cite{dark-silicon} Taylor describes a taxonomy called ``The four horsemen'',
+referring to the fact that none of the solutions appear to be ideal.
+These are four proposed responses that are emerging as solutions beyond making multicore chips \cite{dark-silicon2}.
+Taylor argues that future chips will apply not just one of these solutions, but all of them.
+%It can be seen from the success of complex multi-regime devices like MOSFETs that engineering as a field has an enormous tolerance for complexity if the end result is better.
 
-\subsection{The four horsemen: Approaches to the dark silicon problem}
-Taylor explains a taxonomy called "The four horsemen" \cite{dark-silicon}.
-These are four proposed responses that are emerging as solutions as one transition beyond the transitional multicore stop-gap solution. \cite{dark-silicon2}
-When looking back, these responses appeared to be unlikely candidates from the beginning, bringing with them unwelcome burdens in design, manufacturing and programming.
-From an aestethic engineering point of view, none of them would appear ideal.
-Henceforth the term "Horsemen".
-But it can be seen from the success of complex multi-regime devices like MOSFETs that engineering as a field has an enormous tolerance for complexity if the end result is better.
-From this result, Taylor argues that future chips will apply not just one of these alternatives, but all of them.
-
-The four horsemen are called The Shrinking Horseman, The Dim Horseman, The Specialized Horseman and The Dues Ex Machina Horseman.
+The four horsemen are The Shrinking Horseman, The Dim Horseman, The Specialized Horseman and The Deus Ex Machina Horseman,
+each referring to a particular solution to the dark silicon issue. \cite{dark-silicon}
 
 \subsubsection{The Shrinking Horseman}
 Instead of having dark silicon on the chip, one may simply shrink the chip itself.
@@ -177,8 +179,6 @@ This is the use of dark silicon to implement a host of specialized processors\ci
 They can be more energy efficient, or much faster than a general purpose processor.
 Programs are executed where it is most efficient.
 Unused cores are power- and clock gated in order to keep them from wasting energy.
-\todo{Sort of ambigious on its own. Consider removal of sentence}
-Specialized logic focuses on reducing the amount of capacitance that needs to be switched to perform a particular operation.
 
 Specialization is already being realized today in forms of specialized accelerators that span diverse areas such as baseband processing, graphics, computer vision, and media coding.
 These accelerators enable orders-of-magnitude improvements in energy efficiency and performance, especially for computations that are highly parallel.
@@ -210,83 +210,86 @@ There are physical limits to what can be done with \todo{I chose to not elaborat
 New transistors must also be able to compete with MOFSETs in performance.
 Tunnel field-effect transistors (TFET) and nanoelectromechanical system (NEMS) switches are examples on inventions that hint to order-in-magnitude improvements in the leakage problem, but they still fall short in performance.
 
-% TODO: Remove all occurrences of the word "horseman", it's a litterary reference we shouldn't use.
+% Please rewrite the above, the word "horseman" is something we shouldn't use.
 
 \section{Heterogeneous Architectures}
 \label{sec:heterogeneous}
 
-
 \subsection{The Single-ISA Heterogeneous MAny-core Computer}
 \label{sec:shmac}
-The Single-ISA Heterogeneous MAny-core Computer is a proposed infrastructure by NTNU for investigating heterogeneous systems at all abstraction levels, as illustrated in figure \cite{fig:shmacAbstractionLevels}.
-The point is to create a flexible framework in which different heterogeneous processors can be created from a collection of processing elements and accelerators.
-The programming model is kept constant across SHMAC-instances, while underlying implementation changes.
+The Single-ISA Heterogeneous MAny-core Computer is an architecture for investigating heterogeneous systems at all abstraction levels, as illustrated in figure \ref{fig:shmacAbstractionLevels}.
+%The point is to create a flexible framework in which different heterogeneous processors can be created from a collection of processing elements and accelerators. % - Not anymore?
+The programming model is kept constant across SHMAC-instances, while the underlying implementation changes.
 This way, software design space exploration is facilitated.
-It is a tile-based architecture with a mesh interconnect.
-All processor tiles implement the same ARM ISA and the same memory model, in order to achieve a common programming model.\cite{shmac-plan}.
-An illustration of SHMAC can be seen in figure \cite{fig:shmac}.
+It implements a tile-based architecture with a mesh interconnect. All processor tiles implement the same
+ARM ISA and the same memory model, in order to achieve a common programming model \cite{shmac-plan}.
+An illustration of SHMAC can be seen in figure \ref{fig:shmac}.
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.5\textwidth]{Figures/Heterogeneous/SHMACAbstractionLevels}
-    \caption{All levels of abstraction in computing systems, as seen in \cite{shmac-plan}.}
-    \label{fig:shmacAbstracionLevels}
+    \caption{Levels of abstraction in computing systems \cite{shmac-plan}.}
+    \label{fig:shmacAbstractionLevels}
 \end{figure}
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/SHMAC}
-    \caption{High-Level Architecture of ARM-based SHMAC, as seen in \cite{shmac-plan}.}
+    \includegraphics[width=0.95\textwidth]{Figures/Heterogeneous/SHMAC}
+    \caption{High-Level architecture of SHMAC \cite{shmac-plan}.}
     \label{fig:shmac}
 \end{figure}
 
-\todo{PROBLEM: This paragraph is way too similar to original text. Must fix, one way or another. }NTNU argues that the SHMAC-approach gives the right tools to reach the research goles outlined in the plan in \cite{shmac-plan}.
-For software research, SHMAC, makes it possible to explore substantially more diverse systems than the ones currently provided by the industry.
-Furthermore, SHMAC-architectures realized in FPGAs will be significatly faster than using simulators.
-It is expected that co-developing software and hardware will result in substantial cross-fertilization that gives insight into both hardware and software issues.
-And finally, micro- and macro-architecture components can be combined with novel transistor technologies and ASIC realizations to reach research goals at the lower abstraction levels.
+%\todo{PROBLEM: This paragraph is way too similar to original text. Must fix, one way or another. }NTNU argues that the SHMAC-approach gives the right tools to reach the research goles outlined in the plan in \cite{shmac-plan}.
+%For software research, SHMAC makes it possible to explore substantially more diverse systems than the ones currently provided by the industry.
+%Furthermore, SHMAC-based computers realized in FPGAs will be significatly faster than using simulators.
+%It is expected that co-developing software and hardware will result in new knowledge that gives insight into both hardware and software issues.
+%Micro- and macro-architecture components can also be combined with novel transistor technologies and ASIC realizations to reach research goals at even lower abstraction levels.
 
-%Original source, kept for source comparison
+% - Yes, I commented out this stuff: write what you want to say, then use citations to back it up - do not copy from the citations!
+
 %We believe that the SHMAC-approach gives us the right tools to reach the research goals outlined in this plan. For software research, SHMAC makes it possible to explore substantially more diverse systems than those cur- rently provided by the industry. At the same time, SHMAC-architectures realized in FPGAs will be significantly faster than simulator-based approaches. We expect that co-developing software and hardware result in substan- tial cross-fertilization that gives insights into both hardware and software issues. Finally, the SHMAC micro- and macro-architecture components can be combined with novel transistor technologies and ASIC realizations to reach research goals at the lower abstraction levels.
 
 \subsubsection{SHMAC Architecture}
 
-SHMAC is a tile-based architecture, with the processing elements laid out in a rectangular grid with neighbour-to-neighbour connection, using mesh interconnection.
-Six tile types are supported, prior to this project\cite{shmac-plan}:
+SHMAC is a tile-based architecture, with the processing elements laid out in a rectangular grid with neighbour-to-neighbour connection, using a mesh interconnect.
+Several tile types are currently supported, not including the tile described in this report,
+with the most important ones being the processor tile, which contains a Turbo Amber CPU
+\footnote{See section \ref{sec:aht} for a short overview}, a scratchpad tile which functions as
+fast temporary storage, a DRAM tile and an I/O tile for communicating with a host system.
 
-\todo{Entire following list pretty much rip-off, except Amber and Turbo Amber. Sources from elsewhere needed.}
-\begin{description}
-  \item[Amber Processor Tile] Processor tile that contains an ARM Amber processor, caches, peripherals and optional accelerators.
-  It can be seen in figure \ref{fig:shmac-cpu}.
-  \todo{This and next 2 sentences rip-off.}Currently, the peripherals consists of interrupt controller, timers and tile registers.
-  The tile registers are per-tile memory that store local information like the processor ID, the coordinates of the tile, etc. 
-  The caches, router and peripherals are connected to a Wishbone bus.
-  
-  \todo{IMPORTANT! Affected our results!}Caches reduce the average memory latency, but adding caches also add the possibility for coherence problems.
-  This is currently solved by placing shared data in uncachable memory regions, through software. 
-  
-  The processor tile can be equipped with optional accelerators, designed to execute a specified computation in a very effective way.
-  
-  
-  \item[Turbo Amber Processor Tile] \todo{Suggest source needed from Redmine or the internet}Same as previous, but has an ARM Turbo Amber processor with \todo{Needs to be confirmed} higher performance.
-  \item[Scratchpad Tile] Includes memory and a router, but no processing element. 
-  It is is an on-chip memory where the contents are managed by software (e.g. programmer, compiler, system software, etc.).
-  Each scratchpad tile is given a 128 MB address space.
-  The number of scratchpad tiles depends on a number of factors like the amount of block RAM available on the chosen FPGA, the desired access latency, the amount of block RAM used for caches in the processor tiles and the possibility of access contention\cite{shmac-plan}.
-  The memory layout for SHMAC is seen in figure \ref{fig:shmac_memory}.
-  \item[Main Memory Tile] Memory controller tile that gives SHMAC access to off-chip memory.
-  \item[APB Interface] This tile implements the Advanced Peripherals Bus (APB) slave which gives the host processor on the Versatile boards access to SHMACs memory space. 
-  In addition, the APB contains system registers which are used for managing communication with the host system.
-  \item[Dummy Tile] Contains only a router and is used to fill remaining tiles when there is not enough resources available in the target FPGA to fill all tiles with tiles that implement functionality.
-\end{description}
+%\todo{Entire following list pretty much rip-off, except Amber and Turbo Amber. Sources from elsewhere needed.}
+%\begin{description}
+%  \item[Amber Processor Tile] Processor tile that contains an ARM Amber processor, caches, peripherals and optional accelerators.
+%  It can be seen in figure \ref{fig:shmac-cpu}.
+%  \todo{This and next 2 sentences rip-off.}Currently, the peripherals consists of interrupt controller, timers and tile registers.
+%  The tile registers are per-tile memory that store local information like the processor ID, the coordinates of the tile, etc. 
+%  The caches, router and peripherals are connected to a Wishbone bus.
+%  
+%  \todo{IMPORTANT! Affected our results!}Caches reduce the average memory latency, but adding caches also add the possibility for coherence problems.
+%  This is currently solved by placing shared data in uncachable memory regions, through software. 
+%  
+%  The processor tile can be equipped with optional accelerators, designed to execute a specified computation in a very effective way.
+%  
+%  
+%  \item[Turbo Amber Processor Tile] \todo{Suggest source needed from Redmine or the internet}Same as previous, but has an ARM Turbo Amber processor with \todo{Needs to be confirmed} higher performance.
+%  \item[Scratchpad Tile] Includes memory and a router, but no processing element. 
+%  It is is an on-chip memory where the contents are managed by software (e.g. programmer, compiler, system software, etc.).
+%  Each scratchpad tile is given a 128 MB address space.
+%  The number of scratchpad tiles depends on a number of factors like the amount of block RAM available on the chosen FPGA, the desired access latency, the amount of block RAM used for caches in the processor tiles and the possibility of access contention\cite{shmac-plan}.
+%  The memory layout for SHMAC is seen in figure \ref{fig:shmac_memory}.
+%  \item[Main Memory Tile] Memory controller tile that gives SHMAC access to off-chip memory.
+%  \item[APB Interface] This tile implements the Advanced Peripherals Bus (APB) slave which gives the host processor on the Versatile boards access to SHMACs memory space. 
+%  In addition, the APB contains system registers which are used for managing communication with the host system.
+%  \item[Dummy Tile] Contains only a router and is used to fill remaining tiles when there is not enough resources available in the target FPGA to fill all tiles with tiles that implement functionality.
+%\end{description}
 
 
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/SHMAC}
-    \caption{SHMAC Processor tile, as seen in \cite{shmac-plan}.}
-    \label{fig:shmac-cpu}
-\end{figure}
+%\begin{figure}[htb]
+%    \centering
+%    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/SHMAC}
+%    \caption{SHMAC Processor tile \cite{shmac-plan}.}
+%    \label{fig:shmac-cpu}
+%\end{figure}
 
 
 %\subsubsection{SHMAC Memory Map}
@@ -299,12 +302,12 @@ Six tile types are supported, prior to this project\cite{shmac-plan}:
 %
 %The scratchpad tiles have been given a 128 MB address space. The SHMAC architecture supports 1 to k scratchpad tiles where k can be chosen independently of the number of tiles in the SHMAC instance. The number of scratchpad tiles depends on a number of factors like the amount of block RAM available on the chosen FPGA, the desired access latency, the amount of block RAM used for caches in the processor tiles and the possibility of access contention.
 
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/SHMACMemory}
-    \caption{Memory map of ARM-based SHMAC, as seen in \cite{shmac-plan}.}
-    \label{fig:shmac-memory}
-\end{figure}
+%\begin{figure}[htb]
+%    \centering
+%    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/SHMACMemory}
+%    \caption{Memory map of ARM-based SHMAC, as seen in \cite{shmac-plan}.}
+%    \label{fig:shmac-memory}
+%\end{figure}
 
 
 %\subsubsection{Work packages}
