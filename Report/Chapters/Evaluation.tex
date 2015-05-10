@@ -1,23 +1,32 @@
-\chapter{Measurements and Evaluation}
-\label{cha:evaluation}
+\chapter{Results}
 
-Introtext here.
+This chapter presents and analyzes the results obtained using the methodology
+presented in the previous chapter.
 
-Here we present the results from measuring performance and power, and calculate energy efficiency.
-HORAAAY!!
+\section{Performance Results}
 
-\section{Hashing performance}
+Using software-only hashing produced the results in table \ref{tab:Perf-SW}. As can be seen
+in the plot in figure \ref{fig:sw-scaling} adding more processors after the third produces no
+additional performance gain.\todo{We'll rotate this table or maybe move it to an appendix?}
+
+The reason for this is that all cores must make frequent accesses to DRAM, which causes the
+DRAM tile to quickly become congested.
+
+Another interesting effect to note in the results is how the XY routing affects the performance
+of each tile. The more tiles that tries to access main memory through a tile, the less
+performance that tile has; it seems that SHMACs router system favours requests originating
+from other tiles before requests originating from the tile itself.
 
 \begin{table}
 \tiny
 \begin{tabular}{| l || r | r | r | r | r | r | r | r | r | r | r | r | r | r | r | r |}
   \hline 
-  \textbf{SUM \textbackslash T ID} & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13} & \textbf{14} & \textbf{15}   \\
+  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13} & \textbf{14} & \textbf{15}   \\
   \hline                       
   \textbf{13041} & 13041 & - & - & - & - & - & - & - & - & - & - & - & - & - & - & - \\
   \textbf{26105} & 13041 & 13064 & - & - & - & - & - & - & - & - & - & - & - & - & - & - \\
   \textbf{39185} & 13041 & 13064 & 13080 & - & - & - & - & - & - & - & - & - & - & - & - & - \\
-  \textbf{36470} & 11114	& 10801 & 7258 & 7297 & - & - & - & - & - & - & - & - & - & - & - & - \\
+  \textbf{36470} & 11114 & 10801 & 7258 & 7297 & - & - & - & - & - & - & - & - & - & - & - & - \\
   \textbf{36449} & 8064 & 8033 & 4065 & 4063 & 12224 & - & - & - & - & - & - & - & - & - & - & - \\
   \textbf{36452} & 6063 & 6073 & 3047 & 3047 & 9140 & 9082 & - & - & - & - & - & - & - & - & - & - \\
   \textbf{36450} & 4237 & 4244 & 2125 & 2125 & 6367 & 6367 & 10985 & - & - & - & - & - & - & - & -\\
@@ -32,10 +41,39 @@ HORAAAY!!
   \textbf{37645} & 1042 & 1046 & 523 & 523 & 1569 & 1569 & 1569 & 1569 & 4706 & 4706 & 9411 & 1572 & 1572 & 3124 & 1572 & 1572\\
   \hline  
 \end{tabular}
-\caption{Hashing per second, using software only.}
+\caption{Software hash results, using varying numbers of cores}
 \label{tab:Perf-SW}
 \end{table}
 
+\begin{figure}
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=H/s,
+			scaled ticks=false]
+		\addplot[color=red,mark=x] coordinates {
+			(1, 13041)
+			(2, 26105)
+			(3, 39185)
+			(4, 36470)
+			(5, 36449)
+			(6, 36452)
+			(7, 36450)
+			(8, 36457)
+			(9, 36446)
+			(10, 36457)
+			(11, 37640)
+			(12, 36442)
+			(13, 36868)
+			(14, 36447)
+			(15, 36444)
+			(16, 37645)
+		};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Scaling using software hashing}
+	\label{fig:sw-scaling}
+\end{figure}
 
 
 \begin{table}
@@ -68,44 +106,46 @@ HORAAAY!!
 \label{tab:Perf-SHADMA}
 \end{table}
 
-\begin{tikzpicture}
-	\begin{axis}[
-		xlabel=Active processor tiles,
-		ylabel=Sum of hashes]
-	\addplot[color=red,mark=x] coordinates {
-		(1, 13041)
-		(2, 26105)
-		(3, 39185)
-		(4, 36470)
-		(5, 36449)
-		(6, 36452)
-		(7, 36450)
-		(8, 36457)
-		(9, 36446)
-		(10, 36457)
-		(11, 37640)
-		(12, 36442)
-		(13, 36868)
-		(14, 36447)
-		(15, 36444)
-		(16, 37645)
-	};
-	\addplot[color=blue,mark=o] coordinates {
-		(1, 37711)
-		(2, 80237)
-		(3, 117791)
-		(4, 150799)
-	};
-	\addplot[color=green,mark=x] coordinates {
-		(1, 42209)
-		(2, 86979)
-		(3, 126705)
-		(4, 159372)
-	};
-	\end{axis}
+\begin{figure}
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=Sum of hashes]
+		\addplot[color=red,mark=x] coordinates {
+			(1, 13041)
+			(2, 26105)
+			(3, 39185)
+			(4, 36470)
+			(5, 36449)
+			(6, 36452)
+			(7, 36450)
+			(8, 36457)
+			(9, 36446)
+			(10, 36457)
+			(11, 37640)
+			(12, 36442)
+			(13, 36868)
+			(14, 36447)
+			(15, 36444)
+			(16, 37645)
+		};
+		\addplot[color=blue,mark=o] coordinates {
+			(1, 37711)
+			(2, 80237)
+			(3, 117791)
+			(4, 150799)
+		};
+		\addplot[color=green,mark=x] coordinates {
+			(1, 42209)
+			(2, 86979)
+			(3, 126705)
+			(4, 159372)
+		};
+		\end{axis}
+	\end{tikzpicture}
 	%\caption{Sum of hases per second}
 	%\label{fig:Perf-plot}
-\end{tikzpicture}
+\end{figure}
 
 \section{Power and energy efficiency}
 
