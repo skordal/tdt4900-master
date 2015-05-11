@@ -40,7 +40,7 @@ the hash of each transaction is inserted into a merkle tree.
 
 The root of the merkle tree is inserted into the header for the new block together with the hash of the
 previous block and various other fields specified by the standard. If the hash of the header is below the
-target value, the block is successfully mined and transmitted to the network. If the hash does not satisy
+target value, the block is successfully mined and transmitted to the network. If the hash does not satisfy
 the demands of the network, a 32-bit field in the block header, called the \textit{nonce}, can be changed
 to produce a new hash. In addition, transactions can be excluded in order to produce a different merkle
 root for the header.
@@ -88,14 +88,14 @@ per chip\todo{Power?} \cite{bespoke-silicon}.
 
 Moore's law states that transistor density on integrated chips continue to double every
 two years. In addition, native transistor speeds are increasing with a factor of 1,4.
-According to Dennar scaling, which predicted that the power density of transistors, that
-ism the voltage and current used to operate the transistor, would scale down with the
+According to Dennard scaling, which predicted that the power density of transistors, that
+is the voltage and current used to operate the transistor, would scale down with the
 size of the transistors, this would not be a problem; however, the energy efficiency
 of transistors are only improving by a factor of 1.4, not keeping up with the scaling
-of transistor sizes.
+of transistor size.
 
 Under a constant power-budget, there is a shortfall of a factor of 2 in the energy budget,
-and this the utilization potential of a chip is falling exponentially by 2 times each generation.
+and this utilization potential of a chip is falling exponentially by 2 times for each generation.
 If the power limitation were to be based on the current generation, then designs would be 93,75\% dark in eight years.
 This gives rise to the term ``dark silicon'', where a chip must either be underclocked or parts of
 it turned off, giving rise to ``dark'' areas of the chip, in order to keep to a set power budget.
@@ -109,25 +109,32 @@ Large fractions of the chip will be left dark - either switched off for a long t
 Hence new designs are required, where new architectural techniques spend area to buy energy efficiency. \cite{dark-silicon}
 
 \subsection{Approaches to the Problem of Dark Silicon}
-The need to work around the problem of dark silicon has lead to several approaches
-being suggested as solutions. In \cite{dark-silicon} Taylor describes a taxonomy called ``The four horsemen'',
-referring to the fact that none of the solutions appear to be ideal.
-These are four proposed responses that are emerging as solutions beyond making multicore chips \cite{dark-silicon2}.
-Taylor argues that future chips will apply not just one of these solutions, but all of them.
+To work around the problem of dark silicon, several approaches have been suggested as solutions.
+There are four approaches areas suggested by Taylor\cite{dark-silicon}: Shrinking the chip, dimming the chip, specialization and so-called "Deus Ex Machina".
+All four refer to a particular solution to the dark silicon issue.
+
+%The need to work around the problem of dark silicon has lead to several approaches
+%being suggested as solutions. In \cite{dark-silicon} Taylor describes a taxonomy called ``The four horsemen'',
+%referring to the fact that none of the solutions appear to be ideal.
+%These are four proposed responses that are emerging as solutions beyond making multicore chips \cite{dark-silicon2}.
+%Taylor argues that future chips will apply not just one of these solutions, but all of them.
 %It can be seen from the success of complex multi-regime devices like MOSFETs that engineering as a field has an enormous tolerance for complexity if the end result is better.
 
-The four horsemen are The Shrinking Horseman, The Dim Horseman, The Specialized Horseman and The Deus Ex Machina Horseman,
-each referring to a particular solution to the dark silicon issue. \cite{dark-silicon}
+%The four horsemen are The Shrinking Horseman, The Dim Horseman, The Specialized Horseman and The Deus Ex Machina Horseman,
+%each referring to a particular solution to the dark silicon issue. \cite{dark-silicon}
 
-\subsubsection{The Shrinking Horseman}
+%\subsubsection{The Shrinking Horseman}
+\subsubsection{Shrinking the chip}
+
 Instead of having dark silicon on the chip, one may simply shrink the chip itself.
-Taylor\cite{dark-silicon} views these "shrinking chips" as the most pessimistic outcome.
+%Taylor\cite{dark-silicon} views these "shrinking chips" as the most pessimistic outcome.
 Although all chips may eventually shrink somewhat, the ones that shrink the most will be those where dark silicon cannot be applied fruitfully to improve the product.
 \todo{Nært overflødig?}These chips will rapidly turn into low-margin businesses for which further generations of Moore’s law provide small benefit.
+
 Futhermore, there are other effects: Exponentially smaller chips are not exponentially cheaper, since mask cost, design cost and I/O pad aread cannot be amortized. 
 Competition will most likely favor chips that utulizes dark silicon to improve overall product, causing chips that are only shrinked to sell at low market price, causing loss to the company.
 And last, but not least, exponential shrinking leads to exponential rise in power density, and chip temperature will thus follow suit.
-Meeting the temperature limit will reduce the scaling below the nominal 1,4x expected energy efficienty. 
+Meeting the temperature limit will reduce the scaling below the nominal 1,4x expected energy efficienty. \cite{dark-silicon}
 
 %There are also second-order effects assosiated with shrinking chips:
 
@@ -141,15 +148,26 @@ Meeting the temperature limit will reduce the scaling below the nominal 1,4x exp
 %    Meeting the temperature limit will reduce the scaling below the nominal 1,4x expected energy efficienty. 
 %\end{itemize}
 
-\subsubsection{The Dim Horseman}
-%\todo{This subchapter ended up long. Try to see if it can be reduced. Especially NTV}
-According to Taylor\cite{dark-silicon}, as exponentially larger fractions of a chip’s transistors become dark transistors, silicon area becomes an exponentially cheaper resource relative to power and energy consumption.
-Therefore new architectural techniques that spend area to buy energy efficiency is called for.
-Instead of shrinking silicon, one may consider populating dark silicon area with logic that is used only part of the time, and interesting new design possibilities occurs.The term "dim silicon" refers to techniques that put large amounts of otherwise-dark silicon area to productive use by employing heavy underclocking or infrequent use to meet the power budget.
-The architecture has to strategically managing the chip-wide transistor duty cycle to enforce the overall power constraint. 
-Whereas early 90-nm designs such as Cell and Prescott were dimmed because actual power exceeded design-estimated power, more increasingly more elegant methods are converging, that make better trade-offs.Among the dim silicon techniques are dynamically varying the frequency with the number of cores being used, scaling up the amount of cache logic, employing near threshold voltage (NTV) processor designs, and redesigning the architecture to accommodate bursts that temporarily allow the power budget to be exceeded, such as Turbo Boost and computational sprinting.
+%\subsubsection{The Dim Horseman}
+\subsubsection{Dimming the chip}
+While the fractions of dark transistors of the chip increases exponentially, the silicon area become exponantially cheaper as resource, relative to power and energy consumption.
+This gives the opportunity to spend area to buy energy efficiency, and basing new architectures on this.
+\todo{Consider adding a figure to better illustrate the point}Dark silicon area can be populated with logic that is used only part of the time.
+By employing heavy underclocking or infrequent use, large amount of otherwise-dark silicon area are put to productive use while meeting the power budget.
+The term "dim silicon" refers to the techniques based on this approach.
+The architecture has to strategically manage the chip-wide transistor duty cycle, to enforce the overall power constraint. 
 
-%\todo{Consider shorting down or removing entire lists from each sub-chapter, to keep the four horsemen short and concise.}Amond dim silicon methods are: 
+\todo{Consider whether details of dim-silicon implementations/examples should be moved to related work.} The early 90-nm designs of, for instance, Cell and Prescott, were dimmed because actual power exceeded design-estimated power. 
+Lately, more increasingly more elegant methods are converging, that make better trade-offs.Among the dim silicon techniques are dynamically varying the frequency with the number of cores being used, scaling up the amount of cache logic, employing near threshold voltage (NTV) processor designs, and redesigning the architecture to accommodate bursts that temporarily allow the power budget to be exceeded, such as Turbo Boost and computational sprinting. \cite{dark-silicon}
+
+% %\todo{This subchapter ended up long. Try to see if it can be reduced. Especially NTV}
+%According to Taylor\cite{dark-silicon}, as exponentially larger fractions of a chip’s transistors become dark transistors, silicon area becomes an exponentially cheaper resource relative to power and energy consumption.
+%Therefore new architectural techniques that spend area to buy energy efficiency is called for.
+%Instead of shrinking silicon, one may consider populating dark silicon area with logic that is used only part of the time, and interesting new design possibilities occurs.%The term "dim silicon" refers to techniques that put large amounts of otherwise-dark silicon area to productive use by employing heavy underclocking or infrequent use to meet the power budget.
+%The architecture has to strategically managing the chip-wide transistor duty cycle to enforce the overall power constraint. 
+%Whereas early 90-nm designs such as Cell and Prescott were dimmed because actual power exceeded design-estimated power, more increasingly more elegant methods are converging, that make better trade-offs.%Among the dim silicon techniques are dynamically varying the frequency with the number of cores being used, scaling up the amount of cache logic, employing near threshold voltage (NTV) processor designs, and redesigning the architecture to accommodate bursts that temporarily allow the power budget to be exceeded, such as Turbo Boost and computational sprinting.
+
+% %\todo{Consider shorting down or removing entire lists from each sub-chapter, to keep the four horsemen short and concise.}Amond dim silicon methods are: 
 
 %\begin{itemize}
 %    \item Turbo boost, where less core are active, the higher the frequency they may run at.
@@ -175,21 +193,44 @@ Whereas early 90-nm designs such as Cell and Prescott were dimmed because actual
 
 %\end{itemize}
 
-\subsubsection{The Specialized Horseman}
-This is the use of dark silicon to implement a host of specialized processors\cite{dark-silicon}.
-They can be more energy efficient, or much faster than a general purpose processor.
-Programs are executed where it is most efficient.
-Unused cores are power- and clock gated in order to keep them from wasting energy.
+%\subsubsection{The Specialized Horseman}
+\subsubsection{Specialization}
+Specialization means that each within a set of processors, each are specialized for a subset of tasks, increasing energy efficiency or speed than a general purpose processor, for those particular tasks.
+Any application are executed on the processor which is deemed as the most efficient.
+Cores not in use are power- and clock gated, and thus do not waste energy unnecessarily.
 
-Specialization is already being realized today in forms of specialized accelerators that span diverse areas such as baseband processing, graphics, computer vision, and media coding.
-These accelerators enable orders-of-magnitude improvements in energy efficiency and performance, especially for computations that are highly parallel.
-It is expected to se a rise of systems with more coprocessors than general processors.
-Tayler refers to them as coprocessor- dominated architectures, or CoDAs.
+Specialized accelerators already exist today that span diverse areas, including baseband processing, graphics, computer vision and media coding.
+These enable orders-of-magnitude improvements in energy efficiency and performance, especially for computations that are highly parallel.
+Systems with more coprocessors than general purpose processors is anticipated to rise, referred to as coprocessor-dominated architectures, or CoDAs.
 
-One of the expected challenges it the so-called "Tower of Babel" crisis, as the notion of general-purpose computation is fragmented, and the traditional clear lines of communication between programmers and software and the underlying hardware is eliminated.
-For instance, CUDA for NVidia GPUs is not usable for similar architectures, such as AMD.
+Challenges with these systems are expected as well, one of them beeing the so-called "Tower of Babel" crisis.
+\todo{Couldn't find a better way to state this without making it look like the source material. Have a look at it before deadline}The notion of general-purpose computation is fragmented, and the former clear lines of lines of communication between programmers and software and the underlying hardware is eliminated.
+For instance, CUDA for NVidia GPUs cannot be used for similar architectures, such as AMD.
 Overspecialization problems between accelerators that cause them to become inapplicable to closely related classes of computation has been observed.
-In addition, adoption problems are also caused by the excessive costs of programming heterogeneous hardware (such as Sony Playstation 3 vs. Microsoft XBox), and there is always the risk that specialized hardware may become obsolete as standards are revised.
+In addition, adoption problems are also caused by the excessive costs of programming heterogeneous hardware (such as Sony Playstation 3 vs. Microsoft XBox), and there is always the risk that specialized hardware may become obsolete as standards are revised. \cite{dark-silicon}.
+
+
+
+
+
+
+
+
+
+%This is the use of dark silicon to implement a host of specialized processors.
+%They can be more energy efficient, or much faster than a general purpose processor.
+%Programs are executed where it is most efficient.
+%Unused cores are power- and clock gated in order to keep them from wasting energy.
+
+%Specialization is already being realized today in forms of specialized accelerators that span diverse areas such as baseband processing, graphics, computer vision, and media coding.
+%These accelerators enable orders-of-magnitude improvements in energy efficiency and performance, especially for computations that are highly parallel.
+%It is expected to see a rise of systems with more coprocessors than general processors.
+%Tayler refers to them as coprocessor- dominated architectures, or CoDAs.
+
+%One of the expected challenges it the so-called "Tower of Babel" crisis, as the notion of general-purpose computation is fragmented, and the traditional clear lines of communication between programmers and software and the underlying hardware is eliminated.
+%For instance, CUDA for NVidia GPUs is not usable for similar architectures, such as AMD.
+%Overspecialization problems between accelerators that cause them to become inapplicable to closely related classes of computation has been observed.
+%In addition, adoption problems are also caused by the excessive costs of programming heterogeneous hardware (such as Sony Playstation 3 vs. Microsoft XBox), and there is always the risk that specialized hardware may become obsolete as standards are revised. \cite{dark-silicon}.
 
 %\todo{The following sections are expanding challenges to the specialized horseman, beyond the basic. Consider carefully if this delves in too deply of our own project report, and delete it all if so.}
 %The following challenges needs to be adressed:
@@ -202,14 +243,25 @@ In addition, adoption problems are also caused by the excessive costs of program
 %    \item Recent efforts. The UCSD GreenDroid processor. \todo{YEP!}Proposal: This is an example. Move and describe it in related works.
 %\end{itemize}
 
-\subsubsection{The Dues Ex Machina Horseman}
-Taylor notes that this one is the most unpredictable\cite{dark-silicon}.
-He uses the termology "Deus ex machina" from literature or theater, in which the protagonists seem increasingly doomed until the very last moment, when something completely unexpected comes out of nowhere to save the day.
+%\subsubsection{The Dues Ex Machina Horseman}
+\subsubsection{Dues Ex Machina}
+The termology "Deus ex machina" from literature or theater, in which the protagonists seem increasingly doomed until the very last moment, when something completely unexpected comes out of nowhere to save the day.
 In the case for dark silicon, one deus ex machina would be a breakthrough in semiconductor devices.
 The required breakthrough would have to be very fundamental, making it possible to build transistors out of devices other than MOSFETs. 
-There are physical limits to what can be done with \todo{I chose to not elaborate this one further}leakage from MOFSET transistors, and transistors made of other devices can combat this.
+There are physical limits to what can be done with \todo{I chose to not elaborate this one further}leakage from MOFSET transistors, and transistors made of other devices can go beyond these limits.
 New transistors must also be able to compete with MOFSETs in performance.
 Tunnel field-effect transistors (TFET) and nanoelectromechanical system (NEMS) switches are examples on inventions that hint to order-in-magnitude improvements in the leakage problem, but they still fall short in performance.
+Overall, this is the most unpredictable field of solution. \cite{dark-silicon}
+
+
+
+%Taylor notes that this one is the most unpredictable\cite{dark-silicon}.
+%He uses the termology "Deus ex machina" from literature or theater, in which the protagonists seem increasingly doomed until the very last moment, when something completely unexpected comes out of nowhere to save the day.
+%In the case for dark silicon, one deus ex machina would be a breakthrough in semiconductor devices.
+%The required breakthrough would have to be very fundamental, making it possible to build transistors out of devices other than MOSFETs. 
+%There are physical limits to what can be done with \todo{I chose to not elaborate this one further}leakage from MOFSET transistors, and transistors made of other devices can combat this.
+%New transistors must also be able to compete with MOFSETs in performance.
+%Tunnel field-effect transistors (TFET) and nanoelectromechanical system (NEMS) switches are examples on inventions that hint to order-in-magnitude improvements in the leakage problem, but they still fall short in performance.
 
 % Please rewrite the above, the word "horseman" is something we shouldn't use.
 
