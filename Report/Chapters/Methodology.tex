@@ -50,7 +50,7 @@ following method:
     \item Hashing using only the hashing accelerator.
     The processor controls and copies data to and from the hashing module.
     \item Hashing using the hashing accelerator and DMA.
-    The processor controls each module, but the DMA does data transfer.
+    The processor controls each module, but the DMA handles data transfer.
 \end{itemize}
 
 Interrupts are used by the hashing module to signal when it is finished working. However,
@@ -63,6 +63,25 @@ Power usage for the application is determined by measuring the wall-power of the
 that SHMAC is running on both when idle and when running the test applications:
 
 \[P_{application} = P_{running} - P_{idle}\]
+
+
+% WARNING: Mathematical symbols are always explained bit by bit in most papers I have read. And we should explain why we chose this way (lack of counters on-chip)
+
+% NOTE TO SELF: At some point, I think we need to underline the existing problems (cache bug, cache coherency issues, etc.), in order to affirm whenever they affect our test results.
+% Furthermore, a report should always provide the means for the results to be reproduced.
+% Must discuss with Kristian.
+
+% FOLLOWING POST-MEETING:
+
+\section{SHMAC Throughput}
+Write here the numbers from shmac: Expected tile-to-tile routing time, Max throughput on DRAM-access, etc.etc. Anything we know that may impact our testing of the bitcoin mining
+
+Optional: Write the expected max performance if we can calculate them?
+
+\section{Known hazards with SHMAC}
+List up potential problems that SHMAC may give us, due to the known bugs in the system (cache coherency issues with DMA, the infamous cache bug
+
+
 
 %\section{Test benchmark}
 %

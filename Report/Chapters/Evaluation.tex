@@ -96,14 +96,14 @@ Exceptions are processor tile 10, which appears to have no competition with othe
 \end{figure}
 
 Tables \ref{tab:Perf-SHA} and \ref{tab:Perf-SHADMA} shows the results when using the SHA-256 hashing accelerator, and without and with DMA module, respectively.
-Only up to four processors where used, as adding in processors from the second row when scaling from processor 0 caused the application to crash.
+Only up to four processors where used, as adding in processors from the second row when scaling up caused the application to crash.
 The cause is currently unknown.
 
-Both tables shows that the sum of hashes has a near-linear increase, with very low indiviual performance drop.
-It appears that the individual perfomance of each processor varies, with some higher than others, and so far they remain stable. 
+Both tables shows that the sum of hashes has a near-linear increase, with very low indiviual performance drop, when scaling up.
+The individual perfomance of each processor varies, with some higher than others, and appaers remain stable with the scaling. 
 The application uses scratchpad tiles when the SHA-256 hashing module is in use, and positioning combined with XY-routing may be the reason behind the variying performance.
 
-Using DMA shows the same trend, but with increased performance for each tile.
+Using DMA shows the same trend, but with further increased performance for each tile.
 
 \begin{table}
 \begin{tabular}{| l || r r r r |}
@@ -135,14 +135,14 @@ Using DMA shows the same trend, but with increased performance for each tile.
 \label{tab:Perf-SHADMA}
 \end{table}
 
-The results are compared in \ref{fig:Perf-plot}, where software hashing is seen in red, accelerator hashing is seen in blue, and accelerator hashing using DMA is seen in black.
+The results are compared in figure \ref{fig:Perf-plot}. %, where software hashing is seen in red, accelerator hashing is seen in blue, and accelerator hashing using DMA is seen in black.
 As seen in the figure, the hashing modules far outperforms the software hashing, even with only up to four processors in use.
 
 \begin{figure}
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
-			ylabel=Sum of hashes]
+			ylabel=Sum of hashes/S]
 		\addplot[color=red,mark=x] coordinates {
 			(1, 13041)
 			(2, 26105)
@@ -175,7 +175,7 @@ As seen in the figure, the hashing modules far outperforms the software hashing,
 		};
 		\end{axis}
 	\end{tikzpicture}
-	\caption{Sum of hashes per second. Red: SW only, Blue: SHA-256 only, Black: SHA-256 + DMA}
+	\caption{Sum of hashes per second. Red: Software only, Blue: SHA-256 only, Black: SHA-256 + DMA}
 	\label{fig:Perf-plot}
 \end{figure}
 

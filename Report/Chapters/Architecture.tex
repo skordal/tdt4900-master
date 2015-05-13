@@ -16,7 +16,7 @@ SHMAC, which can be seen in figure \ref{fig:SHA-Tile}.
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1.0\textwidth]{Figures/Tile/HashingTile}
-    \caption{SHMAC tile with SHA256 accelerator and DMA}
+    \caption{SHMAC tile with SHA256 accelerator and DMA. New components are shown in red, while pre-existing components are shown in grey.}
     \label{fig:SHA-Tile}
 \end{figure}
 
@@ -75,13 +75,17 @@ The DMA module was made as part of the project to test if separate data transfer
 The DMA consists of a wishbone slave interface accessible for configuration, a wishbone master
 interface for transferring data and the DMA module itself.
 
-%\todo{The 14th commandment: Thou shall satisfy Kristian. The 13th commandment: Thou shall satisfy ME!!!}The Wishbone Slave consists of three registers for each DMA Channel, making it six in total.
-%The registers are used for base source, base destination and detailing the transfer request.
-%When request is activated, the selected channel receives data from the slave, and executes the transfer.
-%An arbiter selects commands from the channels if both are active.
-%Every single command from the channels are passed on to the Wishbone master, which executes the command.
-%The command is either a load or a store command.
-%Any received data from a load command is passed on to the correct channel, and when a channel if finished, the imformation is passed from the Wishbone Master to the Wishbone Slave, so it can modify its registers and interrupt the CPU. 
+%NOTE TO SELF: The way the text is now, there is no explanation of the figure's components.
+%Must keep an eye on the feedback.
+
+%\todo{The 14th commandment: Thou shall satisfy Kristian. The 13th commandment: Thou shall satisfy ME!!!}
+\todo{Hmmm... Can agree that this is a little bit nit-picky. See if this can be summed up shorter and better.}
+The Wishbone Slave consists of three registers for each DMA Channel, making it six in total.
+The registers are used for base source, base destination and detailing the transfer request.
+When request is activated, the selected channel receives data from the slave, and executes the transfer.
+An arbiter arbitrates between the channels if both are active.
+Every single command, either load or store, are passed from the channels to the Wishbone master, where they are executed.
+Any received data from a load command is sent on to the correct channel, and when a channel if finished, the imformation is passed from the Wishbone Master to the Wishbone Slave, so it can modify its registers and interrupt the CPU. 
 
 In addition, the DMA supports switching the endianness of the data it copies. This improves performance
 when used with the SHA256 accelerator, because the results from the accelerator are big-endian numbers
