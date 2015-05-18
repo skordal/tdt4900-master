@@ -7,7 +7,7 @@ works and what heterogeneous computing is.
 
 \section{The Bitcoin Currency}
 \label{sec:bitcoins}
-
+\todo{Overall: While short and concise, I feel that a lot of the facts are coming brash on. Recommendation: Make the introduction to the bitcoin system smoother for new readers. Recommend adding more of the initial history and purpose to do so.}
 Bitcoin, often abbreviated BTC, is a digital currency, using a peer-to-peer network to provide
 a decentralized currency, not relying on banks or financial institutions to process transactions
 or maintain accounts.
@@ -16,8 +16,8 @@ At the core of the bitcoin system is the block chain, a distributed, linked list
 which contains the transactions that have been executed on the network since the previous block was
 generated.
 
-A block is only valid if the arithmetic value of the double SHA-256 hash of its header is below
-a certain target value. Finding a block that has such a header is computing intensive, and prevents
+A block is only valid if the arithmetic value of the double \todo{Could probably use a little less to-the-point description regarding first mention of SHA-256}SHA-256 hash of its header is below
+a certain target value. Finding a block that has such a header is \todo{Why is it computing intensive?}computing intensive, and prevents
 the network from being flooded with new blocks. The target value is decided by the network ``difficulty''
 and is set to such a value that, on average, six new blocks are generated per hour.
 
@@ -27,11 +27,25 @@ the reward decreases over time until a predetermined number of bitcoins have ent
 The reward is currently 25 bitcoins and halves every 210~000 blocks. The total number of bitcoins
 that is to be generated is 21~000~000 bitcoins. \cite{bitcoin}
 
+\subsection{The SHA-256 Algorithm}
+\subsubsection{Cryptography}
+\textbf{Optional.}
+
+\textbf{Where SHA-256 originally came from. Mention briefly the original idea}
+
+\subsubsection{SHA-256}
+\textbf{Check if Appendix A is appropriate enough}
+
+
+
+\subsection{The SHA-2 Algorithm}
+\textbf{Optional. SHA-2 Algorithms are all the same, but with different number parameters}
+
 \subsection{Mining Bitcoins}
 \label{sec:bitcoin-mining}
 
 The process of creating a new block for the bitcoin blockchain is often referred to as \textit{mining},
-refering to the fact that a lot of energy may need to be expended in order to find a valid block.
+refering to the fact that a \todo{Why does it take a lot? Explaination expected in SHA-256 subchapter. Make sure it is done!} lot of energy may need to be expended in order to find a valid block.
 
 The process begins with the creation of a transaction that transfers the reward for generating the block
 into the account of the miner. This transaction is often called the coinbase or generation transaction.
@@ -60,7 +74,7 @@ To overcome this problem, mining pools were invented. A bitcoin mining pool is a
 work between miners. The work that is distributed has a lower target value than does the bitcoin network
 itself, meaning that each participating miner can find valid blocks faster. Although most of the blocks
 submitted to a pool does not fulfill the network requirements, sometimes a block does fulfill both the
-pools difficulty requirements as well as the network requirements; in that case the new block is
+pools \todo{Recommend examples. The easier for the reader, the better}difficulty requirements as well as the network requirements; in that case the new block is
 submitted to the bitcoin network and all the miners who submitted work towards finding the block
 is rewarded according to their contribution.
 
@@ -68,8 +82,10 @@ As such, pooled mining lets anyone with weaker hardware participate in bitcoin m
 a small reward. However, unless that hardware can produce at least a couple of gigahashes per second
 the reward will be on the scale of nanobitcoins per hour.
 
-\section{Existing Bitcoin Hardware}
+\section{History of Bitcoin Mining}
+\textbf{Propose this chapter to replace "Bitcoin Hardware". Should not only contain the brief mentions of technology, but the way to achieve them, and lesson's learned underway (escially important for ASIC's having unexpected high energy use, and thus the way to the dark silicon area). Should end with going into dark silicon-problem.}
 
+\section{Existing Bitcoin Hardware}
 Due to bitcoin's popularity and the possibility of profits, various specialized hardware has been used
 to accelerate the process. Starting with simple programmes running on general-purpose processors,
 bitcoin miners soon turned to GPUs in order to improve the performance and power efficiency of the
@@ -366,6 +382,11 @@ The tile registers are private for each tile and contain information like the ti
 \end{figure}
 
 
-%\subsubsection{Work packages}
+\subsubsection{Work packages}
+\textbf{Currently optional. Remove if nothing is worthwhile to mention. (LA STÅ)}
 
+\subsection{SHMAC Performance}
+\textbf{Optional chapter position (if not in Methodology). DRAM throughput, routing speed, known costs, etc.}
 
+\subsection{SHMAC Achievements}
+\textbf{Just hit my mind: What other projects have they achieved something noteworthy for SHMAC, that we may mention?}
