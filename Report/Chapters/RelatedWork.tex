@@ -1,6 +1,7 @@
 \chapter{Related Work}
 \label{cha:related-work}
 
+
 \section{Heterogeneous Processors}
 
 Heterogenenous architectures offers various possibilities for improved performance and power efficiency;
@@ -188,6 +189,34 @@ Clearly it is important to take uncore power into account for scheduling operati
     \caption{Core and uncore energy contricution for big cores and fixed uncores, as seen in \cite{heterogeneous-uncore}.}
     \label{fig:Uncore3}
 \end{figure}
+
+% Maybe we can reorganize to get the stuff below into a proper context?
+
+\section{ASIC Bitcoin Miners}
+
+The need for more high-performance and power efficient bitcoin miners caused implementors of bitcoin
+miners to turn to ASIC solutions \cite{bespoke-silicon}.
+
+One such design is the Goldstrike 1 architecture, which is an ASIC-based bitcoin mining solution capable
+of reaching 2~TH/s. To reach the performance requirements, a bitcoin mining core was created that was
+able to perform at 125 GH/s. Four of these were combined in one package, with four of these packages
+then combined on a circuit board to produce the target performance.
+
+The Goldstrike cores consist of an architecture with 120 hash engines running in parallel.
+A hash engine searches through all possible values of the 32-bit nonce field in the bitcoin header
+(see section \ref{sec:bitcoin-mining}) in order to find a valid hash.
+
+The hash engines uses a pipelined double-SHA256 implementation, with each round of the hash calculation
+unrolled into a pipeline.
+
+Tinished ASIC chips, each with four bitcoin mining cores, was measured to provide 504~GH/s while using
+500~W of power. This gives a power efficiency of about 1~GH/J.
+
+Interestingly, the architecture provided challenges when it comes to powering and cooling the chips.
+Because the architecture uses all available computing power for bitcoin mining all the time while
+the chips are in use, no parts of the chips can be turned off to save power. \cite{goldstrike}
+
+% Fun fact, GH/Ws = G/J
 
 \section{Heterogenity and Bitcoin Mining}
 
