@@ -47,14 +47,17 @@ root for the header.
 
 If more than one new block is pushed to the network at about the same time, the block chain diverges.
 This situtation is resolved when the next block is generated; the longest block chain is then accepted
-as the proper block chain. \cite{bitcoin}
+as the canonical block chain. \cite{bitcoin}
 
 \subsection{Pooled Bitcoin Mining}
 
 Because an increasing amount of computing power is being used to mine bitcoins, the difficulty of finding
-a block has increased to such a level that no single bitcoin miner can hope to mine. The current total
-hashing rate is about 396,5~EH/s ($396,5\cdot 10^{18}$ H/s) according to the statistics available from
-\texttt{blockchain.info}.
+a block has increased to such a level that no single bitcoin miner can hope to find a block on his or her
+own. The current total hashing rate is about 396,5~EH/s\footnote{$396,5\cdot 10^{18}$} H/s) according to the
+statistics available from \texttt{blockchain.info}. This means that the amount of work one can expect to
+do in order to find a block is, on average, 237,9~ZH\footnote{$237,9\cdot 10^{21}$ hashes}! Using, for instance,
+a GPU-based bitcoin miner with a hashrate of 1~GH/s, it would take, on average, $237,9\cdot 10^{14}$ seconds,
+or 7~543~759 years to find a block.
 
 To overcome this problem, mining pools were invented. A bitcoin mining pool is a service that distributes
 work between miners. The work that is distributed has a lower target value than does the bitcoin network
@@ -65,8 +68,8 @@ submitted to the bitcoin network and all the miners who submitted work towards f
 is rewarded according to their contribution.
 
 As such, pooled mining lets anyone with weaker hardware participate in bitcoin mining in exchange for
-a small reward. However, unless that hardware can produce at least a couple of gigahashes per second
-the reward will be on the scale of nanobitcoins per hour.
+a smaller reward. However, using hardware such as regular CPUs and GPUs is still considered unprofitable
+because of these processors' relative performance in comparison with specialized bitcoin mining ASICs.
 
 \section{Existing Bitcoin Hardware}
 
