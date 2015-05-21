@@ -74,156 +74,155 @@ As such, pooled mining lets anyone with weaker hardware participate in bitcoin m
 a smaller reward. However, using hardware such as regular CPUs and GPUs is still considered unprofitable
 because of these processors' relative performance in comparison with specialized bitcoin mining ASICs.
 
-\section{History of Bitcoin Mining}
-
-
-\subsection{CPU}
-Source code for bitcoin-mining began with the CPU, back to early \todo{Find more excact date? Perhaps with together bitcoin itself?}2010. 
-The following code found from \todo{add source: https://github.com/bitoin/bitcoin/blob/master/src/miner.cpp}\cite{bitcoin github} demonstrates the simple algorithm.      
-       
-\begin{lstlisting}%[frame=single]  
-
-while(1)
-    HDR[kNoncePos]++;
-    IF (SHA256(SHA256(HDR)) < (65535 << 208) / DIFFICULTY)
-        return;
-\end{lstlisting}
-
-To further optimize this code, a mid-state buffer.
-This buffer contains the beginning portion of the block header that precedes the nonce, and has the \todo{Make sure this constant intermadiate hash value is described earlier}constant intermediate hash value.
-For each of the 64 rounds of basic encryption, a high number of operations are involved.
-These are 32-bit additions and rotations, bit-wise functions including xors, majority, and mux-functions, and use of an array with 64 32-bit constants.
-Every operation in the 64 round encryption is dependant on the preceeding ones, making parallelization of one SHA-256 computation impossible.
-But the different rounds where trying to find a new nonce are independent of each other, and can thus be parallelized.
-
-Multicore CPUs usually have hardware optimized for less regular computations, which result in wasted performance and energy efficiency. \cite{bespoke-silicon}
-
-At the best of its time, the high-end overclocked six-core Core i7 990x eventually reached 33 MH/s when using SIMD extentions.
-
-\subsection{GPU}
+%\section{History of Bitcoin Mining}
+%
+%\subsection{CPU}
+%Source code for bitcoin-mining began with the CPU, back to early \todo{Find more excact date? Perhaps with together bitcoin itself?}2010. 
+%The following code found from \todo{add source: https://github.com/bitoin/bitcoin/blob/master/src/miner.cpp}\cite{bitcoin github} demonstrates the simple algorithm.      
+%       
+%\begin{lstlisting}%[frame=single]  
+%
+%while(1)
+%    HDR[kNoncePos]++;
+%    IF (SHA256(SHA256(HDR)) < (65535 << 208) / DIFFICULTY)
+%        return;
+%\end{lstlisting}
+%
+%To further optimize this code, a mid-state buffer.
+%This buffer contains the beginning portion of the block header that precedes the nonce, and has the \todo{Make sure this constant intermadiate hash value is described earlier}constant intermediate hash value.
+%For each of the 64 rounds of basic encryption, a high number of operations are involved.
+%These are 32-bit additions and rotations, bit-wise functions including xors, majority, and mux-functions, and use of an array with 64 32-bit constants.
+%Every operation in the 64 round encryption is dependant on the preceeding ones, making parallelization of one SHA-256 computation impossible.
+%But the different rounds where trying to find a new nonce are independent of each other, and can thus be parallelized.
+%
+%Multicore CPUs usually have hardware optimized for less regular computations, which result in wasted performance and energy efficiency. \cite{bespoke-silicon}
+%
+%At the best of its time, the high-end overclocked six-core Core i7 990x eventually reached 33 MH/s when using SIMD extentions.
+%
+%\subsection{GPU}
 %The first CUDA miner was released in September 2010, and first OpenCL miner in October 2010.
-The first OpenCL miner was released in October 2010, and was further optimized and adapted by different parties.
-The bitcoin protocol was often implemented in another language, such as Java or Python, while the mining itself was implemented through OpenCL.
-The implementation are consistently a single linear code regian where the nonce at start is based on the thread work item id.
-Both chained 64 SHA256 hash rounds are executed in a single unrolled loop.
-The external memory is usually not accessed in steady state, and when a successfull nonce is found, it is flagged at the ed of the OpenCL routine, and will be acted on by the driver code. 
+%The first OpenCL miner was released in October 2010, and was further optimized and adapted by different parties.
+%The bitcoin protocol was often implemented in another language, such as Java or Python, while the mining itself was implemented through OpenCL.
+%The implementation are consistently a single linear code regian where the nonce at start is based on the thread work item id.
+%Both chained 64 SHA256 hash rounds are executed in a single unrolled loop.
+%The external memory is usually not accessed in steady state, and when a successfull nonce is found, it is flagged at the ed of the OpenCL routine, and will be acted on by the driver code. 
 
 %With the GPUs set to mine for many months, the users would tweak the voltage, the video RAM operating frequencies and the core it self, in order reduce costs where possible and increase througput.
-\todo{Longer version with arguments. Also have a shorter version ready to replace, simply comment this one out}
-With GPU rigs set to mine for many months, the users would tweak the GPUs.
-They would reduce or increase the voltage, either to reduce mining costs, or to achieve higher frequencies
-Lower voltage reduces mining costs, or higher increases frequency and thus increases Gh/s.
-Operating frequencies for viedo ram would be reduced to save energy, since the memory is unused.
-The core itself would be tweaked.
-Input parameters as well, like thread numbers, to balance maximum throughput with stability and temperature limits.
-With the lack of use of floating point units and memory systems, many of the critical paths and bottlenecks are not exercised, giving the system a longer reliability. 
-\todo{Here ends long version}Retuning parameters would be necessary over time, due to the wear-down of fans and power delivery systems, eventually causing critical paths to run too slow.
+%\todo{Longer version with arguments. Also have a shorter version ready to replace, simply comment this one out}
+%With GPU rigs set to mine for many months, the users would tweak the GPUs.
+%They would reduce or increase the voltage, either to reduce mining costs, or to achieve higher frequencies
+%Lower voltage reduces mining costs, or higher increases frequency and thus increases Gh/s.
+%Operating frequencies for viedo ram would be reduced to save energy, since the memory is unused.
+%The core itself would be tweaked.
+%Input parameters as well, like thread numbers, to balance maximum throughput with stability and temperature limits.
+%With the lack of use of floating point units and memory systems, many of the critical paths and bottlenecks are not exercised, giving the system a longer reliability. 
+%\todo{Here ends long version}Retuning parameters would be necessary over time, due to the wear-down of fans and power delivery systems, eventually causing critical paths to run too slow.
+%
+%\textbf{Skipped that AMD did greater than NVidia}
+%
+%\textbf{Skipped software retune}
+%
+%\textbf{Skipped the rig-madness}
+%\textbf{CONSIDER WRITING THE RIG-THINGY}
 
-\textbf{Skipped that AMD did greater than NVidia}
-
-\textbf{Skipped software retune}
-
-\textbf{Skipped the rig-madness}
-\textbf{CONSIDER WRITING THE RIG-THINGY}
-
-GPU-rigs were more accesibale than FPGA's for end users, since the minimal requirement were PC-building skills and avid forum-reading.
-No formal training in parallell computing or FPGA tools were required.
+%GPU-rigs were more accesibale than FPGA's for end users, since the minimal requirement were PC-building skills and avid forum-reading.
+%No formal training in parallell computing or FPGA tools were required.
 %There were a few key restrictions, however:
 %With GPUs followed additional cost in wasted resources, such as necessary motherboards needed for the GPU's, but with unused processors, hard-drive and RAM. 
 %Each GPU demanded power, typically 200-300W per GPU.
 %GPUs used at this scale goes beyond the airflow design of the cases, and the power consumption exceeded natural cooling, power and noise limits.
 %Each GPU needed to be plugged into a PCI-E 8x or 16x slot, which there were few on the commercial motherboards, and OpenCL required each to be attached to a display. 
 
-\textbf{Dropped the GPU rig-limits}
+%\textbf{Dropped the GPU rig-limits}
+%
+%\textbf{Dropped the GPU rig-limits solution}
+%
+%The power consumption on each GPU were 200 Watts or more, making the use of rigs comparable with data centers.
+%For some residental homes, only one or two GPUs could be utulized before the price per KWh was jacked up for the resident.
+%The most successful Bitcoin mining operations tended to relocate to warehouse space with largers volume for air for cooling, and with cheap industrial power rate.
+%
+%At the best of its time, NVidia GPUs like GTX570 reached 155 MH/s rates, while AMD GPUs like 7970, costing \$450, performed as much as 675 MH/s.\cite{bespoke-silicon}
 
-\textbf{Dropped the GPU rig-limits solution}
+%\subsection{FPGA}
+%The first open-source FPGA bitcoin miner was released in June 2011.
+%The FPGAs gave an edge in rotation operations and bit-level operations, but the SHA256's 32-bit addition operations were more difficult.
+%In scaling, the designers created a single SHA-256 module that could be unrolled, specified by a parameter.
+%At maximum unroll, different hardware for each of the 64 rounds of the hash were created, with pipeline registers in between, containing the running hash digest and a full copy of the 512-bit block being hashed.
+%With the state for a current nonce proceeding down the pipeline, one stage per cycle, this allowed a maximum throughput of one hash per cycle.
+%Alternatively, the pipeline could be reduced to calculate a hash every N cycle, while new duplicates of the pipeline could be synthesized.
+%Depending on the size of the FPGA, the trade-off were between the unroll factor and duplication of the pipelines.
+%
+%Power consumption became much higher than typical for FPGA, with the pipeline design giving extremely high activity factor for LUTs.
+%Pre-made boards could not provice enough power current nor heat dissipation to sustain usage, and hackers thus developed custom boards that focused on providing enough power and cooling, and minimalized unused resources (RAM and I/O).
+%Using Spartan XC6SLX150 parts and placing these on quad-chip boards, they achieved a maximum of 860 MH/s at 216 MHz and 39W, at the price of \$1060.
+%
+%Butterfly Labs (BFL) in Kansas offered a non-open-source version, with the price of \$599 with performance at 830 MH/s.
+%They also offered a higher-end Goliath FPGA-based machine, the BFL Mini-rig, with prices at \$15K that achieved 25.2 GH/s, based on Altera FPGAs that each reached 650-750 MH/s per chip.
+%To this point, BLF was the most successfull commercial closed-source Bitcoin company.
+%
+%The prime benefit of using FPGAs were the energy efficiency, where the consumption were to one-fifth, compared to the best non-FPGA solutions.
+%FPGAs had competition from the best GPU-solutions, however, with the FPGA being more expensive with less potential for resale, and with the GPU's using more advanced silicon scaled technology \todo{Had to mention this somewhere. Consider improving}(45-nm vs 28-nm).
+%
+%FPGAs didn't last long before ASIC miners came to the market, but the design laid the foundations for ASICs, and thus were important for the development. 
+%The ASIC Verilog designs were similar to the preceeding FPGA Verilog, as well as the board, packaging and distribution infrastructure, giving already built expertize that would help in the ASIC generation.
+%\cite{bespoke-silicon}
 
-The power consumption on each GPU were 200 Watts or more, making the use of rigs comparable with data centers.
-For some residental homes, only one or two GPUs could be utulized before the price per KWh was jacked up for the resident.
-The most successful Bitcoin mining operations tended to relocate to warehouse space with largers volume for air for cooling, and with cheap industrial power rate.
-
-At the best of its time, NVidia GPUs like GTX570 reached 155 MH/s rates, while AMD GPUs like 7970, costing \$450, performed as much as 675 MH/s.\cite{bespoke-silicon}
-
-\subsection{FPGA}
-The first open-source FPGA bitcoin miner was released in June 2011.
-The FPGAs gave an edge in rotation operations and bit-level operations, but the SHA256's 32-bit addition operations were more difficult.
-In scaling, the designers created a single SHA-256 module that could be unrolled, specified by a parameter.
-At maximum unroll, different hardware for each of the 64 rounds of the hash were created, with pipeline registers in between, containing the running hash digest and a full copy of the 512-bit block being hashed.
-With the state for a current nonce proceeding down the pipeline, one stage per cycle, this allowed a maximum throughput of one hash per cycle.
-Alternatively, the pipeline could be reduced to calculate a hash every N cycle, while new duplicates of the pipeline could be synthesized.
-Depending on the size of the FPGA, the trade-off were between the unroll factor and duplication of the pipelines.
-
-Power consumption became much higher than typical for FPGA, with the pipeline design giving extremely high activity factor for LUTs.
-Pre-made boards could not provice enough power current nor heat dissipation to sustain usage, and hackers thus developed custom boards that focused on providing enough power and cooling, and minimalized unused resources (RAM and I/O).
-Using Spartan XC6SLX150 parts and placing these on quad-chip boards, they achieved a maximum of 860 MH/s at 216 MHz and 39W, at the price of \$1060.
-
-Butterfly Labs (BFL) in Kansas offered a non-open-source version, with the price of \$599 with performance at 830 MH/s.
-They also offered a higher-end Goliath FPGA-based machine, the BFL Mini-rig, with prices at \$15K that achieved 25.2 GH/s, based on Altera FPGAs that each reached 650-750 MH/s per chip.
-To this point, BLF was the most successfull commercial closed-source Bitcoin company.
-
-The prime benefit of using FPGAs were the energy efficiency, where the consumption were to one-fifth, compared to the best non-FPGA solutions.
-FPGAs had competition from the best GPU-solutions, however, with the FPGA being more expensive with less potential for resale, and with the GPU's using more advanced silicon scaled technology \todo{Had to mention this somewhere. Consider improving}(45-nm vs 28-nm).
-
-FPGAs didn't last long before ASIC miners came to the market, but the design laid the foundations for ASICs, and thus were important for the development. 
-The ASIC Verilog designs were similar to the preceeding FPGA Verilog, as well as the board, packaging and distribution infrastructure, giving already built expertize that would help in the ASIC generation.
-\cite{bespoke-silicon}
-
-\subsection{ASIC}
-
-Butterfly Labs (BFL), ASICMINER and Avalon were the first three ASIC Bitcoin miners that came to market.
-
-Given their past success with the FPGA miners, BFL were the first ones to announce ASIC products, taking pre-order in June 2012 for three types of machines:
-\todo{Direct rip-off. Fix later}\$149 Jalapenos rated at 4.5 Gh/s, \$1299 SC Sin- gles rated at 60 Gh/s and \$30K SC MiniRigs rated at 1500 Gh/s, all at 65-nm.
-Given the pirces, the machines were expected to generate 20-50 times more bitcoins per dollar, compared to GPUs.
-Each BFL chip in these products contained 16 lanes of double SHA-256 hash pipelines.
-One ASIC was equal to 16 Spartan-6 FPGAs. 
-Originally, shipping was set to November 2012, but after several setbacks the resulting product ended up consuming 4-8 times as much power than expected, forcing BLF to underclock the chip from 500 MHz to 250MHz.
-Heat dissipation was one of the main reasons to why.
-This further required redesign of the systems using the chips:
-\todo{Half-way rip-off. Fix later}The Jalapenos, were supposed to use 1 chip, but were shipped with two chips to achieve the the 4.5 Gh/s rate, and they operated to 6 W per Gh/s. 
-The MiniRigs would ship as three separate 500 Gh/s boxes.
-In the end, the products were shipped in Arpil 2013, five months after intial estimate.
-
-ASICMINER Bitcoin started in July, one month after BFL started taking in pre-orders.
-This team raised funding through online forums, primarily through bitcointalk.org, where the team kept open communication with the community and \todo{get confimred}funders.
-
-\textbf{Skipped industry-standard flow (verilog, simulation, etc.etc.)}
-
-The final spec was released in September 2012, after carefully designing the product.
-It would run on 1.05V, frequency at 335 MHz, size at 6 mm x 6 mm QFN40 package, and power consumption was at 4.2 W per Gh/s, the scaling at 6-metal 130-nm process, with a simple memory mapped interface for writing, midstate, data and nonces \todo{Huh? Den skjønte jeg ikke, lar stå til jeg forstår}into the part. 
-\todo{Same as previous}The part would contain a single double SHA256 hash unit.
-Essentially, it replicates the Spartan-6 design at a higher frequency, lower power, and far less cost.
-The final design focused on reducing power consumption so that the QFN package could be used to reduce packaging and cooling expenses.
-In addition, Chinese labor was used for the production, reducing the cost for the ASICMINER.
-
-Unfortunately, ASICMINER experienced delay.
-Among them was the shutdown of GLBSE exchange, used for funding and selling the Bitcoin miners, was shut down, resulting for the team to temporarily losing the list over costumers.
-Furthermore, the fab was busy and prioritized bigger companies.
-And later demands to change the design (respin the masks to avoid MLM technology) reduced the throughput.
-ASICMINER also needed to train workers to assemble the units and aquire a warehouse space that had sufficiently stable power and cooling to hos the machines.
-
-\textbf{Skipped phase 2: Direct sale to costumers}
-
-In the end, one ASICMINER performs one hash per clock cycle, similar to the FPGA design, but is 40 times more energy efficient than the 28-nm AMD 7970 GPU, and 4.4 times cheaper per GH/s.
-When \cite{bespoke-silicon} was written, it would sell for 4 BTC each.
-
-The Avalon Bitcoin miner was another grass-root effort, runded by direct Internet pre-sales.
-Their products were rigs, sold for \$1299 each, with hashing rate at 66 GH/s on 600W.
-The technology was a 110-nm TSMC iplementation of a single double-SHA256 pipeline. @
-300 chips were packaged across 3 blades inside a 4U-ish machine.
-The first batch reached the costumers in late January 2013.
-
-\cite{bespoke-silicon}
-
-\subsection{TITLE}
-Other stuff.
-Rising difficulty?
-
-\subsection{Scaling of bitcoin hardware}
-
-
-\textbf{Propose this chapter to replace "Bitcoin Hardware". Should not only contain the brief mentions of technology, but the way to achieve them, and lesson's learned underway (escially important for ASIC's having unexpected high energy use, and thus the way to the dark silicon area). Should end with going into dark silicon-problem.}
-
+%%\subsection{ASIC}
+%
+%Butterfly Labs (BFL), ASICMINER and Avalon were the first three ASIC Bitcoin miners that came to market.
+%
+%Given their past success with the FPGA miners, BFL were the first ones to announce ASIC products, taking pre-order in June 2012 for three types of machines:
+%\todo{Direct rip-off. Fix later}\$149 Jalapenos rated at 4.5 Gh/s, \$1299 SC Sin- gles rated at 60 Gh/s and \$30K SC MiniRigs rated at 1500 Gh/s, all at 65-nm.
+%Given the pirces, the machines were expected to generate 20-50 times more bitcoins per dollar, compared to GPUs.
+%Each BFL chip in these products contained 16 lanes of double SHA-256 hash pipelines.
+%One ASIC was equal to 16 Spartan-6 FPGAs. 
+%Originally, shipping was set to November 2012, but after several setbacks the resulting product ended up consuming 4-8 times as much power than expected, forcing BLF to underclock the chip from 500 MHz to 250MHz.
+%Heat dissipation was one of the main reasons to why.
+%This further required redesign of the systems using the chips:
+%\todo{Half-way rip-off. Fix later}The Jalapenos, were supposed to use 1 chip, but were shipped with two chips to achieve the the 4.5 Gh/s rate, and they operated to 6 W per Gh/s. 
+%The MiniRigs would ship as three separate 500 Gh/s boxes.
+%In the end, the products were shipped in Arpil 2013, five months after intial estimate.
+%
+%ASICMINER Bitcoin started in July, one month after BFL started taking in pre-orders.
+%This team raised funding through online forums, primarily through bitcointalk.org, where the team kept open communication with the community and \todo{get confimred}funders.
+%
+%\textbf{Skipped industry-standard flow (verilog, simulation, etc.etc.)}
+%
+%The final spec was released in September 2012, after carefully designing the product.
+%It would run on 1.05V, frequency at 335 MHz, size at 6 mm x 6 mm QFN40 package, and power consumption was at 4.2 W per Gh/s, the scaling at 6-metal 130-nm process, with a simple memory mapped interface for writing, midstate, data and nonces \todo{Huh? Den skjønte jeg ikke, lar stå til jeg forstår}into the part. 
+%\todo{Same as previous}The part would contain a single double SHA256 hash unit.
+%Essentially, it replicates the Spartan-6 design at a higher frequency, lower power, and far less cost.
+%The final design focused on reducing power consumption so that the QFN package could be used to reduce packaging and cooling expenses.
+%In addition, Chinese labor was used for the production, reducing the cost for the ASICMINER.
+%
+%Unfortunately, ASICMINER experienced delay.
+%Among them was the shutdown of GLBSE exchange, used for funding and selling the Bitcoin miners, was shut down, resulting for the team to temporarily losing the list over costumers.
+%Furthermore, the fab was busy and prioritized bigger companies.
+%And later demands to change the design (respin the masks to avoid MLM technology) reduced the throughput.
+%ASICMINER also needed to train workers to assemble the units and aquire a warehouse space that had sufficiently stable power and cooling to hos the machines.
+%
+%\textbf{Skipped phase 2: Direct sale to costumers}
+%
+%In the end, one ASICMINER performs one hash per clock cycle, similar to the FPGA design, but is 40 times more energy efficient than the 28-nm AMD 7970 GPU, and 4.4 times cheaper per GH/s.
+%When \cite{bespoke-silicon} was written, it would sell for 4 BTC each.
+%
+%The Avalon Bitcoin miner was another grass-root effort, runded by direct Internet pre-sales.
+%Their products were rigs, sold for \$1299 each, with hashing rate at 66 GH/s on 600W.
+%The technology was a 110-nm TSMC iplementation of a single double-SHA256 pipeline. @
+%300 chips were packaged across 3 blades inside a 4U-ish machine.
+%The first batch reached the costumers in late January 2013.
+%
+%\cite{bespoke-silicon}
+%
+%\subsection{TITLE}
+%Other stuff.
+%Rising difficulty?
+%
+%\subsection{Scaling of bitcoin hardware}
+%
+%
+%\textbf{Propose this chapter to replace "Bitcoin Hardware". Should not only contain the brief mentions of technology, but the way to achieve them, and lesson's learned underway (escially important for ASIC's having unexpected high energy use, and thus the way to the dark silicon area). Should end with going into dark silicon-problem.}
+%
 %\section{Existing Bitcoin Hardware}
 %Due to bitcoin's popularity and the possibility of profits, various specialized hardware has been used
 %to accelerate the process. Starting with simple programmes running on general-purpose processors,
@@ -240,6 +239,8 @@ Rising difficulty?
 
 \section{The SHA256 Algorithm}
 \todo{Write a short overview}
+
+Mention the compression function, lots of references to it in later chapters.
 
 \section{Heterogenity and Dark Silicon}
 \label{sec:dark-silicon}

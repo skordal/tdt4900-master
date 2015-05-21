@@ -18,32 +18,68 @@ The bitcoin blockchain was started on January 3rd, 2009. At this point, all mini
 using CPU mining. The official bitcoin network client supports mining and was used for this
 purpose. \cite{bitcoin-history}
 
+\subsection{GPU Mining}
 The shift to GPU mining started in July 2010, when the first OpenCL miner was written and
 used in a private mining setup. In September that year, the first open source GPU miner
 was released after the author was paid 10~000 bitcoins, worth about \$600 USD at the time,
 by Jeff Garzik, one of the core bitcoin developers. An open source OpenCL-based miner was
 released shortly after \cite{bitcoin-history}.
 
+OpenCL miners typically computes the double SHA256 hash using a fully unrolled implementation
+of the compression loop. Multiple calculations are run simultaneously exploiting the parallelism
+offered by GPUs. Many miners tweaked parameters of their hardware, such as the voltage and
+clock frequencies of both the video RAM and the GPU core in order to get higher throughput
+and thus reduce the cost of running each GPU, in order to obtain greater profits.
+
+\subsection{FPGA Mining}
+
 FPGA miners appeared in June 2011, providing better power efficiency as compared to GPUs \cite{bespoke-silicon}.
 Early designs were mostly based on the Spartan 6 FPGAs from Xilinx, and could provide a
 performance of between 200~MH/s and 220~MH/s per chip, about the same as contemporary GPUs \cite{bitcoin-hardware-cmp}
-but consuming much less power than their GPU counterparts \cite{bespoke-silicon}.
+but consuming as little as a fifth of the power used by their GPU counterparts \cite{bespoke-silicon}.
 
 % Note: Taylor managed to get the release year of the GPUs he compares performance to wrong,
 % choosing GPUs from 2012 to compare to FPGAs from 2011.
 
-However, neither GPUs nor GPUs can compare to ASICs, specialized chips that started to
-appear on the network in the beginning of 2013 \cite{first-asic-miner}.
+FPGAs provided great advantages to the speed of bitwise functions, which are important for
+the SHA256 algorithm. Popular open-source designs were created so that they could be used
+by different kinds of FPGAs. They consisted of a SHA-256 module which could be configured
+with a specific unroll factor, that is, they had a configurable depth pipeline, each
+consisting of the neccessary hardware for computing a specific number of rounds of the
+SHA256 compression function. Completely unrolling the algorithm created a pipeline of
+64 stages, with a throughput of 1 hash per cycle, while it was also possible to specify
+lesser unroll factors which resulted in fewer pipeline stages and reduced throughput, taking
+several cycles to perform a hash but saving registers and logic resources in the FPGAs.
+The pipelines were duplicated to improve performance.
 
-\section{The Goldstrike Bitcoin Miner}
+Power consumption became much higher than typical for FPGAs, with the pipelined design
+giving extremely high activity factor for LUTs. Pre-made boards could not provice enough
+power nor heat dissipation to sustained usage, and hackers thus developed custom
+boards that focused on providing enough power and cooling with minimal unused resources,
+such as RAM and I/O components. \cite{bespoke-silicon}
 
-The need for more high-performance and power efficient bitcoin miners caused implementors of bitcoin
-miners to turn to ASIC solutions \cite{bespoke-silicon}.
+\subsection{ASIC Miners}
 
-One such design is the Goldstrike 1 architecture, which is an ASIC-based bitcoin mining solution capable
-of reaching 2~TH/s. To reach the performance requirements, a bitcoin mining core was created that was
-able to perform at 125 GH/s. Four of these were combined in one package, with four of these packages
-then combined on a circuit board to produce the target performance.
+Neither GPUs nor GPUs can compare to ASICs, specialized chips that started to appear on the network
+in the beginning of 2013 \cite{first-asic-miner}. It was the need for more high-performance and power
+efficient bitcoin miners caused implementors of bitcoin miners to turn to ASIC solutions.
+
+One of the first ASIC designs were Butterfly Labs' ASIC miners. Having experience developing
+FPGA based mining solutions, the company created an ASIC chip with 16 double SHA256 modules,
+the equivalent of 16 FPGA-based miners. The end-product ended up being delayed when the chips
+ended up consuming more power than expected and had to be underclocked in order to be able
+to cool the chips properly.
+
+ASICMINER was another of the earliest designs, including only one SHA256 hash unit on a chip,
+replicating a single FPGA-based design at a much higher frequency, with better power efficiency
+and a cheaper price. \cite{bespoke-silicon}
+
+\subsubsection{The Goldstrike 1}
+Another ASIC design is the Goldstrike 1 architecture, described in an article in IEEE Micro, which
+is an ASIC-based bitcoin mining solution capable of reaching 2~TH/s. To reach the performance
+requirements, a bitcoin mining core was created that was able to perform at 125 GH/s. Four of
+these were combined in one package, with four of these packages then combined on a circuit board
+to produce the target performance.
 
 The Goldstrike cores consist of an architecture with 120 hash engines running in parallel.
 A hash engine searches through all possible values of the 32-bit nonce field in the bitcoin header
@@ -259,10 +295,9 @@ done by either making a complete, separate bitcoin mining core in a heterogeneou
 or by incorporating an accelerator into an existing core or as a peripheral in such a system.
 
 The Zedboard is a platform using a Zynq-7020 system-on-chip from Xilinx, which consists of
-two Cortex-A9 processors, various peripherals and an FPGA area. This platform was evaluated in \cite{xcell-bitcoin}
-and \cite{standridge-master} as a possible bitcoin mining platform, by using a separate bitcoin mining
+two Cortex-A9 processors, various peripherals and an FPGA area. This platform was evaluated
+as a possible bitcoin mining platform, by using a separate bitcoin mining
 accelerator. The accelerator included hardware for accelerating both the double SHA-256 calculation
 and for comparing the result with the target value. At 50 MHz they obtained a performance of about
-0.8~MdH/s\footnote{Mega doublehashes per second}. Because of this accelerators specialization compared
-to the accelerator implemented in this project it is hard to compare the figures directly. \cite{xcell-bitcoin}
+0.8~MH/s. \cite{xcell-bitcoin,standridge-master}
 
