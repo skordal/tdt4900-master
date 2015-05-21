@@ -40,6 +40,14 @@ does not support doing the two-pass hashing required by the bitcoin protocol, in
 on software to set up correct input data for the second pass. It also relies on software to
 do the neccessary padding of the input data as required by the SHA256 algorithm.
 
+Even for generic SHA256 hashing, several optimizations are possible. The SHA256 algorithm
+includes 64 32-bit constants, one for each round of the compression function. These can be
+stored in a block RAM memory to save some logic resources. However, this occupies valuable
+block ram resources that, in SHMAC, is used both by CPUs and scratchpad memory tiles. Thus,
+using block RAMs for optimization would place limits on how many tiles can be included in
+a SHMAC design; indeed, it was observed when synthesizing that designs with many cores
+would run out of block RAM before other resources according to the synthesis logs.
+
 The module is controlled by the processor using a memory-mapped interface. This allows the use
 of a DMA to offload data transfer between memory and the hashing module. The memory-mapped interface
 provides registers for 512 bits of input and 256 bits of output data, in addition to control and

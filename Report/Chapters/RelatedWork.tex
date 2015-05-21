@@ -1,6 +1,65 @@
 \chapter{Related Work}
 \label{cha:related-work}
 
+% Miner history -> Goldstrike -> Heterogenity -> Heterogenity + bitcoin mining
+
+Because of bitcoins popularity and the competitiveness involved in mining it, there exists
+many different accelerators to improve the performance and energy efficiency of mining systems.
+During the currency's history, hardware for bitcoin mining has evolved from regular, general-purpose
+CPUs to highly specialized ASIC chips.
+
+Likewise, heterogeneous systems have evolved as an answer to dark silicon problems inherent in
+modern processor chips. Different solutions utilizing different aspects of Taylor's proposed
+solutions from section \ref{sec:taylor} are harnessed in new hardware.
+
+\section{History of Bitcoin Mining}
+
+The bitcoin blockchain was started on January 3rd, 2009. At this point, all mining was done
+using CPU mining. The official bitcoin network client supports mining and was used for this
+purpose. \cite{bitcoin-history}
+
+The shift to GPU mining started in July 2010, when the first OpenCL miner was written and
+used in a private mining setup. In September that year, the first open source GPU miner
+was released after the author was paid 10~000 bitcoins, worth about \$600 USD at the time,
+by Jeff Garzik, one of the core bitcoin developers. An open source OpenCL-based miner was
+released shortly after \cite{bitcoin-history}.
+
+FPGA miners appeared in June 2011, providing better power efficiency as compared to GPUs \cite{bespoke-silicon}.
+Early designs were mostly based on the Spartan 6 FPGAs from Xilinx, and could provide a
+performance of between 200~MH/s and 220~MH/s per chip, about the same as contemporary GPUs \cite{bitcoin-hardware-cmp}
+but consuming much less power than their GPU counterparts \cite{bespoke-silicon}.
+
+% Note: Taylor managed to get the release year of the GPUs he compares performance to wrong,
+% choosing GPUs from 2012 to compare to FPGAs from 2011.
+
+However, neither GPUs nor GPUs can compare to ASICs, specialized chips that started to
+appear on the network in the beginning of 2013 \cite{first-asic-miner}.
+
+\section{The Goldstrike Bitcoin Miner}
+
+The need for more high-performance and power efficient bitcoin miners caused implementors of bitcoin
+miners to turn to ASIC solutions \cite{bespoke-silicon}.
+
+One such design is the Goldstrike 1 architecture, which is an ASIC-based bitcoin mining solution capable
+of reaching 2~TH/s. To reach the performance requirements, a bitcoin mining core was created that was
+able to perform at 125 GH/s. Four of these were combined in one package, with four of these packages
+then combined on a circuit board to produce the target performance.
+
+The Goldstrike cores consist of an architecture with 120 hash engines running in parallel.
+A hash engine searches through all possible values of the 32-bit nonce field in the bitcoin header
+(see section \ref{sec:bitcoin-mining}) in order to find a valid hash.
+
+The hash engines uses a pipelined double-SHA256 implementation, with each round of the hash calculation
+unrolled into a pipeline.
+
+Tinished ASIC chips, each with four bitcoin mining cores, was measured to provide 504~GH/s while using
+500~W of power. This gives a power efficiency of about 1~GH/J.
+
+Interestingly, the architecture provided challenges when it comes to powering and cooling the chips.
+Because the architecture uses all available computing power for bitcoin mining all the time while
+the chips are in use, no parts of the chips can be turned off to save power. \cite{goldstrike}
+
+% Fun fact, GH/Ws = G/J
 
 \section{Heterogeneous Processors}
 
@@ -190,35 +249,10 @@ Clearly it is important to take uncore power into account for scheduling operati
     \label{fig:Uncore3}
 \end{figure}
 
-% Maybe we can reorganize to get the stuff below into a proper context?
-
-\section{ASIC Bitcoin Miners}
-
-The need for more high-performance and power efficient bitcoin miners caused implementors of bitcoin
-miners to turn to ASIC solutions \cite{bespoke-silicon}.
-
-One such design is the Goldstrike 1 architecture, which is an ASIC-based bitcoin mining solution capable
-of reaching 2~TH/s. To reach the performance requirements, a bitcoin mining core was created that was
-able to perform at 125 GH/s. Four of these were combined in one package, with four of these packages
-then combined on a circuit board to produce the target performance.
-
-The Goldstrike cores consist of an architecture with 120 hash engines running in parallel.
-A hash engine searches through all possible values of the 32-bit nonce field in the bitcoin header
-(see section \ref{sec:bitcoin-mining}) in order to find a valid hash.
-
-The hash engines uses a pipelined double-SHA256 implementation, with each round of the hash calculation
-unrolled into a pipeline.
-
-Tinished ASIC chips, each with four bitcoin mining cores, was measured to provide 504~GH/s while using
-500~W of power. This gives a power efficiency of about 1~GH/J.
-
-Interestingly, the architecture provided challenges when it comes to powering and cooling the chips.
-Because the architecture uses all available computing power for bitcoin mining all the time while
-the chips are in use, no parts of the chips can be turned off to save power. \cite{goldstrike}
-
-% Fun fact, GH/Ws = G/J
-
 \section{Heterogenity and Bitcoin Mining}
+
+Because of the need for all available computing power to solve hashes, heterogeneous architectures
+may not seem the best solution for 
 
 Heterogeneous systems may be configured to include bitcoin mining as an application. This can be
 done by either making a complete, separate bitcoin mining core in a heterogeneous computer

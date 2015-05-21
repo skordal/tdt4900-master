@@ -7,18 +7,21 @@ works and what heterogeneous computing is.
 
 \section{The Bitcoin Currency}
 \label{sec:bitcoins}
-\todo{Overall: While short and concise, I feel that a lot of the facts are coming brash on. Recommendation: Make the introduction to the bitcoin system smoother for new readers. Recommend adding more of the initial history and purpose to do so.}
 Bitcoin, often abbreviated BTC, is a digital currency, using a peer-to-peer network to provide
 a decentralized currency, not relying on banks or financial institutions to process transactions
-or maintain accounts.
+or maintain accounts. An account simply consists of a cryptographic keypair, which is used to sign
+and verify transactions, and as such anyone can create as many accounts as they wish. The bitcoin
+project provides a variety of software for interacting with the bitcoin network and managing
+accounts.
 
 At the core of the bitcoin system is the block chain, a distributed, linked list consisting of blocks
 which contains the transactions that have been executed on the network since the previous block was
 generated.
 
-A block is only valid if the arithmetic value of the double \todo{Could probably use a little less to-the-point description regarding first mention of SHA-256}SHA-256 hash of its header is below
-a certain target value. Finding a block that has such a header is \todo{Why is it computing intensive?}computing intensive, and prevents
-the network from being flooded with new blocks. The target value is decided by the network ``difficulty''
+A block is only valid if the arithmetic value of the double SHA-256 hash of its header is below
+a certain target value. Finding a block that has such a header is computing intensive because it
+has to be done through a brute-force search, and this prevents the network from being flooded with
+new blocks. The target value is decided by the network ``difficulty''
 and is set to such a value that, on average, six new blocks are generated per hour.
 
 To get people to participate in creating new blocks, a reward is offered to whomever manages to
@@ -27,25 +30,11 @@ the reward decreases over time until a predetermined number of bitcoins have ent
 The reward is currently 25 bitcoins and halves every 210~000 blocks. The total number of bitcoins
 that is to be generated is 21~000~000 bitcoins. \cite{bitcoin}
 
-\subsection{The SHA-256 Algorithm}
-\subsubsection{Cryptography}
-\textbf{Optional.}
-
-\textbf{Where SHA-256 originally came from. Mention briefly the original idea}
-
-\subsubsection{SHA-256}
-\textbf{Check if Appendix A is appropriate enough}
-
-
-
-\subsection{The SHA-2 Algorithm}
-\textbf{Optional. SHA-2 Algorithms are all the same, but with different number parameters}
-
 \subsection{Mining Bitcoins}
 \label{sec:bitcoin-mining}
 
 The process of creating a new block for the bitcoin blockchain is often referred to as \textit{mining},
-refering to the fact that a \todo{Why does it take a lot? Explaination expected in SHA-256 subchapter. Make sure it is done!} lot of energy may need to be expended in order to find a valid block.
+refering to the fact that a lot of energy may need to be expended in order to find a valid block.
 
 The process begins with the creation of a transaction that transfers the reward for generating the block
 into the account of the miner. This transaction is often called the coinbase or generation transaction.
@@ -77,7 +66,7 @@ To overcome this problem, mining pools were invented. A bitcoin mining pool is a
 work between miners. The work that is distributed has a lower target value than does the bitcoin network
 itself, meaning that each participating miner can find valid blocks faster. Although most of the blocks
 submitted to a pool does not fulfill the network requirements, sometimes a block does fulfill both the
-pools \todo{Recommend examples. The easier for the reader, the better}difficulty requirements as well as the network requirements; in that case the new block is
+pools difficulty requirements as well as the network requirements; in that case the new block is
 submitted to the bitcoin network and all the miners who submitted work towards finding the block
 is rewarded according to their contribution.
 
@@ -86,7 +75,6 @@ a smaller reward. However, using hardware such as regular CPUs and GPUs is still
 because of these processors' relative performance in comparison with specialized bitcoin mining ASICs.
 
 \section{History of Bitcoin Mining}
-
 
 
 \subsection{CPU}
@@ -250,6 +238,9 @@ Rising difficulty?
 %exceeding 200 GH/s \todo{reference http://www.spondoolies-tech.com/products/sp35-yukon-power-shipping-%from-stock}
 %per chip\todo{Power?} \cite{bespoke-silicon}.
 
+\section{The SHA256 Algorithm}
+\todo{Write a short overview}
+
 \section{Heterogenity and Dark Silicon}
 \label{sec:dark-silicon}
 
@@ -276,6 +267,8 @@ Large fractions of the chip will be left dark - either switched off for a long t
 Hence new designs are required, where new architectural techniques spend area to buy energy efficiency. \cite{dark-silicon}
 
 \subsection{Approaches to the Problem of Dark Silicon}
+\label{sec:taylor}
+
 To work around the problem of dark silicon, several approaches have been suggested as solutions.
 There are four approaches areas suggested by Taylor\cite{dark-silicon}: Shrinking the chip, dimming the chip, specialization and so-called "Deus Ex Machina".
 All four refer to a particular solution to the dark silicon issue.
