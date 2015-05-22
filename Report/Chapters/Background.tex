@@ -217,19 +217,48 @@ because of these processors' relative performance in comparison with specialized
 %\cite{bespoke-silicon}
 
 \subsection{Scaling of bitcoin hardware}
-\textbf{Scaling down to 28 nm mentioned. Find and compare with current lowest.}
+\textbf{Scaling down to 28 nm mentioned. Find and compare current lowest.}
 The question remains whether Bitcoin chips will scale well, even further.
-The Dark Silicon problem will require improvement in energy efficiency at about 1.4 times per proess generation.
+The \todo{First mention} Dark Silicon problem will require improvement in energy efficiency at about 1.4 times per proess generation.
 Because of high duty cycles and lack of low-power density SRAMs, Bitcoin logic is close to the worst case for dark silicon, far beyond multicore or GPUs.
 
 BLF ran into this problem with their 65-nm chip, and had to scale back the performance due to power consumption.
 While the "Race to ASIC" was the former focus, energy costs will determine which ASIC will be most profitable, thus energy efficiency must be addressed.
 
-\cite{bespoke silicon}
+\cite{bespoke-silicon}
 
-\subsection{TITLE}
-Other stuff.
-Rising difficulty?
+\subsection{Development of bitcoin}
+
+\subsubsection{Bitcoin currency rating}
+\textbf{Optional. Expand or remove}
+
+\subsubsection{Bitcoin difficulty rating}
+
+\todo{Read before remove}\textbf{Technically Optional, but the way I see it, relevant given the development in the Bitcoin mining history. Also relevant for our problem with not finishing bitcoin miner.}
+
+Figure \ref{fig:bitcoin-difficulty-all} shows how the BTC Mining difficulty has developed exponentially since Bitcoin was released. 
+
+\textbf{Source: http://bitcoin.sipa.be/speed-ever.png. Move this over to bibliography is possible, or find more elegant solution}
+
+Figure \ref{fig:bitcoin-difficulty-devices}, as seen in \cite{bespoke-silicon}, shows the same up to 2014, but also hightligts when each generation was released, from CPU to ASIC.
+
+\textbf{Comment the development. Find facts about it. (currently lower priority)}
+
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Figures/Bitcoin/Difficulty-all}
+    \caption{The BTC Mining Difficulty, overall history from beginning until today.}
+    \label{fig:bitcoin-difficulty-all}
+\end{figure}
+
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Figures/Bitcoin/Difficulty-devices}
+    \caption{The BTC Mining Difficulty, compared to when each generation was introduced, as seen in \cite{bespoce-silicon}.}
+    \label{fig:bitcoin-difficulty-devices}
+\end{figure}
 
 
 %\textbf{Propose this chapter to replace "Bitcoin Hardware". Should not only contain the brief mentions of technology, but the way to achieve them, and lesson's learned underway (escially important for ASIC's having unexpected high energy use, and thus the way to the dark silicon area). Should end with going into dark silicon-problem.}
