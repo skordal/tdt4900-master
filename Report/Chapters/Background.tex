@@ -167,8 +167,10 @@ because of these processors' relative performance in comparison with specialized
 %The ASIC Verilog designs were similar to the preceeding FPGA Verilog, as well as the board, packaging and distribution infrastructure, giving already built expertize that would help in the ASIC generation.
 %\cite{bespoke-silicon}
 
-%%\subsection{ASIC}
-%
+\subsection{ASIC}
+
+\todo{Idea: Using the three companies will almost be a rip-off. Rather, summarize the trend and draw out the key points}
+
 %Butterfly Labs (BFL), ASICMINER and Avalon were the first three ASIC Bitcoin miners that came to market.
 %
 %Given their past success with the FPGA miners, BFL were the first ones to announce ASIC products, taking pre-order in June 2012 for three types of machines:
@@ -213,14 +215,23 @@ because of these processors' relative performance in comparison with specialized
 %The first batch reached the costumers in late January 2013.
 %
 %\cite{bespoke-silicon}
-%
-%\subsection{TITLE}
-%Other stuff.
-%Rising difficulty?
-%
-%\subsection{Scaling of bitcoin hardware}
-%
-%
+
+\subsection{Scaling of bitcoin hardware}
+\textbf{Scaling down to 28 nm mentioned. Find and compare with current lowest.}
+The question remains whether Bitcoin chips will scale well, even further.
+The Dark Silicon problem will require improvement in energy efficiency at about 1.4 times per proess generation.
+Because of high duty cycles and lack of low-power density SRAMs, Bitcoin logic is close to the worst case for dark silicon, far beyond multicore or GPUs.
+
+BLF ran into this problem with their 65-nm chip, and had to scale back the performance due to power consumption.
+While the "Race to ASIC" was the former focus, energy costs will determine which ASIC will be most profitable, thus energy efficiency must be addressed.
+
+\cite{bespoke silicon}
+
+\subsection{TITLE}
+Other stuff.
+Rising difficulty?
+
+
 %\textbf{Propose this chapter to replace "Bitcoin Hardware". Should not only contain the brief mentions of technology, but the way to achieve them, and lesson's learned underway (escially important for ASIC's having unexpected high energy use, and thus the way to the dark silicon area). Should end with going into dark silicon-problem.}
 %
 %\section{Existing Bitcoin Hardware}
@@ -242,7 +253,7 @@ because of these processors' relative performance in comparison with specialized
 
 Mention the compression function, lots of references to it in later chapters.
 
-\section{Heterogenity and Dark Silicon}
+\section{Dark Silicon and Heterogenity}
 \label{sec:dark-silicon}
 
 Moore's law states that transistor density on integrated chips continue to double every
