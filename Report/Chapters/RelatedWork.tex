@@ -109,14 +109,14 @@ power or temperature conditions \cite{heterogeneous-ee, heterogeneous-perf, hete
 
 \subsection{Energy Efficiency}
 \label{subsec:rw_ee} 
-In one experiment, Kumar \textit{et al}\cite{heterogeneous-ee} ran a simulation where they combined four generations from the Alpha family: EV4 (Alpha 21064), EV5 (Alpha 21164), EV6 (Alpha 21264) and a single-threaded version of EV8 (Alpha 21464).
+Kumar \textit{et al}\cite{heterogeneous-ee} ran a simulation where they combined four generations from the Alpha family: EV4 (Alpha 21064), EV5 (Alpha 21164), EV6 (Alpha 21264) and a single-threaded version of EV8 (Alpha 21464), and made a heterogenous multi processor.
 Only one application would run at the time, on one core, while the others were powered down.
-The architecture, with the chosen cores and their relative sizes to one another can be seen in \todo{Figure needs resizing}
+The architecture, with the chosen cores and their relative sizes to one another can be seen in figure
 \ref{fig:Kumar1}.
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/Kumar1}
+    \includegraphics[width=0.5\textwidth]{Figures/Heterogeneous/Kumar1}
     \caption{Cores used in \cite{heterogeneous-ee}, and their relative sizes.}
     \label{fig:Kumar1}
 \end{figure}
@@ -145,16 +145,16 @@ Since the process or thread-level paralellism varies within most systems, a mix 
 
 In contrast to the previous work described in \ref{subsec:rw_ee} by Kumar \textit{et al}, this experiment assigned multiple threads for multiple cores, and best global assignment was considered above best assignment for a selected application.
 EV5 and EV6 from the Alpha family were chosen for this project, with one EV6 nearly equal to five EV5 in size.
-With the total chip area anvailable for the architecture assumed to be 100 \todo{fix exponent}mm\^2, the space could consist of maximum 4 EV6 cores, or 20 EV5 cores.
+With the total chip area anvailable for the architecture assumed to be 100 mm$^2$, the space could consist of maximum 4 EV6 cores, or 20 EV5 cores.
 Three EV6 cores and five EV5 were chosen for this experiment, with expectation that it would perform well over a wide range of available thread-level parallelism. 
 A small number from SPEC2000 benchmarks were chosen, with the focus on evaluating varying number of threads.
 SMTSIM and Simpoint were used for the simulation.
 
-\todo{Mind-blowing, consider removal}Evaluation metric was weighted speedup, which in this context is the arithmetic sum of the individual IPCs of the threads constituting a workload divided by their IPC on a baseline configuration when running alone.
-In addition to performance gain, application response time within varying queue lengths is tested as well, to give insight on how well heterogeneous processors handles large queues, compared to best homogeneous systems.
+%\todo{Mind-blowing, consider removal}Evaluation metric was weighted speedup, which in this context is the arithmetic sum of the individual IPCs of the threads constituting a workload divided by their IPC on a baseline configuration when running alone.
+%In addition to performance gain, application response time within varying queue lengths is tested as well, to give insight on how well heterogeneous processors handles large queues, compared to best homogeneous systems.
 
 Best static scheduling ensures that threads that are least affected by the difference between the EV5 and the EV6, are assigned to the EV5 processors, when all EV6 processors are occupied.
-When the number of threads passes 4, the weighted speedup increases on the heterogeneous system, compared to a homogeneous CMP with 4 EV6.
+When the number of threads passes 4, the measured weighted speedup increases on the heterogeneous system, compared to a homogeneous CMP with 4 EV6.
 When the number of threads passes 13, a CMP with 20 EV5 performs better, though this can be changed with a different combination of EV5 and EV6 cores.
 This is shown in \todo{Didn't show result figure from previous paper, consider if this leads to inconsistency.}figure \ref{fig:Kumar2}.
 
@@ -164,15 +164,18 @@ Using dynamic heuristics for core assignment further increased the performance.
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/Kumar2}
+    \includegraphics[width=0.5\textwidth]{Figures/Heterogeneous/Kumar2}
     \caption{Benefits from heterogeneity - static scheduling for inter-thread diversity, as seen in \cite{heterogeneous-perf}.}
     \label{fig:Kumar2}
 \end{figure}
 
-For testing response time in an open system, and how various que length affects it, jobs with an average distrubition of 200 million cycles were generated randomly and executed.
+In addition to testing the performance gain, Kumar \textit{et al} also tested the the response time within queue lenght as well.
+This was to give insight on how well heterogeneous processors handles large job queues, compared to best homogeneous systems.
+%For testing response time in an open system, and how various que length affects it, jobs with an average distrubition of 200 million cycles were generated randomly and executed.
+For this test, jobs with an average distrubition of 200 million cycles were generated randomly and executed.
 Then different mean job arrival rates with exponential distribution were simulated.
-Testing revealed a great difference between saturation for a homogenous system with 4 EV6, and the heterogeneous processor.
-For the former, the unbounded response time is seen as the arrival rate approaches its maximum throughput around 2 jobs per 100 million cycles.
+It was revealed a great difference between saturation for a homogenous system with 4 EV6, and the heterogeneous processor.
+For the former, the unbounded response time is seen as the arrival rate approached its maximum throughput around 2 jobs per 100 million cycles.
 From there, the run queue became infinate.
 The heterogeneous system remained stable well beyond that point.
 The degredation was also more graceful under heavier loads than for homogeneous processors.
@@ -180,7 +183,7 @@ This can be seen in figure \ref{fig:Kumar3}.
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/Kumar3}
+    \includegraphics[width=0.5\textwidth]{Figures/Heterogeneous/Kumar3}
     \caption{Limiting response-time for various loads, as seen in \cite{heterogeneous-perf}.}
     \label{fig:Kumar3}
 \end{figure}
@@ -188,24 +191,25 @@ This can be seen in figure \ref{fig:Kumar3}.
 \subsection{Optimal architecture}
 \todo{Subchapter needs double check against source papers}
 \label{subsec:rw_arch}
-In a third experiment, Kumar \textit{et al}\cite{heterogeneous-arch} has taken a closer look at what is good heterogeneous design.
+Kumar \textit{et al}\cite{heterogeneous-arch} has taken a closer look at what is good heterogeneous design.
 They argue that while the previous experiments gave increased energy efficiency and performace, a heterogeneous system should be designed from scratch, instead of using pre-existing core designs.
-While they surpassed homogeneous designs, pre-existing cores failed to reach the full potential of heterogeneousy for three reasons: They present low flexibility in choices, the core choices remain monotonic, and third, best heterogeneous design are composed of specialized core architectures\cite{heterogeneous-arch}.
+While they surpassed homogeneous designs, pre-existing cores failed to reach the full potential of heterogeneousy for three reasons: They present low flexibility in choices, the core choices remain monotonic, and best heterogeneous design are composed of specialized core architectures\cite{heterogeneous-arch}.
 But also, if pre-existing cores are not used, additional costs in design, verification and testing must be evaluated, to see if the benefits are worth the cost.
 
-Kumar \textit{et al} made three significant contributions in this experiment. 
+They made three significant contributions in this experiment. 
 First, benefits of heterogeneity in power and area efficient architectures is re-evaluated, with new benefits and higher gains shown.
 Secondly, methodologies for for arriving at good heterogeneous designs are demonstrated.
 Thirdly, a number of key principles critical to effective design of future chip multiprocessors are identified.
 
 Several conclusions were derived:
-\todo{Itemize or cut down at this point}The most efficient heterogeneous multiprocessors were not constructed from cores that make good general-purpose uniprocessor cores, or cores that would appear in a good homogeneous multicure architecture.
+%\todo{Itemize or cut down at this point}
+The most efficient heterogeneous multiprocessors were not constructed from cores that make good general-purpose uniprocessor cores, or cores that would appear in a good homogeneous multicure architecture.
 Each core was individually tuned for a class of applications with common characteristics.
 The results are usually non-monotonic processors.
 And performance advantages of heterogeneous multiprocessors, including non-monotonic also holds for completely homogeneous workloads.
 In those cases, the diversity across different workloads are exploited.
 
-\todo{Just a headnote. Remove when agreed or fixed}\textbf{Simplification assumptions dropped}
+%\todo{Just a headnote. Remove when agreed or fixed}\textbf{Simplification assumptions dropped}
 
 %A number of 480 unique cores could be made from the various parameters set for this experiment.
 %\todo{Makes absolutely sense at all. Cut down or delete, but some way explain what the parameters were.}These were the issue width, I-cache size, D-cache size, L2 Cache size, Memory Channel, number of FP-IntMul-ALU units, IntQ-fpQ and IntFp PhysReg-ROB (OOO), ITLB-DTLB and LD/St Queue.
@@ -236,54 +240,54 @@ The reason was the larger caches of these cores, causing the advances capabiliti
 
 Heterogeneous multicore processors designed from clean slate gives better performance.
 
-\subsection{Uncore}
-\todo{Client worklod description has been cut out. Reconsider if it should be included}
-\label{subsec:rw_uncore}
-Gupta \textit{et al}\cite{heterogeneous-uncore} ran experiments with a heterogeneous multiprocessor, with the goal of measuring the impact of "uncore" power on the energy efficiency of heterogeneous multicore processors.
-In this experiment, they focused on the use of client devices, where energy is a premium resource and the workload profiles are diverse.
-The uncore is a collection of components of a processor, not in the core, but essential for core performance.
-Some of these components are the last level cache (LLC), integrated memory controllers (IMC), on-chip interconnect (OCI), power control logic (PWR), etc.
-With growing cache size and integration of various SoC components on the CPU die, the uncore is becoming an increasingly imporant contributor \cite{heterogeneous-uncore}.
+%\subsection{Uncore}
+%\todo{Client worklod description has been cut out. Reconsider if it should be included}
+%\label{subsec:rw_uncore}
+%Gupta \textit{et al}\cite{heterogeneous-uncore} ran experiments with a heterogeneous multiprocessor, with the goal of measuring the impact of "uncore" power on the energy efficiency of heterogeneous multicore processors.
+%In this experiment, they focused on the use of client devices, where energy is a premium resource and the workload profiles are diverse.
+%The uncore is a collection of components of a processor, not in the core, but essential for core performance.
+%Some of these components are the last level cache (LLC), integrated memory controllers (IMC), on-chip interconnect (OCI), power control logic (PWR), etc.
+%With growing cache size and integration of various SoC components on the CPU die, the uncore is becoming an increasingly imporant contributor \cite{heterogeneous-uncore}.
 
-If a core has varying levels of sleep states, where the "deeper the sleep", the less power used, then uncore will be as active as the most active core.
-If three cores are idle (or on low activity), and one core is on highest activity, then the uncore will be on the highest activity.
-If for a task, the choice is between a big fast core, or a more power efficient small core, and the small core is chosen, the ucore will stay active for longer time, impacting the possible energy saving.
-This can be seen illustrated in figure \ref{fig:Uncore1}.
+%If a core has varying levels of sleep states, where the "deeper the sleep", the less power used, then uncore will be as active as the most active core.
+%If three cores are idle (or on low activity), and one core is on highest activity, then the uncore will be on the highest activity.
+%If for a task, the choice is between a big fast core, or a more power efficient small core, and the small core is chosen, the ucore will stay active for longer time, impacting the possible energy saving.
+%This can be seen illustrated in figure \ref{fig:Uncore1}.
 
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/Uncore1}
-    \caption{Effect of uncore power on the energy efficiency of heterogeneous cores, as seen in \cite{heterogeneous-uncore}.}
-    \label{fig:Uncore1}
-\end{figure}
+%\begin{figure}[htb]
+%    \centering
+%    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/Uncore1}
+%    \caption{Effect of uncore power on the energy efficiency of heterogeneous cores, as seen in \cite{heterogeneous-uncore}.}
+%    \label{fig:Uncore1}
+%\end{figure}
 
 
 %\todo{WARNING}\textbf{Skipped client workload description}
 
-The analysis considered two uncore conficurations: fixed and scalable.
-The first one used the same uncore subsystem for both big and small cores.
-The second modeled an uncore where certain components were turned off or powered down when moving to small cores.
-Examples are fewer memory channels, controllers, or smaller caches used.  
+%The analysis considered two uncore conficurations: fixed and scalable.
+%The first one used the same uncore subsystem for both big and small cores.
+%The second modeled an uncore where certain components were turned off or powered down when moving to small cores.
+%Examples are fewer memory channels, controllers, or smaller caches used.  
 
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/Uncore2}
-    \caption{Energy savings of using small cores, with core-only savings (C), and with SoC-wide savings (C+UC), with a fixed uncore, and with a scalable uncore, as seen in \cite{heterogeneous-uncore}.}
-    \label{fig:Uncore2}
-\end{figure}
+%\begin{figure}[htb]
+%    \centering
+%    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/Uncore2}
+%    \caption{Energy savings of using small cores, with core-only savings (C), and with SoC-wide savings (C+UC), with a fixed uncore, and with a scalable uncore, as seen in \cite{heterogeneous-uncore}.}
+%    \label{fig:Uncore2}
+%\end{figure}
 
-Figure \ref{fig:Uncore2} shows the energy saved when going from big to small core, with both fixed and scaled uncores.
-It is clear that without scaling of the uncores, energy saving is reduced, even wasted in some cases.
-Figure \ref{fig:Uncore3} shows the relative contribution of core and uncore energy consumption for all the applications during big core execution, on a fixed uncore configuration.
+%Figure \ref{fig:Uncore2} shows the energy saved when going from big to small core, with both fixed and scaled uncores.
+%It is clear that without scaling of the uncores, energy saving is reduced, even wasted in some cases.
+%Figure \ref{fig:Uncore3} shows the relative contribution of core and uncore energy consumption for all the applications during big core execution, on a fixed uncore configuration.
 
-Clearly it is important to take uncore power into account for scheduling operations, and design of scalable uncore design is motivated, to obtain better gains from heterogeneous multicores. 
+%Clearly it is important to take uncore power into account for scheduling operations, and design of scalable uncore design is motivated, to obtain better gains from heterogeneous multicores. 
 
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/Uncore3}
-    \caption{Core and uncore energy contricution for big cores and fixed uncores, as seen in \cite{heterogeneous-uncore}.}
-    \label{fig:Uncore3}
-\end{figure}
+%\begin{figure}[htb]
+%    \centering
+%    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/Uncore3}
+%    \caption{Core and uncore energy contricution for big cores and fixed uncores, as seen in \cite{heterogeneous-uncore}.}
+%    \label{fig:Uncore3}
+%\end{figure}
 
 \section{Heterogenity and Bitcoin Mining}
 

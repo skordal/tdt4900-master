@@ -91,7 +91,7 @@ while(1)
 \end{lstlisting}
 
 To further optimize this code, a mid-state buffer has been taken into use.
-This buffer contains the beginning portion of the block header that precedes the nonce, and has the \todo{Make sure this constant intermadiate hash value is described earlier}constant intermediate hash value.
+This buffer contains the beginning portion of the block header that precedes the nonce, and has the \todo{Make sure this constant intermadiate hash value is described earlier (SHA-256 description)}constant intermediate hash value.
 For each of the 64 rounds of basic encryption, a high number of operations are involved.
 These are 32-bit additions and rotations, bit-wise functions including xors, majority, and mux-functions, and use of an array with 64 32-bit constants.
 Every operation in the 64 round encryption is dependant on the preceeding ones, making parallelization of one SHA-256 computation impossible.
@@ -290,7 +290,7 @@ Figure \ref{fig:bitcoin-difficulty-devices}, as seen in \cite{bespoke-silicon}, 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.95\textwidth]{Figures/Bitcoin/Difficulty-devices}
-    \caption{The BTC Mining Difficulty, compared to when each generation was introduced, as seen in \cite{bespoce-silicon}.}
+    \caption{The BTC Mining Difficulty, compared to when each generation was introduced, as seen in \cite{bespoke-silicon}.}
     \label{fig:bitcoin-difficulty-devices}
 \end{figure}
 
@@ -345,8 +345,7 @@ Hence new designs are required, where new architectural techniques spend area to
 \label{sec:taylor}
 
 To work around the problem of dark silicon, several approaches have been suggested as solutions.
-There are four approaches areas suggested by Taylor\cite{dark-silicon}: Shrinking the chip, dimming the chip, specialization and so-called "Deus Ex Machina".
-All four refer to a particular solution to the dark silicon issue.
+Taylor\cite{dark-silicon} have listed up four particular approaches: Shrinking the chip, dimming the chip, specialization and so-called "Deus Ex Machina".
 
 %The need to work around the problem of dark silicon has lead to several approaches
 %being suggested as solutions. In \cite{dark-silicon} Taylor describes a taxonomy called ``The four horsemen'',
@@ -364,12 +363,14 @@ All four refer to a particular solution to the dark silicon issue.
 Instead of having dark silicon on the chip, one may simply shrink the chip itself.
 %Taylor\cite{dark-silicon} views these "shrinking chips" as the most pessimistic outcome.
 Although all chips may eventually shrink somewhat, the ones that shrink the most will be those where dark silicon cannot be applied fruitfully to improve the product.
-\todo{Nært overflødig?}These chips will rapidly turn into low-margin businesses for which further generations of Moore’s law provide small benefit.
+%\todo{Nært overflødig?}
+These chips may rapidly turn into low-margin businesses for which further generations of Moore’s law provide small benefit.
 
-Futhermore, there are other effects: Exponentially smaller chips are not exponentially cheaper, since mask cost, design cost and I/O pad aread cannot be amortized. 
-Competition will most likely favor chips that utulizes dark silicon to improve overall product, causing chips that are only shrinked to sell at low market price, causing loss to the company.
-And last, but not least, exponential shrinking leads to exponential rise in power density, and chip temperature will thus follow suit.
-Meeting the temperature limit will reduce the scaling below the nominal 1,4x expected energy efficienty. \cite{dark-silicon}
+Futhermore, there are other disadvantages: Exponentially smaller chips are not exponentially cheaper, since mask cost, design cost and I/O pad aread cannot be amortized. 
+Competition will most likely favor chips that utulizes dark silicon to improve the overall product, causing chips that are only shrinked to sell at low market price, leading to loss for the company.
+Exponential shrinking also leads to exponential rise in power density, and chip temperature will thus follow suit.
+Meeting the temperature limit will increase the cost, at which the nominal scaling of energy efficiency is reduced below \todo{Feels weird}1.4X.
+%Meeting the temperature limit will reduce the scaling below the expected energy effeciency, at the nominal \todo{Feels weird}1.4X scaling.
 
 %There are also second-order effects assosiated with shrinking chips:
 
