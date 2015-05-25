@@ -16,7 +16,8 @@ solutions from section \ref{sec:taylor} are harnessed in new hardware.
 
 The bitcoin blockchain was started on January 3rd, 2009. At this point, all mining was done
 using CPU mining. The official bitcoin network client supports mining and was used for this
-purpose. \cite{bitcoin-history}
+purpose. The fastest CPU miner, a high-end, overclocked Core i7 990x eventually reached 33~MH/s
+using SIMD extensions in order to improve performance. \cite{bitcoin-history}
 
 \subsection{GPU Mining}
 The shift to GPU mining started in July 2010, when the first OpenCL miner was written and
@@ -29,7 +30,7 @@ OpenCL miners typically computes the double SHA256 hash using a fully unrolled i
 of the compression loop. Multiple calculations are run simultaneously exploiting the parallelism
 offered by GPUs. Many miners tweaked parameters of their hardware, such as the voltage and
 clock frequencies of both the video RAM and the GPU core in order to get higher throughput
-and thus reduce the cost of running each GPU, in order to obtain greater profits.
+and thus reduce the cost of running each GPU, in order to obtain greater profits \cite{bespoke-silicon}.
 
 \subsection{FPGA Mining}
 
@@ -66,9 +67,9 @@ efficient bitcoin miners caused implementors of bitcoin miners to turn to ASIC s
 
 One of the first ASIC designs were Butterfly Labs' ASIC miners. Having experience developing
 FPGA based mining solutions, the company created an ASIC chip with 16 double SHA256 modules,
-the equivalent of 16 FPGA-based miners. The end-product ended up being delayed when the chips
-ended up consuming more power than expected and had to be underclocked in order to be able
-to cool the chips properly.
+the equivalent of 16 FPGA-based miners using a 65~nm process. The end-product ended up being
+delayed when the chips ended up consuming more power than expected and had to be underclocked
+in order to be able to cool the chips properly.
 
 ASICMINER was another of the earliest designs, including only one SHA256 hash unit on a chip,
 replicating a single FPGA-based design at a much higher frequency, with better power efficiency
@@ -97,9 +98,20 @@ the chips are in use, no parts of the chips can be turned off to save power. \ci
 
 % Fun fact, GH/Ws = G/J
 
+\subsection{Scaling of bitcoin hardware}
+Due to the dark silicon problem, future chips will require that parts of it must be powered down or deactivated,
+in order to satisfy a given power budget\cite{dark-silicon2}. As mentioned, bitcoin mining may be close to
+the worst case for dark silicon optimizations, far beyond multicore CPUs or GPUs. Due to bitcoin mining's
+high procesing requirements, the logic needed to run the algorithm cannot be turned off without losing
+performance.
+
+BLF ran into this problem with their 65~nm chip, and had to scale back the performance to reduce power consumtion
+and manage to cool the chip properly. While bitcoin mining began as a ``race to ASIC'', energy costs now determines
+which ASICs are the most profitable and thus energy efficiency is a problem that must be addressed. \cite{bespoke-silicon}
+
 \section{Heterogeneous Processors}
 
-Heterogenenous architectures offers various possibilities for improved performance and power efficiency;
+Heterogenenous architectures offers various possibilities for improved performance and energy efficiency;
 this could be in the systems ability to adapt to various applications or even external conditions such as
 power or temperature conditions \cite{heterogeneous-ee, heterogeneous-perf, heterogeneous-arch}.
 
