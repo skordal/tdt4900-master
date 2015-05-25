@@ -84,6 +84,32 @@ because of these processors' relative performance in comparison with specialized
 
 \section{The SHA-256 Hash Algorithm}
 
+The SHA-256 hash algorithm is defined in \fips{fips180-4} and is a member of the SHA-2
+family of hash functions. Like all hash functions, it works by accepting an arbitrary
+amount of input data and producing a constant-length output. The function is one-way,
+that is, given a hash, it is impossible to determine the input data used to produce
+the hash.
+
+The SHA-256 algorithm works on blocks of 512~bits. Each block is split into an expanded
+block of 2048 words using a message expansion function. Then each extended block is run
+64 times through the SHA-256 compression algorithm, which uses simple bitwise functions
+such as shifts, rotations, logic functions and unsigned addition to create a 256~bit
+output value. Each round uses the output from the previous round as an initial value,
+which is then combined with input data from the expanded message block.
+
+After 64 iterations of the compression function, the result is added to the intermediate
+hash values from any previous blocks, or, if there are no previous blocks, the initial
+value, producing a finished hash.
+
+A more detailed description of the algorithm can be found in appendix \ref{app:hashing-algo}.
+
+In the bitcoin system, a double SHA-256 algorithm is used. To obtain a double hash, the
+output of a previous SHA-256 calculation is simply used as input data to the hashing
+algorithm.
+
+% Is this too little or too vague?
+
+
 %\section{History of Bitcoin Mining}
 %
 %\todo{Remove everything from here and move to Related work!}
