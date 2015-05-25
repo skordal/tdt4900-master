@@ -56,11 +56,19 @@ as the canonical block chain. \cite{bitcoin}
 
 Because an increasing amount of computing power is being used to mine bitcoins, the difficulty of finding
 a block has increased to such a level that no single bitcoin miner can hope to find a block on his or her
-own. The current total hashing rate is about 396,5~EH/s\footnote{$396,5\cdot 10^{18}$ H/s} according to the
+own. Figure \ref{fig:difficulty} illustrates how the difficulty level have risen on the bitcoin network
+since the beginning. The current total hashing rate is about 396,5~EH/s\footnote{$396,5\cdot 10^{18}$ H/s} according to the
 statistics available from \texttt{blockchain.info}. This means that the amount of work one can expect to
 do in order to find a block is, on average, 237,9~ZH\footnote{$237,9\cdot 10^{21}$ hashes}! Using, for instance,
 a GPU-based bitcoin miner with a hashrate of 1~GH/s, it would take, on average, $237,9\cdot 10^{14}$ seconds,
 or 7~543~759 years to find a block.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Figures/Bitcoin/Difficulty-all}
+    \caption{The BTC Mining Difficulty, overall history from beginning until today.}
+    \label{fig:difficulty}
+\end{figure}
 
 To overcome this problem, mining pools were invented. A bitcoin mining pool is a service that distributes
 work between miners. The work that is distributed has a lower target value than does the bitcoin network
@@ -74,9 +82,11 @@ As such, pooled mining lets anyone with weaker hardware participate in bitcoin m
 a smaller reward. However, using hardware such as regular CPUs and GPUs is still considered unprofitable
 because of these processors' relative performance in comparison with specialized bitcoin mining ASICs.
 
+\section{The SHA-256 Hash Algorithm}
+
 \section{History of Bitcoin Mining}
 
-\todo{Must have cryptography and SHA-2 / SHA-256 described before this point, in order for the CPU-chapter to make sense.}
+\todo{Remove everything from here and move to Related work!}
 
 \subsection{CPU}
 Source code for bitcoin-mining began with the CPU, back to early \todo{Find more excact date? Perhaps with together bitcoin itself?}2010. 
@@ -261,40 +271,6 @@ While it began as a "Race to ASIC", energy costs will now determine which ASIC w
 
 \cite{bespoke-silicon}
 
-\subsection{Development of bitcoin}
-
-\subsubsection{Bitcoin currency rating}
-\textit{Optional. Expand or remove}
-
-\subsubsection{Bitcoin difficulty rating}
-
-\todo{Read before remove}\textit{Technically Optional, but the way I see it, relevant given the development in the Bitcoin mining history. Also relevant for our problem with not finishing bitcoin miner.}
-
-Figure \ref{fig:bitcoin-difficulty-all} shows how the BTC Mining difficulty has developed exponentially since Bitcoin was released. 
-
-\textit{Source: http://bitcoin.sipa.be/speed-ever.png. Move this over to bibliography is possible, or find more elegant solution}
-
-Figure \ref{fig:bitcoin-difficulty-devices}, as seen in \cite{bespoke-silicon}, shows the same up to 2014, but also hightligts when each generation was released, from CPU to ASIC.
-
-\textbf{Comment the development. Find facts about it. (currently lower priority)}
-
-
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.95\textwidth]{Figures/Bitcoin/Difficulty-all}
-    \caption{The BTC Mining Difficulty, overall history from beginning until today.}
-    \label{fig:bitcoin-difficulty-all}
-\end{figure}
-
-
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.95\textwidth]{Figures/Bitcoin/Difficulty-devices}
-    \caption{The BTC Mining Difficulty, compared to when each generation was introduced, as seen in \cite{bespoce-silicon}.}
-    \label{fig:bitcoin-difficulty-devices}
-\end{figure}
-
-
 %\textbf{Propose this chapter to replace "Bitcoin Hardware". Should not only contain the brief mentions of technology, but the way to achieve them, and lesson's learned underway (escially important for ASIC's having unexpected high energy use, and thus the way to the dark silicon area). Should end with going into dark silicon-problem.}
 %
 %\section{Existing Bitcoin Hardware}
@@ -310,11 +286,6 @@ Figure \ref{fig:bitcoin-difficulty-devices}, as seen in \cite{bespoke-silicon}, 
 %the market and currently dominates in terms of performance and power efficiency, with performance
 %exceeding 200 GH/s \todo{reference http://www.spondoolies-tech.com/products/sp35-yukon-power-shipping-%from-stock}
 %per chip\todo{Power?} \cite{bespoke-silicon}.
-
-\section{The SHA256 Algorithm}
-\todo{Write a short overview}
-
-Mention the compression function, lots of references to it in later chapters.
 
 \section{Dark Silicon and Heterogenity}
 \label{sec:dark-silicon}
