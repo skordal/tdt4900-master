@@ -53,10 +53,12 @@ static void hash_handler(int unused)
 		sha256_reset(&contexts[shmac_get_tile_cpu_id()]);
 		sha256_hash_block(&contexts[shmac_get_tile_cpu_id()], (uint32_t *) global_block);
 #if BENCHMARK_PASSES == 2
+		state[shmac_get_tile_cpu_id()] = 1;
 	} else {
 		++stats[shmac_get_tile_cpu_id()];
 		sha256_reset(&contexts[shmac_get_tile_cpu_id()]);
 		sha256_hash_hash(&contexts[shmac_get_tile_cpu_id()], buffers[shmac_get_tile_cpu_id()]);
+		state[shmac_get_tile_cpu_id()] = 0;
 	}
 #endif // BENCHMARK_PASSES == 2
 }
