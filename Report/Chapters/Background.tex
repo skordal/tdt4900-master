@@ -84,7 +84,7 @@ because of these processors' relative performance in comparison with specialized
 
 \section{The SHA-256 Hash Algorithm}
 
-%The SHA-256 hash algorithm is defined in \fips{fips180-4} and is a member of the SHA-2
+The SHA-256 hash algorithm is defined in \cite{fips180-4} and is a member of the SHA-2
 family of hash functions. Like all hash functions, it works by accepting an arbitrary
 amount of input data and producing a constant-length output. The function is one-way,
 that is, given a hash, it is impossible to determine the input data used to produce
@@ -311,13 +311,14 @@ Figure \ref{fig:bitcoin-difficulty-devices}, as seen in \cite{bespoke-silicon}, 
 \textbf{Comment the development. Find facts about it. (currently lower priority)}
 
 
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.95\textwidth]{Figures/Bitcoin/Difficulty-all}
-    \caption{The BTC Mining Difficulty, overall history from beginning until today.}
-    \label{fig:bitcoin-difficulty-all}
-\end{figure}
-
+%\begin{figure}[htb]
+%    \centering
+%    \includegraphics[width=0.95\textwidth]{Figures/Bitcoin/Difficulty-all}
+%    \caption{The BTC Mining Difficulty, overall history from beginning until today.}
+%    \label{fig:bitcoin-difficulty-all}
+%\end{figure}
+%
+% COMMENTED OUT: TURNED OUT TO BE A DUPLICATE FROM EARLIER
 
 \begin{figure}[htb]
     \centering
@@ -506,7 +507,7 @@ Specialized hardware also risk becomming obsolete when standards are revised. \c
 The termology "Deus ex machina" comes from literature or theater, in which the protagonists seem increasingly doomed until the very last moment, when something completely unexpected comes out of nowhere to save the day.
 In the case for dark silicon, one deus ex machina would be a breakthrough in semiconductor device technology.
 The required breakthrough would have to be very fundamental, making it possible to build transistors out of devices other than MOSFETs. 
-There are physical limits to what can be done with \todo{I chose to not elaborate this one further. Remove when delivering}leakage from MOFSET transistors, and transistors made of other devices may go beyond these limits.
+There are physical limits to what can be done with \todo{I chose to not elaborate this one further. Remove when delivering, unless we change our mind}leakage from MOFSET transistors, and transistors made of other devices may go beyond these limits.
 New transistors must also be able to compete with MOFSETs in performance.
 Tunnel field-effect transistors (TFET) and nanoelectromechanical system (NEMS) switches are examples on inventions that hint to order-in-magnitude improvements in the leakage problem, but they still fall short in performance.
 Overall, this is the most unpredictable field of solution. \cite{dark-silicon}
@@ -522,13 +523,14 @@ Overall, this is the most unpredictable field of solution. \cite{dark-silicon}
 
 % Please rewrite the above, the word "horseman" is something we shouldn't use.
 
-\section{Heterogeneous Architectures}
-\label{sec:heterogeneous}
-\todo{Used as head chapter, but consider removal if SHMAC is the only heterogeneous computer described.}Heterogeneous multiprocessor contains of specialized processors for different classes of applications, and are the implementation of the specialization approach.
-One such system is the Single-ISA Heterogeneous MAny-core Computer (SMHAC), which is a research project 
+%\section{Heterogeneous Architectures}
+%\label{sec:heterogeneous}
+%\todo{Used as head chapter, but consider removal if SHMAC is the only heterogeneous computer described.}Heterogeneous multiprocessor contains of specialized processors for different classes of applications, and are the implementation of the specialization approach.
+%One such system is the Single-ISA Heterogeneous MAny-core Computer (SMHAC), which is a research project 
 initiated by EECS on NTNU. \cite{shmac-plan}
 
-\subsection{The Single-ISA Heterogeneous MAny-core Computer}
+%\subsection{The Single-ISA Heterogeneous MAny-core Computer}
+\section{The Single-ISA Heterogeneous MAny-core Computer}
 \label{sec:shmac}
 The Single-ISA Heterogeneous MAny-core Computer is an architecture for investigating heterogeneous systems at all abstraction levels, as illustrated in figure \ref{fig:shmacAbstractionLevels}.
 %The point is to create a flexible framework in which different heterogeneous processors can be created from a collection of processing elements and accelerators. % - Not anymore?
@@ -562,7 +564,8 @@ An illustration of SHMAC can be seen in figure \ref{fig:shmac}.
 
 %We believe that the SHMAC-approach gives us the right tools to reach the research goals outlined in this plan. For software research, SHMAC makes it possible to explore substantially more diverse systems than those cur- rently provided by the industry. At the same time, SHMAC-architectures realized in FPGAs will be significantly faster than simulator-based approaches. We expect that co-developing software and hardware result in substan- tial cross-fertilization that gives insights into both hardware and software issues. Finally, the SHMAC micro- and macro-architecture components can be combined with novel transistor technologies and ASIC realizations to reach research goals at the lower abstraction levels.
 
-\subsubsection{SHMAC Architecture}
+%\subsubsection{SHMAC Architecture}
+\subsection{SHMAC Architecture}
 
 SHMAC is a tile-based architecture, with the processing elements laid out in a rectangular grid with neighbour-to-neighbour connection, using a mesh interconnect, using XY-routing.
 %Several tile types are currently supported, not including the tile described in this report,
@@ -570,12 +573,13 @@ SHMAC is a tile-based architecture, with the processing elements laid out in a r
 %\footnote{See section \ref{sec:aht} for a short overview}, a scratchpad tile which functions as
 %fast temporary storage, a DRAM tile and an I/O tile for communicating with a host system.
 
-The supported tile types, not including the tile described in this report, are the following:
+The supported tile types, not including the new tile described in this report, are the following:
 \todo{Entire following list pretty much rip-off, except Amber and Turbo Amber. Sources from elsewhere needed.}
 \begin{description}
-  \item[Amber Processor Tile] Processor tile that contains an ARM Amber processor, caches, peripherals and optional accelerators.
-  It can be seen in figure \ref{fig:shmac-cpu}.
-  \todo{This and next 2 sentences rip-off.}Currently, the peripherals consists of interrupt controller, timers and tile registers.
+  \item[Amber Processor Tile] The Processor tile that contains an ARM Amber processor, caches, peripherals and optional accelerators, and the general concept can be seen in figure \ref{fig:shmac-cpu}.
+  \todo{Describe Amber Briefly}
+  \textbf{Describe Amber Briefly}
+  Currently, the peripherals consists of interrupt controller, timers and tile registers.
   The tile registers are per-tile memory that store local information like the processor ID, the coordinates of the tile, etc. 
   The caches, router and peripherals are connected to a Wishbone bus.
   
@@ -585,7 +589,7 @@ The supported tile types, not including the tile described in this report, are t
   The processor tile can be equipped with optional accelerators, designed to execute a specified computation in a very effective way.
 %  
 %  
-  \item[Turbo Amber Processor Tile] \todo{Suggest source needed from Redmine or the internet}Same as previous, but has an ARM Turbo Amber processor with \todo{Needs to be confirmed} higher performance.
+  \item[Turbo Amber Processor Tile] Same as previous, but has an ARM Turbo Amber processor with higher performance and runs the ARMv4nt instruction set. \cite{turboamber}
   \item[Scratchpad Tile] Includes memory and a router, but no processing element. 
   It is is an on-chip memory where the contents are managed by software (e.g. programmer, compiler, system software, etc.).
   Each scratchpad tile is given a 128 MB address space.
@@ -599,35 +603,41 @@ The supported tile types, not including the tile described in this report, are t
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/SHMACCPU}
+    \includegraphics[width=0.8\textwidth]{Figures/Heterogeneous/SHMACCPU}
     \caption{SHMAC Processor tile \cite{shmac-plan}.}
     \label{fig:shmac-cpu}
 \end{figure}
 
 
-\subsubsection{SHMAC Memory Map}
+%\subsubsection{SHMAC Memory Map}
+\subsection{SHMAC Memory Map}
 
 Figure \ref{fig:shmac-memory} shows how the memory is mapped in ARM-based SHMAC.
 
-The Exception table contains 8 instructions, one for each exception type described on \todo{Not mentioned so far in this document. Consider inclusion}Redmine.
-\todo{Rip-off}The high end of the memory space is reserved for system registers and tile registers. 
+The Exception table contains 8 instructions, one for each exception type described on \todo{Checked Redmine. Coulnd't find it}Redmine.
+The high end of the memory space is reserved for system registers and tile registers. 
 The tile registers are private for each tile and contain information like the tiles coordinates and other useful data while the system registers are used for communication with the host system.
 
 %The scratchpad tiles have been given a 128 MB address space. The SHMAC architecture supports 1 to k scratchpad tiles where k can be chosen independently of the number of tiles in the SHMAC instance. The number of scratchpad tiles depends on a number of factors like the amount of block RAM available on the chosen FPGA, the desired access latency, the amount of block RAM used for caches in the processor tiles and the possibility of access contention.
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/SHMACMemory}
+    \includegraphics[width=0.5\textwidth]{Figures/Heterogeneous/SHMACMemory}
     \caption{Memory map of ARM-based SHMAC, as seen in \cite{shmac-plan}.}
     \label{fig:shmac-memory}
 \end{figure}
 
 
-\subsubsection{Work packages}
-\textbf{Currently optional. Remove if nothing is worthwhile to mention. (LA STÅ)}
+%\subsection{Work packages}
+%\textbf{Currently optional. Remove if nothing is worthwhile to mention. (LA STÅ)}
 
-\subsection{SHMAC Performance}
+\section{SHMAC Interconnect Network}
+\todo{Does affect our results. Worth a brief description?}
+
+%\subsection{SHMAC Performance}
+\section{SHMAC Performance}
 \textbf{Optional chapter position (if not in Methodology). DRAM throughput, routing speed, known costs, etc.}
 
-\subsection{SHMAC Achievements}
+%\subsection{SHMAC Achievements}
+\section{SHMAC Achievements}
 \textbf{Just hit my mind: What other projects have they achieved something noteworthy for SHMAC, that we may mention?}
