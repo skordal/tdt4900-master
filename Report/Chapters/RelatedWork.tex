@@ -76,8 +76,12 @@ replicating a single FPGA-based design at a much higher frequency, with better p
 and a cheaper price. \cite{bespoke-silicon}
 
 \subsubsection{The Goldstrike 1}
-Another ASIC design is the Goldstrike 1 architecture, described in an article in IEEE Micro, which
-is an ASIC-based bitcoin mining solution capable of reaching 2~TH/s. To reach the performance
+Another ASIC design is the Goldstrike 1 architecture, noteworthy because its architecture is
+described in an article in IEEE Micro. Because of the competitive nature of bitcoin mining,
+it is not common for designers of ASIC solutions to reveal too many details about the architecture
+of their chips and few scientifi papers exist on the topic.
+
+The Golstrike is an ASIC-based bitcoin mining solution capable of reaching 2~TH/s. To reach the performance
 requirements, a bitcoin mining core was created that was able to perform at 125 GH/s. Four of
 these were combined in one package, with four of these packages then combined on a circuit board
 to produce the target performance.
@@ -96,7 +100,7 @@ Interestingly, the architecture provided challenges when it comes to powering an
 Because the architecture uses all available computing power for bitcoin mining all the time while
 the chips are in use, no parts of the chips can be turned off to save power. \cite{goldstrike}
 
-% Fun fact, GH/Ws = G/J
+% Fun fact, GH/Ws = GH/J
 
 \subsection{Scaling of bitcoin hardware}
 Due to the dark silicon problem, future chips will require that parts of it must be powered down or deactivated,
