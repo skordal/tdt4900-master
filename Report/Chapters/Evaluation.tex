@@ -183,14 +183,30 @@ As seen in the figure, the hashing modules far outperforms the software hashing,
 
 We must measure the power from the wall, before we can add anything here.
 
+\section{Discussion about NOC efficiency}
+\section{Discussion about SHMAC bugs}
 
+\section{Discossion on various issues}
+% Relevant stuffz copied from methodology:
+%
+%Caches were turned on for each testing, but a bug in the caches can cause several processors to halt over time, making measurements more difficult.
+%Increased number of tiles in used increases the chance for a cache bug to happen.
+%Additionally, no cache coherency protocol is implemented, and all shared data are therefore mapped to uncachable memory.
+%Data hazard may be present when DMA and processor "shares" data, by loading or storing to the same address space in use.
+%DMA may copy outdated data from memory that the cache has not yet written back, or overwrite data that the cache is not aware of.
+%An operating system may handle data coherency where DMA involved, but since this project is done by running the software on bare metal, this security is absent.
+%The Turbo Amber processor uses \todo{Must get it confirmed, and then source linked}write-through policy, so every data update is always written back to memory, \todo{Want to mention "reduced, but not removed", due to how our tests may go} reducing the possibility of data hazard, but not removing it.
 
+%Interrupt handling for the hashing module is always in use, when the accelerator is used.
 
+%The DMA Module is made only for transfering 32-bit words individually at a time.
+%When transferring data internal on the tile (regular tile registers, hashing registers and DMA registers), this is all the local system requires, as the tile modules does not provide full blocks of \todo{Use of wishbone, with size 128, is not yet provided}4 words.
+%\todo{Merely an assumption. We haven't tested this.}But when running the hashing in software only, the system is likely to achieve better data transfer rate using regular processor data transfer of 4 words, through the caches, since the current DMA would require 4 individual transfer, compared to the processor.
 
+%The use of the included sub-module in the DMA that moves the bytes from high endian to little endian should further improve the performance and energy efficiency, by relieving the software for this task.
+%The byte flip is done through combinatorical circuits, and should not add any extra execution time.
+%Wihtout it, the software would require several independent operations, for loading in and shifting every single byte to the correct position of the word.
 
-
-
-
-
-
+%Additionally, polling is used to control when a DMA is finished.
+%Ideally, interrupt handling is preferable, but the interrupt handler for the DMA would not \todo{yet}work. 
 
