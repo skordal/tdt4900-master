@@ -22,7 +22,9 @@
 #define ENABLE_NUM_CORES	20000
 #endif
 
+#ifndef BENCHMARK_PASSES
 #define BENCHMARK_PASSES	1
+#endif
 
 static volatile unsigned int * stats; //= (volatile void *) 0xf8000060;
 static unsigned int * previous_stats;
@@ -33,17 +35,32 @@ static void print_stats(void * unused);
 static uint8_t global_block[64] = {'a', 'b', 'c'};
 static uint8_t ** buffers;
 static struct sha256_context * contexts;
+static bool * state;
 #endif
 
 #ifdef USE_INTERRUPTS
 static void hash_handler(int unused)
 {
 	sha256_get_hash(&contexts[shmac_get_tile_cpu_id()], buffers[shmac_get_tile_cpu_id()]);
-	++stats[shmac_get_tile_cpu_id()];
-	sha256_reset(&contexts[shmac_get_tile_cpu_id()]);
-	sha256_hash_block(&contexts[shmac_get_tile_cpu_id()], (uint32_t *) global_block);
-}
+
+#if BENCHMARK_PASSES == 2
+	if(state[shmac_get_tile_cpu_id()] == 0)
+	{
+#else
+		++stats[shmac_get_tile_cpu_id()];
+
 #endif
+		sha256_reset(&contexts[shmac_get_tile_cpu_id()]);
+		sha256_hash_block(&contexts[shmac_get_tile_cpu_id()], (uint32_t *) global_block);
+#if BENCHMARK_PASSES == 2
+	} else {
+		++stats[shmac_get_tile_cpu_id()];
+		sha256_reset(&contexts[shmac_get_tile_cpu_id()]);
+		sha256_hash_hash(&contexts[shmac_get_tile_cpu_id()], buffers[shmac_get_tile_cpu_id()]);
+	}
+#endif // BENCHMARK_PASSES == 2
+}
+#endif // USE_INTERRUPTS
 
 void main(void)
 {
@@ -66,9 +83,13 @@ void main(void)
 		buffers = (void *) bram_allocate(0, shmac_get_cpu_count() * sizeof(uint32_t));//(contexts + shmac_get_cpu_count());
 		for(int i = 0; i < shmac_get_cpu_count(); ++i)
 		{
-			buffers[i] = bram_allocate(0, 64);//(void *) ((unsigned int) (buffers + shmac_get_cpu_count())
+			buffers[i] = bram_allocate(0, 32);//(void *) ((unsigned int) (buffers + shmac_get_cpu_count())
 				//+ (unsigned int) (64 * i));
 		}
+
+		state = bram_allocate(0, shmac_get_cpu_count() * sizeof(bool));
+		for(int i = 0; i < shmac_get_cpu_count(); ++i)
+			state[i] = 0;
 
 		sha256_pad_le_block(global_block, 3, 3);
 #endif
@@ -117,6 +138,7 @@ void main(void)
 	while(1) asm volatile("nop\n"); // Burn cycles, use dat power
 }
 
+#ifndef USE_INTERRUPTS
 static void benchmark_process(int cpu)
 {
 #if BENCHMARK_PASSES == 1
@@ -160,6 +182,7 @@ static void benchmark_process(int cpu)
 #	error "BENCHMARK_PASSES can only be 1 or 2!"
 #endif
 }
+#endif
 
 static void print_stats(void * unused)
 {

@@ -4,7 +4,7 @@
 #	Torbjørn Langland <torbljan@stud.ntnu.no>
 # Read the report on <https://github.com/skordal/tdt4102-master>
 
-.PHONY: all clean
+.PHONY: all clean remake
 
 TARGET_PREFIX ?= arm-none-eabi
 
@@ -16,8 +16,9 @@ TARGET_SIZE ?= $(TARGET_PREFIX)-size
 TARGET_CFLAGS += -march=armv4t -std=gnu99 -O3 -fomit-frame-pointer -Wall \
 	-Werror=implicit-function-declaration -ffreestanding \
 	-mno-unaligned-access -DUSE_IMPROVED_MUTEXES -DSHA256_USE_HARDWARE=1 \
-	-DNUM_SCRATCHPADS=1 -DUSE_CACHES -DENABLE_NUM_CORES=1 #-DUSE_INTERRUPTS
-TARGET_LDFLAGS +=  -nostartfiles -Wl,--fix-v4bx
+	-DNUM_SCRATCHPADS=2 -DBENCHMARK_PASSES=2 -DENABLE_NUM_CORES=6 -DUSE_CACHES \
+	-DUSE_INTERRUPTS # -DUSE_DMA=1
+TARGET_LDFLAGS += -nostartfiles -Wl,--fix-v4bx
 
 OBJECTS := \
 	bram.o \
@@ -32,14 +33,16 @@ OBJECTS := \
 	start.o \
 	timer.o
 
-
-
 LINKER_SCRIPT ?= bitcoin.ld
 
 all: $(OBJECTS)
 	$(TARGET_CC) -o bitcoin.elf -Wl,-T$(LINKER_SCRIPT) $(OBJECTS) $(TARGET_LDFLAGS)
 	$(TARGET_OBJCOPY) -O binary -j .text -j .data bitcoin.elf bitcoin.bin
 	$(TARGET_SIZE) bitcoin.elf
+
+remake:
+	@$(MAKE) clean
+	@$(MAKE) all
 
 clean:
 	-$(RM) $(OBJECTS)
