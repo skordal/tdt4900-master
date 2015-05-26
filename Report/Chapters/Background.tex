@@ -608,15 +608,19 @@ The supported tile types, not including the new tile described in this report, a
     \label{fig:shmac-cpu}
 \end{figure}
 
-
 %\subsubsection{SHMAC Memory Map}
 \subsection{SHMAC Memory Map}
 
-Figure \ref{fig:shmac-memory} shows how the memory is mapped in ARM-based SHMAC.
-
-The Exception table contains 8 instructions, one for each exception type described on \todo{Checked Redmine. Coulnd't find it}Redmine.
+%Figure \ref{fig:shmac-memory} shows how the memory is mapped in ARM-based SHMAC.
+%
+%The Exception table contains 8 instructions, one for each exception type described on \todo{Checked Redmine. Coulnd't find it}Redmine.
+% NOTE: That is because it is standard ARM stuff, not SHMAC relevant - K.
+%
 The high end of the memory space is reserved for system registers and tile registers. 
-The tile registers are private for each tile and contain information like the tiles coordinates and other useful data while the system registers are used for communication with the host system.
+The tile registers are private for each tile and contain information such as the tile's coordinates, CPU number and other useful data.
+In addition the tile memory space contains the memory mapped peripherals for each tile, such as timers and the interrupt controller.
+Any custom peripheral, such as the DMA and the hashing accelerator developed in the project is also mapped into this address space.
+The system registers are used for communication with the host system.
 
 %The scratchpad tiles have been given a 128 MB address space. The SHMAC architecture supports 1 to k scratchpad tiles where k can be chosen independently of the number of tiles in the SHMAC instance. The number of scratchpad tiles depends on a number of factors like the amount of block RAM available on the chosen FPGA, the desired access latency, the amount of block RAM used for caches in the processor tiles and the possibility of access contention.
 
@@ -631,13 +635,15 @@ The tile registers are private for each tile and contain information like the ti
 %\subsection{Work packages}
 %\textbf{Currently optional. Remove if nothing is worthwhile to mention. (LA STÅ)}
 
-\section{SHMAC Interconnect Network}
+\subsection{Network On Chip}
 \todo{Does affect our results. Worth a brief description?}
+%\section{SHMAC Network on Chip}
+%\textbf{Optional position: Chapter 3 describing SHMAC}
+%Write here the numbers from shmac: Expected tile-to-tile routing time, Max throughput on DRAM-access, etc.etc. Anything we know that may impact our testing of the bitcoin mining
+
 
 %\subsection{SHMAC Performance}
-\section{SHMAC Performance}
-\textbf{Optional chapter position (if not in Methodology). DRAM throughput, routing speed, known costs, etc.}
+%\section{SHMAC Performance}
+%\textbf{Optional chapter position (if not in Methodology). DRAM throughput, routing speed, known costs, etc.}
+%
 
-%\subsection{SHMAC Achievements}
-\section{SHMAC Achievements}
-\textbf{Just hit my mind: What other projects have they achieved something noteworthy for SHMAC, that we may mention?}
