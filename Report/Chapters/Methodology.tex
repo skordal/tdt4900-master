@@ -7,14 +7,13 @@ and without a DMA. The results are compared to a software implementation of the
 algorithm.
 
 In addition to measuring the hashing performance, the power efficiency of the
-solution is evaluated, allowing estimating the number of hashes per W, a number
-that can be compared with other hardware.
+solution is evaluated, allowing estimating the number of hashes per second per W.
 
 \section{Test Setup}
 \label{sec:SHMAC_setup}
 
-To test the accelerator, a 20~tile setup was used on SHMAC. A 5x4 grid containing the following
-tiles were synthesized, resulting in the following setup, also illustrated in figure \ref{fig:5x4}:
+To test the accelerator, a 20~tile setup was used on SHMAC. It was decided to include
+the following tiles in the design:
 
 \begin{itemize}
     \item 16 CPU tiles with on-tile DMA and SHA256 accelerator
@@ -23,7 +22,13 @@ tiles were synthesized, resulting in the following setup, also illustrated in fi
     \item 1 I/O tile
 \end{itemize}
 
-\begin{figure}[ht]
+The layout is illustrated in figure \ref{fig:5x4}. The I/O tile is placed to the
+left of the first processor in the system, as only the first processor tile is used
+for communicating with the host system. This gives the first processor a ``dedicated''
+connection to the I/O tile, preventing data that is sent to the host from interferring
+with data transfers needed for the hashing benchmark.
+
+\begin{figure}[htb]
     \centering
     \includegraphics[width=0.5\textwidth]{Figures/Measurements/5x4}
     \caption{Test setup, using BRAM tiles as scratchpad and DRAM as main memory.}
