@@ -161,8 +161,8 @@ void sha256_hash_block(struct sha256_context * ctx, const uint32_t * data)
 		dma_set_dest_address0((uint32_t) &ctx->module[SHA256_INPUT(0)]);
 		dma_set_request_details0(0x00F00001);
 
-		while ((dma_get_request_details0() & 0x00000004) == 0x4);
-		dma_set_request_details0(0x00000000);		
+		while (!(dma_get_request_details0() & 0x4));
+		dma_set_request_details0(0x00000000);
 #else 
 		for(int i = 0; i < 16; ++i)
 			ctx->module[SHA256_INPUT(i)] = data[i];
@@ -182,8 +182,8 @@ void sha256_hash_hash(struct sha256_context * ctx, const uint8_t * hash)
 		dma_set_dest_address0((uint32_t) &ctx->module[SHA256_INPUT(0)]);
 		dma_set_request_details0(0x00700001);
 
-		while ((dma_get_request_details0() & 0x00000004) == 0x4);
-		dma_set_request_details0(0x00000000);		
+		while (!(dma_get_request_details0() & 0x4));
+		dma_set_request_details0(0x00000000);
 #else 
 		for(int i = 0; i < 8; ++i)
 			ctx->module[SHA256_INPUT(i)] = ((const uint32_t *) hash)[i];
@@ -227,7 +227,7 @@ void sha256_get_hash(const struct sha256_context * ctx, uint8_t * hash)
 		dma_set_dest_address1((uint32_t) hash);
 		dma_set_request_details1(0x00700003);
 
-		while ((dma_get_request_details1() & 0x00000004) == 0x4);
+		while (!(dma_get_request_details1() & 0x4));
 		dma_set_request_details1(0x00000000);
 #else 
 		for(int i = 0; i < 8; ++i)
