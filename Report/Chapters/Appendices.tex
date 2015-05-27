@@ -83,8 +83,435 @@ the previous message block.
 When the final input block has been processed, the final hash is composed by
 concatenating the intermediate hash values. \cite{sha-spec, fips180-4, fordypningsprosjekt}
 
-\chapter{Detailed DMA Description}
-\label{app:DMA-arch}
+\chapter{Measuring Performance results}
+
+This chapter lists up all the details regarding all the performance measuring done during this thesis.
+For each selected SHMAC architecture, the performance is measured by the double hashes per second.
+Every architecture have been measured when running software-only hashing, when running the SHA-256 accelerator without using the DMA Module, and then with using the DMA Module. 
+
+\section{5X4 Tile Architecture}
+
+The first and original architecture used for measuring, as seen in figure \ref{fig:5x4-2}.
+Unfortunately, while software hashing worked on all tiles, the application crashed when using the SHA-256 accelerator on more than one row.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Figures/Measurements/5x4}
+    \caption{Test setup 1, with 5x4 architecture, using BRAM tiles as scratchpad and DRAM as main memory, placed in center.}
+    \label{fig:5x4-2}
+\end{figure}
+
+\subsection{Software hashing}
+
+The results from doing the hashing in software is listed up in table \ref{tab:Full-Perf-SW1}. 
+As can be seen in the plot in figure \ref{fig:sw-scaling1} adding more processors after the third does not increase performance.
+
+The reason for this is that all cores must make frequent accesses to DRAM, which causes the
+DRAM tile to quickly become congested.
+
+Another interesting effect to note in the results is how the XY routing affects the performance
+of each tile. The more tiles that tries to access main memory through a tile, the less
+performance that tile has; it seems that SHMACs router system favours requests originating
+from other tiles before requests originating from the tile itself.
+
+Exceptions are processor tile 10, which appears to have no competition with other tiles for the routing, and row 4, as adding processors from this row seems does not decrease the individual performance of other tiles. 
+
+\begin{sidewaystable}
+\begin{tabular}{| l || r r r r | r r r r | r r r | r r r r r |}
+  \hline 
+  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13} & \textbf{14} & \textbf{15}   \\
+  \hline                       
+  \textbf{5972} & 5972 & - & - & - & - & - & - & - & - & - & - & - & - & - & - & - \\
+  \textbf{11950} & 5971 & 5979 & - & - & - & - & - & - & - & - & - & - & - & - & - & - \\
+  \textbf{17933} & 5972 & 5979 & 5982 & - & - & - & - & - & - & - & - & - & - & - & - & - \\
+  \textbf{15543} & 4833 & 4701 & 2999 & 3010 & - & - & - & - & - & - & - & - & - & - & - & - \\
+  \textbf{15540} & 3348 & 3339 & 1680 & 1680 & 5493 & - & - & - & - & - & - & - & - & - & - & - \\
+  \textbf{15539} & 2586 & 2590 & 1297 & 1296 & 3896 & 3874 & - & - & - & - & - & - & - & - & - & - \\
+  \textbf{15539} & 1796 & 1799 & 900 & 900 & 2698 & 2698 & 4748 & - & - & - & - & - & - & - & - & - \\
+  \textbf{15549} & 1725 & 1728 & 865 & 864 & 2592 & 2592 & 2592 & 2591 & - & - & - & - & - & - & - & -\\
+  \textbf{15536} & 1110 & 1116 & 558 & 558 & 1674 & 1675 & 1674 & 1674 & 5497 & - & - & - & - & - & - & -\\
+  \textbf{15541} & 861 & 864 & 432 & 432 & 1295 & 1295 & 1295 & 1295 & 3893 & 3879 & - & - & - & - & - & -\\
+  \textbf{15539} & 595 & 597 & 298 & 299 & 895 & 895 & 895 & 894 & 2684 & 2684 & 4803 & - & - & - & - & -\\
+  \textbf{15537} & 434 & 435 & 217 & 218 & 652 & 652 & 653 & 653 & 1957 & 1958 & 3915 &3793 & - & - & - & -\\
+  \textbf{15534} & 432 & 434 & 217 & 217 & 651 & 650 & 651 & 651 & 1953 & 1953 & 3906 & 1909 & 1910 & - & - & -\\
+  \textbf{15540} & 432 & 434 & 216 & 217 & 650 & 650 & 650 & 650 & 1950 & 1949 & 3900 & 963 & 963 & 1916 & - & -\\
+  \textbf{15535} & 430 & 432 & 216 & 216 & 649 & 648 & 649 & 648 & 1945 & 1946 & 3891 & 649 & 649 & 1295 & 1272 & -\\
+  \textbf{16047} & 444 & 446 & 223 & 223 & 669 & 669 & 668 & 669 & 2006 & 2006 & 4012 & 669 & 669 & 1335 & 670 & 669\\
+  \hline  
+\end{tabular}
+\caption{Software double hash results, using varying numbers of cores. Distribution on different tile-rows are highlighted by column separation}
+\label{tab:Full-Perf-SW1}
+\end{sidewaystable}
+
+\begin{figure}
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=DH/s,
+			scaled ticks=false]
+		\addplot[color=red,mark=x] coordinates {
+			(1, 5972)
+			(2, 11950)
+			(3, 17933)
+			(4, 15543)
+			(5, 15540)
+			(6, 15539)
+			(7, 15539)
+			(8, 15549)
+			(9, 15536)
+			(10, 15541)
+			(11, 15539)
+			(12, 15537)
+			(13, 15534)
+			(14, 15540)
+			(15, 15535)
+			(16, 16047)
+		};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Scaling using software hashing}
+	\label{fig:sw-scaling1}
+\end{figure}
+
+\subsection{Using SHA-256 accelerator, without and with DMA, 5x4 architecture}
+Tables \ref{tab:Perf-SHA1} and \ref{tab:Perf-SHADMA1} show the results when using the SHA-256 hashing accelerator, without and with DMA module, respectively.
+Only up to four processors where used, as adding in processors from the second row when scaling up caused the application to crash.
+
+\todo{Must be explained in the text}The scratchpad-bug is believed to be the cause.
+
+Both tables shows that the sum of hashes has a near-linear increase, with very low indiviual performance drop, when scaling up.
+Using DMA shows slightly increased performance for each tile.
+The individual performance of each processor varies, with some higher than others, and it appaers to remain stable with the scaling. 
+The application uses scratchpad tiles when the SHA-256 hashing module is in use, and positioning combined with XY-routing may be the reason behind the varying performance.
+
+The linear increase and the comparison between the two can be seen in the plots of figure \ref{fig:shadmacomp-scaling1}, where the scaling without DMA is seen in red, and with DMA is seen in black.
+
+\begin{table}
+\begin{tabular}{| l || r r r r |}
+  \hline 
+  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3}\\
+  \hline                       
+  \textbf{17541} & 17541 & - & - & - \\
+  \textbf{37554} & 17527 & 20027 & - & - \\
+  \textbf{54882} & 17467 & 19930 & 17485 & - \\
+  \textbf{70181} & 17403 & 19882 & 17412 & 15484 \\
+  \hline  
+\end{tabular}
+\caption{Double Hashing per second, using the SHA256-hashing module. 13x2 architecture.}
+\label{tab:Perf-SHA1}
+\end{table}
+
+\begin{table}
+\begin{tabular}{| l || r r r r |}
+  \hline 
+  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3}\\
+  \hline                       
+  \textbf{18212} & 18212 & - & - & - \\
+  \textbf{38272} & 18193 & 20079 & - & - \\
+  \textbf{56142} & 18133 & 19865 & 18144 & - \\
+  \textbf{71882} & 17978 & 19588 & 17988 & 16328 \\
+  \hline  
+\end{tabular}
+\caption{Double Hashing per second, using the SHA256-hashing module and DMA module. Only up to 4 processors worked}
+\label{tab:Perf-SHADMA1}
+\end{table}
+				
+\begin{figure}
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=DH/s,
+			scaled ticks=false]
+		\addplot[color=red,mark=x] coordinates {
+			(1, 17541)
+			(2, 37554)
+			(3, 54882)
+			(4, 70181)
+		};
+		\addplot[color=black,mark=o] coordinates {
+			(1, 18212)
+			(2, 38272)
+			(3, 56142)
+			(4, 71882)
+		};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Scaling using SHA-256 accelerator. Red: Without DMA. Black: With DMA.}
+	\label{fig:shadmacomp-scaling1}
+\end{figure}
+
+\subsection{Comparison, 5x4}
+
+The difference between software hashing and use of accelerator with DMA are compared in figure \ref{fig:comp-plot1}, where software hashing is seen in red plot, and accelerator hashing is seen in black plot.
+As seen in the figure, the hashing modules greatly outperforms the software hashing, even with only up to four processors in use.
+
+\begin{figure}
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=Sum of hashes/S]
+		\addplot[color=red,mark=x] coordinates {
+			(1, 5972)
+			(2, 11950)
+			(3, 17933)
+			(4, 15543)
+			(5, 15540)
+			(6, 15539)
+			(7, 15539)
+			(8, 15549)
+			(9, 15536)
+			(10, 15541)
+			(11, 15539)
+			(12, 15537)
+			(13, 15534)
+			(14, 15540)
+			(15, 15535)
+			(16, 16047)
+		};
+		\addplot[color=black,mark=o] coordinates {
+			(1, 18212)
+			(2, 38272)
+			(3, 56142)
+			(4, 71882)
+		};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Sum of double hashes per second. Red: Software only, Black: SHA-256 + DMA, 5x4 architecture}
+	\label{fig:comp-plot1}
+\end{figure}
+
+\section{13X2 Tile Architecture}
+
+Since the scratchpad-bug prevents us from measuring more than one tile, a different architecture has been synthesized and tested, as seen in figure \ref{13x2-2}.
+This one circumwents the scratchpad-but by having all CPU tiles on the same upper row, while filling the second with BRAM, DRAM and empty tiles only.
+This way, the use of more tiles may be measured, with the interest to find a congestion limit when using SHA-256 accelerator.
+It is likely that the interconnect network may beceome congested earlier than in a different architecture, due to the XY-routing, given that the all CPU-tiles will be competing for the network on the upper row.
+
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Figures/Measurements/13x2}
+    \caption{Test setup 2, with BRAM and DRAM tiles on second row, and all CPU's and I/O on the first row.}
+    \label{fig:13x2-2}
+\end{figure}
+
+\subsection{Software Hashing, 13x2}
+
+The results from doing the hashing in software for this architecture is listed up in table \ref{tab:Full-Perf-SW2}. 
+\todo{Uh... Mangler sw-data!}The plot in figure \ref{fig:sw-scaling2} confirms that the pattern is the same: The application does not improve beyond three active tiles.
+Once again, congested memory is the reason.
+
+\todo{Need software hash-only data}
+
+\begin{sidewaystable}
+\begin{tabular}{| l || r r r r r r r r r r r r |}
+  \hline 
+  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11}\\
+  \hline                       
+  \textbf{0} & - & - & - & - & - & - & - & - & - & - & - \\
+  \textbf{0} & - & - & - & - & - & - & - & - & - & - \\
+  \textbf{0} & - & - & - & - & - & - & - & - & - \\
+  \textbf{0} & - & - & - & - & - & - & - & - \\
+  \textbf{0} & - & - & - & - & - & - & - \\
+  \textbf{0} & - & - & - & - & - & - \\
+  \textbf{0} & - & - & - & - & - \\
+  \textbf{0} & - & - & - & -\\
+  \textbf{0} & - & - & -\\
+  \textbf{0} & - & -\\
+  \textbf{0} & -\\
+  \textbf{0} \\
+  \hline  
+\end{tabular}
+\caption{Software double hash results, this time on the 13x2 architecture}
+\label{tab:Full-Perf-SW2}
+\end{sidewaystable}
+
+
+\begin{figure}
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=DH/s,
+			scaled ticks=false]
+		\addplot[color=red,mark=x] coordinates {
+			(1, 0)
+			(2, 0)
+			(3, 0)
+			(4, 0)
+			(5, 0)
+			(6, 0)
+			(7, 0)
+			(8, 0)
+			(9, 0)
+			(10, 0)
+			(11, 0)
+			(12, 0)
+		};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Scaling using software hashing, 13x2 architecture}
+	\label{fig:sw-scaling2}
+\end{figure}
+
+\subsection{Using SHA-256 accelerator, without and with DMA, 13x2 architecture}
+
+Tables \ref{tab:Perf-SHA2} and \ref{tab:Perf-SHADMA2} show the results when using the SHA-256 hashing accelerator in the 13x2 architecture, without and with DMA module, respectively.
+This time, using an architecture that circumvents the cache-bug problem, all available CPU's were functioning when using the SHA-256 accelerator.
+
+The trend is the same, with a near-linear increase.
+It may be observed from the table results that the closer a specific tile is in proximity to the BRAM-tiles, the higher the individual performance, with highest performance observed at CPU tiles 3-5.
+This counts for both without and with DMA. 
+The plots in figure \ref{fig:shadmacomp-scaling2} seems to confirm this trend: The increase become greater as the processors closer to the middle become active, and lessens beyond that point.
+Unfortunately, there were not enough CPU-tiles for this architecture to find a possible saturation point.
+
+An interesting observation is that as more tiles are added, the gain from using the DMA is reduced per tile.
+The increase on CPU tile 0 is reduced from about 1500 double hashes to about mere 130.
+As all CPU tiles become active, CPU tiles 1-4 have less performace compared to running without DMA, with CPU tile 4 having the biggest drop of nearly 2300 double hashes. 
+CPU tiles 5-11 shows a steady increase again, up to about 1000 double hashes per second.
+
+Judging from the positions in figure \ref{fig:13x2-2}It seems that the closer a CPU tile is to the leftmost BRAM-tile, from left (CPU tile 4 is right above), the more negative the use of DMA is.
+
+
+\begin{sidewaystable}
+\begin{tabular}{| l || r r r r r r r r r r r r |}
+  \hline 
+  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11}\\
+  \hline                       
+  \textbf{12756} & 12756 & - & - & - & - & - & - & - & - & - & - & - \\
+  \textbf{26751} & 12735 & 14016 & - & - & - & - & - & - & - & - & - & - \\
+  \textbf{42268} & 12713 & 13993 & 15562 & - & - & - & - & - & - & - & - & - \\
+  \textbf{59689} & 12688 & 13953 & 15526 & 17522 & - & - & - & - & - & - & - & - \\
+  \textbf{79461} & 12637 & 13889 & 15456 & 17442 & 20037 & - & - & - & - & - & - & - \\
+  \textbf{96589} & 12577 & 13820 & 15376 & 17352 & 19941 & 17523 & - & - & - & - & - & - \\
+  \textbf{111491} & 12512 & 13748 & 15292 & 17245 & 19840 & 17391 & 15463 & - & - & - & - & - \\
+  \textbf{124567} & 12440 & 13671 & 15200 & 17138 & 19740 & 17267 & 15336 & 13775 & - & - & - & -\\
+  \textbf{136162} & 12375 & 13595 & 15107 & 17030 & 19642 & 17134 & 15207 & 13654 & 12418 & - & - & -\\
+  \textbf{146476} & 12309 & 13520 & 15017 & 16923 & 19543 & 16987 & 15065 & 13528 & 12300 & 11284 & - & -\\
+  \textbf{155681} & 12246 & 13445 & 14929 & 16818 & 19447 & 16822 & 14928 & 13385 & 12172 & 11163 & 10326 & -\\
+  \textbf{164011} & 12199 & 13380 & 14848 & 16723 & 19356 & 16718 & 14774 & 13232 & 12031 & 11034 & 10204 & 9512\\
+  \hline  
+\end{tabular}
+\caption{Double Hashing per second, using the SHA256-hashing accelerator. 13x2 architecture.}
+\label{tab:Perf-SHA2}
+\end{sidewaystable}
+
+\begin{sidewaystable}
+\begin{tabular}{| l || r r r r r r r r r r r r |}
+  \hline 
+  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11}\\
+  \hline                       
+  \textbf{14231} & 14231 & - & - & - & - & - & - & - & - & - & - & - \\
+  \textbf{29577} & 14221 & 15356 & - & - & - & - & - & - & - & - & - & - \\
+  \textbf{46143} & 14175 & 15308 & 16660 & - & - & - & - & - & - & - & - & - \\
+  \textbf{64070} & 14108 & 15233 & 16574 & 18155 & - & - & - & - & - & - & - & - \\
+  \textbf{83379} & 13996 & 15096 & 16403 & 17968 & 19916 & - & - & - & - & - & - & - \\
+  \textbf{101428} & 13837 & 14928 & 16226 & 17766 & 19617 & 19054 & - & - & - & - & - & - \\
+  \textbf{117158} & 13664 & 14734 & 16007 & 17500 & 19322 & 18794 & 17137 & - & - & - & - & - \\
+  \textbf{130772} & 13457 & 14511 & 15742 & 17206 & 18954 & 18551 & 16893 & 15458 & - & - & - & -\\
+  \textbf{142451} & 13214 & 14232 & 15435 & 16874 & 18550 & 18257 & 16643 & 15232 & 14014 & - & - & -\\
+  \textbf{152096} & 12914 & 13915 & 15118 & 16502 & 18064 & 17890 & 16277 & 14916 & 13742 & 12758 & - & -\\
+  \textbf{160117} & 12622 & 13595 & 14764 & 16165 & 17556 & 17472 & 15916 & 14566 & 13438 & 12497 & 11526 & -\\
+  \textbf{167103} & 12331 & 13298 & 14444 & 15907 & 17060 & 17020 & 15668 & 14257 & 13134 & 12181 & 11245 & 10558\\
+  \hline  
+\end{tabular}
+\caption{Double Hashing per second, using the SHA256-hashing accelerator with the DMA module. 13x2 architecture.}
+\label{tab:Perf-SHADMA2}
+\end{sidewaystable}
+		
+		
+			
+\begin{figure}
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=DH/s,
+			scaled ticks=false]
+		\addplot[color=red,mark=x] coordinates {
+			(1, 12756)
+			(2, 26751)
+			(3, 42268)
+			(4, 59689)
+			(5, 79461)
+			(6, 96589)
+			(7, 111491)
+			(8, 124567)
+			(9, 136162)
+			(10, 146476)
+			(11, 155681)
+			(12, 164011)
+		};
+		\addplot[color=black,mark=o] coordinates {
+			(1, 14231)
+			(2, 29577)
+			(3, 46143)
+			(4, 64070)
+			(5, 83379)
+			(6, 101428)
+			(7, 117158)
+			(8, 130772)
+			(9, 142451)
+			(10, 152096)
+			(11, 160117)
+			(12, 167103)
+		};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Sum of double hashes per second. Red: Software only, Black: SHA-256 + DMA. 13x2 architecture.}
+	\label{fig:shadmacomp-scaling2}
+\end{figure}
+
+
+\subsection{Comparison, 13x2}
+
+Cannot compare without software hashes in figure \ref{fig:comp-plot2}.
+
+\begin{figure}
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=Sum of double hashes/S]
+		\addplot[color=red,mark=x] coordinates {
+			(1, 0)
+			(2, 0)
+			(3, 0)
+			(4, 0)
+			(5, 0)
+			(6, 0)
+			(7, 0)
+			(8, 0)
+			(9, 0)
+			(10, 0)
+			(11, 0)
+			(12, 0)
+		};
+		\addplot[color=black,mark=o] coordinates {
+			(1, 14231)
+			(2, 29577)
+			(3, 46143)
+			(4, 64070)
+			(5, 83379)
+			(6, 101428)
+			(7, 117158)
+			(8, 130772)
+			(9, 142451)
+			(10, 152096)
+			(11, 160117)
+			(12, 167103)
+		};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Sum of hashes per second. Red: Software only, Black: SHA-256 + DMA, 13x2 architecture}
+	\label{fig:comp-plot2}
+\end{figure}
+
+
+
+\chapter{Power measurements and energy efficienty calculations}
+
+Must measure something, somehow.
+
+%\chapter{Detailed DMA Description}
+%\label{app:DMA-arch}
 
 
 \end{appendix}
