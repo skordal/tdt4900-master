@@ -162,7 +162,10 @@ static void benchmark_process(int cpu)
 		++stats[cpu];
 	}
 #elif BENCHMARK_PASSES == 2
-	struct sha256_context * ctx = sha256_new();
+	//struct sha256_context * ctx = sha256_new();
+	struct sha256_context ctx;
+	ctx.accelerated = SHA256_USE_HARDWARE;
+
 	uint8_t block[64] = {'a', 'b', 'c'};
 	uint8_t hash[32];
 
@@ -170,13 +173,13 @@ static void benchmark_process(int cpu)
 
 	while(1)
 	{
-		sha256_reset(ctx);
-		sha256_hash_block(ctx, (uint32_t *) block);
-		sha256_get_hash(ctx, hash);
+		sha256_reset(&ctx);
+		sha256_hash_block(&ctx, (uint32_t *) block);
+		sha256_get_hash(&ctx, hash);
 
-		sha256_reset(ctx);
-		sha256_hash_hash(ctx, hash);
-		sha256_get_hash(ctx, hash);
+		sha256_reset(&ctx);
+		sha256_hash_hash(&ctx, hash);
+		sha256_get_hash(&ctx, hash);
 
 		++stats[cpu];
 	}
