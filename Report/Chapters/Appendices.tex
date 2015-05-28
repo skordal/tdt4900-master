@@ -298,8 +298,11 @@ It is likely that the interconnect network may beceome congested earlier than in
 \subsection{Software Hashing, 13x2}
 
 The results from doing the hashing in software for this architecture is listed up in table \ref{tab:Full-Perf-SW2}. 
-\todo{Uh... Mangler sw-data!}The plot in figure \ref{fig:sw-scaling2} confirms that the pattern is the same: The application does not improve beyond three active tiles.
+The CPU tiles nearest the DRAM tile have highest individual performance, compared to others present.
+The plot in figure \ref{fig:sw-scaling2} confirms that the pattern is the same: The application does not improve beyond three active tiles.
 Once again, congested memory is the reason.
+
+
 
 \todo{Need software hash-only data}
 
@@ -308,18 +311,18 @@ Once again, congested memory is the reason.
   \hline 
   \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11}\\
   \hline                       
-  \textbf{0} & - & - & - & - & - & - & - & - & - & - & - \\
-  \textbf{0} & - & - & - & - & - & - & - & - & - & - \\
-  \textbf{0} & - & - & - & - & - & - & - & - & - \\
-  \textbf{0} & - & - & - & - & - & - & - & - \\
-  \textbf{0} & - & - & - & - & - & - & - \\
-  \textbf{0} & - & - & - & - & - & - \\
-  \textbf{0} & - & - & - & - & - \\
-  \textbf{0} & - & - & - & -\\
-  \textbf{0} & - & - & -\\
-  \textbf{0} & - & -\\
-  \textbf{0} & -\\
-  \textbf{0} \\
+  \textbf{5963} & 5963 & - & - & - & - & - & - & - & - & - & - & - \\
+  \textbf{11930} & 5962 & 5968 & - & - & - & - & - & - & - & - & - & - \\
+  \textbf{17900} & 5961 & 5968 & 5971 & - & - & - & - & - & - & - & - & - \\
+  \textbf{15566} & 2857 & 2840 & 4515 & 5354 & - & - & - & - & - & - & - & - \\
+  \textbf{15549} & 1428 & 1431 & 2811 & 4518 & 5361 & - & - & - & - & - & - & - \\
+  \textbf{15541} & 712 & 714 & 1413 & 2803 & 4523 & 5376 & - & - & - & - & - & - \\
+  \textbf{15536} & 379 & 380 & 753 & 1502 & 2992 & 4723 & 4807 & - & - & - & - & - \\
+  \textbf{15537} & 346 & 348 & 690 & 1376 & 2744 & 4638 & 2753 & 2642 & - & - & - & -\\
+  \textbf{15536} & 345 & 347 & 688 & 1371 & 2736 & 4635 & 2744 & 1373 & 1297 & - & - & -\\
+  \textbf{15534} & 344 & 346 & 686 & 1368 & 2729 & 4632 & 2736 & 1366 & 685 & 642 & - & -\\
+  \textbf{15535} & 344 & 345 & 685 & 1365 & 2723 & 4627 & 2731 & 1363 & 681 & 344 & 327 & -\\
+  \textbf{15536} & 344 & 345 & 684 & 1362 & 2718 & 4630 & 2726 & 1360 & 680 & 342 & 173 & 172\\
   \hline  
 \end{tabular}
 \caption{Software double hash results, this time on the 13x2 architecture}
@@ -334,18 +337,18 @@ Once again, congested memory is the reason.
 			ylabel=DH/s,
 			scaled ticks=false]
 		\addplot[color=red,mark=x] coordinates {
-			(1, 0)
-			(2, 0)
-			(3, 0)
-			(4, 0)
-			(5, 0)
-			(6, 0)
-			(7, 0)
-			(8, 0)
-			(9, 0)
-			(10, 0)
-			(11, 0)
-			(12, 0)
+			(1, 5963)
+			(2, 11930)
+			(3, 17900)
+			(4, 15566)
+			(5, 15549)
+			(6, 15541)
+			(7, 15536)
+			(8, 15537)
+			(9, 15536)
+			(10, 15534)
+			(11, 15535)
+			(12, 15536)
 		};
 		\end{axis}
 	\end{tikzpicture}
@@ -471,18 +474,18 @@ Cannot compare without software hashes in figure \ref{fig:comp-plot2}.
 			xlabel=Active processor tiles,
 			ylabel=Sum of double hashes/S]
 		\addplot[color=red,mark=x] coordinates {
-			(1, 0)
-			(2, 0)
-			(3, 0)
-			(4, 0)
-			(5, 0)
-			(6, 0)
-			(7, 0)
-			(8, 0)
-			(9, 0)
-			(10, 0)
-			(11, 0)
-			(12, 0)
+			(1, 5963)
+			(2, 11930)
+			(3, 17900)
+			(4, 15566)
+			(5, 15549)
+			(6, 15541)
+			(7, 15536)
+			(8, 15537)
+			(9, 15536)
+			(10, 15534)
+			(11, 15535)
+			(12, 15536)
 		};
 		\addplot[color=black,mark=o] coordinates {
 			(1, 14231)
