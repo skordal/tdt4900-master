@@ -35,6 +35,8 @@ with data transfers needed for the hashing benchmark.
     \label{fig:5x4}
 \end{figure}
 
+\section{Project software}
+
 \section{Measuring the Performance}
 
 Measuring the performance is done by repeatedly double-hashing a block of data, recording the
@@ -80,8 +82,16 @@ $P$ is the power in watts:
 %
 %Optional: Write the expected max performance if we can calculate them?
 %
-%\section{Known hazards with SHMAC}
-%List up potential problems that SHMAC may give us, due to the known bugs in the system (cache coherency issues with DMA, the infamous cache bug
+\section{Known hazards with SHMAC and test setup}
+List up potential problems that SHMAC may give us, due to the known bugs in the system (cache coherency issues with DMA, the infamous cache bug.
 
+Also include the uncertainty with testing of wall-power, and the lack of on-chip power measurement.
 
+\section{Tools and software used for this project}
+- Vivado
 
+- Modelsim
+
+- Gcc
+
+- Sudo Minicom?

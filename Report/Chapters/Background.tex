@@ -626,7 +626,7 @@ The system registers are used for communication with the host system.
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.5\textwidth]{Figures/Heterogeneous/SHMACMemory}
+    \includegraphics[width=0.6\textwidth]{Figures/Heterogeneous/SHMACMemory}
     \caption{Memory map of ARM-based SHMAC, as seen in \cite{shmac-plan}.}
     \label{fig:shmac-memory}
 \end{figure}
@@ -635,8 +635,22 @@ The system registers are used for communication with the host system.
 %\subsection{Work packages}
 %\textbf{Currently optional. Remove if nothing is worthwhile to mention. (LA STÅ)}
 
-\subsection{Network On Chip}
-\todo{Does affect our results. Worth a brief description?}
+\subsection{SHMAC Interconnection Netwwork}
+SHMAM uses a 2D mesh-based interconnection network to connect all the tiles.
+Store-and-forward switching with on/off flow control is used, and the XY-algorithm is used for route computation.
+Each tile consists of a router with five ports, for east, north, west, south and local connection, respectively.
+A round-robin scheme is used, and packets from the local tile has equal priority to those arriving from the other directions.
+In the current implementation, it takes 3 cycles for a data packet to transfer from one tile to the next. 
+The architecture of the router can be seen in figure \ref{fig:shmac-router}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/SHMACRouter}
+    \caption{Architecture of the SHMAC router, as seen in \cite{shmac-plan}.}
+    \label{fig:shmac-router}
+\end{figure}
+
+
 %\section{SHMAC Network on Chip}
 %\textbf{Optional position: Chapter 3 describing SHMAC}
 %Write here the numbers from shmac: Expected tile-to-tile routing time, Max throughput on DRAM-access, etc.etc. Anything we know that may impact our testing of the bitcoin mining
@@ -650,4 +664,25 @@ The system registers are used for communication with the host system.
 
 
 \subsection{Wishbone Bus}
-Each processor tile on SHMAC uses the WISHBONE Bus.
+The WISHBONE SoC Interconnect Architecture was developed by OpenCores Organization as a flexible design methodology for use with semiconductor IP cores.
+WISHBONE makes integration of IP cores more easy as it can be used as a common interface between IP cores, in contrast to using non-standard interconnection that requires custom "glue logic". 
+This improves the portability and reliability of the system, and results in faster time-to-market for the end user.
+
+\todo{Paragraph is rip-off. Write with own words. Or cut out}The WISHBONE architecture offers: a flexible integration solution that can be easily tailored to a specific application, a variety of bus cycles and data path widths to solve various system problems, and allow products to be designed by a variety of suppliers (thereby driving down price while improving performance and quality).
+
+%NOTE: Added these details because they may be relecvant for "future work", especially concerning the DMA Module.
+In the simplest implementation of WISHBONE, a WB master may request only one data transfer (either storing or loading) per transfer cycle, in which both the request and the cycles ends as soon as the request is acknowledged.
+WISHBONE supports also burst mode, in which one cycle may consist of several transfers between the master and the WB slave.
+Each request will last until acknowledged, before the WB master moves on to the next one.
+Pipelining is also supported, in which the requests do not have to wait for acknowledge before ending, allowing multiple requests to be sent out before acknowledges arrive.
+\cite{WISHBONE}.
+
+WISHBONE is implemented as internal bus on the CPU tiles of SHMAC, but currently supports only single transfers with no bursts or pipelining.
+This means that in spite of using switched packet interconnection network on SHMAC, something that opens up for sending out several packets, a WB Master on a tile will only send out one request, before getting the acknowledged response back.
+\todo{Yaman said this. Find out if oral conversations with teachers/staff is allowed for bibliography.}\cite{Yaman}
+And prior to this project, only one WB master existed on each tile, owning the entire WISHBONE network in the tile.
+
+\subsection{Other properties of Vexpress}
+FIND: DDR MEMORY LATENCY AND THROUGHPUT IF POSSIBLE.
+Throughput according to Asbjørn: 128-bit word per cycle.
+Clock is a 50MHz.

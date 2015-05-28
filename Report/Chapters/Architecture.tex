@@ -20,7 +20,7 @@ SHMAC, which can be seen in figure \ref{fig:SHA-Tile}.
     \label{fig:SHA-Tile}
 \end{figure}
 
-The new tile is derived from the existing CPU tile for SHMAC, the Turbo Amber tile, which contains
+\todo{Turbo Amber should have been described at this point. Suggest removing this repeat}The new tile is derived from the existing Turbo Amber tile for SHMAC, the Turbo Amber tile, which contains
 a ``Turbo Amber'' CPU, which is an improved version of the open-source Amber CPU, providing various
 performance optimizations over the original Amber and supporting the ARMv4t instruction set \cite{turboamber}.
 
@@ -101,7 +101,8 @@ and must be converted to little-endian to be used by the software running on the
 endianness in software adds several several additional store and arithmetic operations, which are now avoided.
 
 \subsection{Wishbone Arbiter}
-Since the DMA is a wishbone master, the CPU tile needs an arbiter to arbitrate between the DMA and the CPU
+With the DMA comes a new WISHBONE master, and the CPU itself no longer has sole ownership of the WISHBONE bus. 
+The tile needs an arbiter to arbitrate between the DMA and the CPU
 on the wishbone bus. For this purpose, the reference arbiter from the Public domain library for VHDL \cite{WBLibrary}
 was adapted for use. This is a round-robin arbiter, illustrated in figure \ref{fig:WBArbiter}.
 
