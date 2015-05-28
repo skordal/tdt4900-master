@@ -509,9 +509,205 @@ Cannot compare without software hashes in figure \ref{fig:comp-plot2}.
 
 
 
-\chapter{Power measurements and energy efficienty calculations}
+\chapter{Power measurements}
 
-Must measure something, somehow.
+For a chosen architecture, and for a set of active CPU's, the power was measured.
+Compared to performance measuring, only a set of configurations were tested this time, in order to simplify the testing, and due to the pattern of the testing.
+
+Interestingly, it turned out that the less tiles were active, the more power was consumed.
+Originally, the 13x2 architecture was measured first, since it was already set up and ready on the SHMAC at the time, but to keep the consistency of this document, 5x4 will be explained first.
+But due to the trend discovered in the power usage, only 1 and 16 tiles were activated for the 5x4 architecture.
+
+It should be noted that idle power varied from time to time.
+Three different numbers were measured:
+31.3 W, 31.7 W and 32.3 W.
+
+We select 31.3 W as Idle, assuming worst case usage of power.
+
+Both power usage and uncertainty is listed up in Watt.
+
+\section{5x4 Architecture}
+ 
+Only software hashing was measured for power usage, since the scratchpad bug would have prevented the use of more than 4 tiles when running the SHA-256 accelerators.
+
+Table \ref{tab:SW-power1} shows the measured power used, while \ref{fig:SW-power1} shows the plotting.
+
+\begin{table}
+\begin{tabular}{| l | r | r |}
+  \hline 
+  \textbf{Cores} & \textbf{Power} & \textbf{Uncertainty} \\
+  \hline                       
+  \textbf{IDLE} &  31.3 & 0.3 \\
+  \textbf{1} &  35.0 & 0.4\\
+  \textbf{16} &  33.0 & 0.4 \\
+  \hline 
+\end{tabular}
+\caption{Measured power usage in Watts, software only, 5x4 architecture.}
+\label{tab:SW-power1}
+\end{table}
+
+\begin{figure}
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=Power consumption (W),
+			scaled ticks=false]
+		\addplot[color=red,mark=x] coordinates {
+			(0, 31.3)
+			(1, 35.0)
+			(16, 33.0)
+			
+		};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Power scaling using software hashing, 5x4 architecture}
+	\label{fig:SW-power1}
+\end{figure}
+
+\section {13x2 Architecture}
+For this architecture, all tiles from 0-11 were activated one by one, and measured, when running both the SHA-256 accelerator and the DMA Module.
+Only a selected number for software hashing and accelerator without DMA were measured, since the power usage trend were identified and assumed for the rest of the \todo{I still think we should give this full coverage, by measuring everything} measurements.
+
+To keep the consistency in this document, software hashing results will be detailed first, then accelerator, then accelerator with DMA.
+
+\subsection{Software hashing power consumption, 13x2 Architecture.}
+
+Table \ref{tab:SW-power2} and figure \ref{fig:SW-power2} shows the measured power.
+Only 1, 5 and 12 tiles were measured.
+
+\begin{table}
+\begin{tabular}{| l | r | r |}
+  \hline 
+  \textbf{Cores} & \textbf{Power} & \textbf{Uncertainty} \\
+  \hline                       
+  \textbf{IDLE} &  31.3 & 0.3 \\
+  \textbf{1} &  34.0 & 0.3\\
+  \textbf{5} &  32.5 & 0.5\\
+  \textbf{12} &  32.5 & 0.5 \\
+  \hline 
+\end{tabular}
+\caption{Measured power usage in Watts, software only, 13x2 architecture.}
+\label{tab:SW-power2}
+\end{table}
+
+\begin{figure}
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=Power consumption (W),
+			scaled ticks=false]
+		\addplot[color=red,mark=x] coordinates {
+			(0, 31.3)
+			(1, 34.0)
+			(5, 32.5)
+			(12, 32.5)
+		};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Power scaling using software hashing, 13x2 architecture}
+	\label{fig:SW-power2}
+\end{figure}
+
+\subsection{SHA-256 accelerator power consumption, 13x2 Architecture.}
+
+Table \ref{tab:SHA-power2} and figure \ref{fig:SHA-power2} shows the measured power.
+Only 5 and 12 tiles were measured.
+
+\begin{table}
+\begin{tabular}{| l | r | r |}
+  \hline 
+  \textbf{Cores} & \textbf{Power} & \textbf{Uncertainty} \\
+  \hline                       
+  \textbf{IDLE} &  31.3 & 0.3 \\
+  \textbf{5} &  33.7 & 0.3\\
+  \textbf{12} &  32.3 & 0.5 \\
+  \hline 
+\end{tabular}
+\caption{Measured power usage in Watts, SHA-256 accelerator, 13x2 architecture.}
+\label{tab:SHA-power2}
+\end{table}
+
+
+\begin{figure}
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=Power consumption (W),
+			scaled ticks=false]
+		\addplot[color=red,mark=x] coordinates {
+			(0, 31.3)
+			(5, 33.7)
+			(12, 32.3)
+		};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Power scaling using SHA-256 accelerator, 13x2 architecture}
+	\label{fig:SHA-power2}
+\end{figure}
+
+\subsection{SHA-256 accelerator with DMA power consumption, 13x2 Architecture.}
+
+This is the first series of power measurements, and all anvailable number of active tiles, from 1-12, were measured.
+This laid the basis for the other measurements, as it showed the trend of the measured power usage slightly reducing as more cores are activated.
+ 
+Unsurprisingly, using the DMA requires more power, and since the current software relies on polling the DMA, the processor is kept active.
+Sleep mode does not \todo{Must get documented} exist either for Turbo Amber, so in this case it is unavoidable.
+
+Table \ref{tab:SHADMA-power2} and figure \ref{fig:SHADMA-power2} shows the measured power.
+
+\begin{table}
+\begin{tabular}{| l | r | r |}
+  \hline 
+  \textbf{Cores} & \textbf{Power} & \textbf{Uncertainty} \\
+  \hline                       
+  \textbf{IDLE} &  31.3 & 0.3 \\
+  \textbf{1} &  33.7 & 0.4\\
+  \textbf{2} &  33.7 & 0.4\\
+  \textbf{3} &  33.9 & 0.4\\
+  \textbf{4} &  34.0 & 0.3\\
+  \textbf{5} &  34.0 & 0.4\\
+  \textbf{6} &  33.7 & 0.4\\
+  \textbf{7} &  33.7 & 0.4\\
+  \textbf{8} &  33.6 & 0.4\\
+  \textbf{9} &  33.8 & 0.4\\
+  \textbf{10} &  33.6 & 0.3\\
+  \textbf{11} &  34.0 & 0.3\\
+  \textbf{12} &  33.5 & 0.5 \\
+  \hline 
+\end{tabular}
+\caption{Measured power usage in Watts, SHA-256 accelerator with DMA, 13x2 architecture.}
+\label{tab:SHADMA-power2}
+\end{table}
+
+\begin{figure}
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=Power consumption (W),
+			scaled ticks=false]
+		\addplot[color=red,mark=x] coordinates {
+			(0, 31.3)
+			(1, 33.7)
+			(2, 33.7)
+			(3, 33.9)
+			(4, 34.0)
+			(5, 34.0)
+			(6, 33.7)
+			(7, 33.7)
+			(8, 33.6)
+			(9, 33.8)
+			(10, 33.6)
+			(11, 34.0)
+			(12, 33.5)
+		};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Power scaling using SHA-256 accelerator  with DMA, 13x2 architecture}
+	\label{fig:SHA-power2}
+\end{figure}
+
+\chapter{Calculated Watt per Hash}
+
 
 %\chapter{Detailed DMA Description}
 %\label{app:DMA-arch}
