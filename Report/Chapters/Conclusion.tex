@@ -11,3 +11,36 @@ Bitcoin mining is currently an activity that requires a tremendous amount of com
 As such, it is no surprise that ASICs rule this domain.
 
 \section{Future work}
+\todo{Option: Create a chapter named "Discussion", and move future work there, before conclusion?}
+
+\subsection{Enhancing the DMA Module}
+
+The current DMA Module only supports transfer of 32-bit words, which means four transfers for each 128-bit blocks used by SHMAC.
+This hampers potential performance severely, as up to 75\% of the DMA's work could have been avoided.
+When using the current DMA Module with the SHA-256 hashing, the performance gain is at only \textbf{XXX} percent, while the increase in energy usage is in average about \todo{Due to lack of data, we cannot make the outrageous cry of how bad it is, until we know how bad it is} \textbf{XXX}.
+
+\textbf{Insert data about how bad or slightly good this is, when calculations are done.} 
+
+The reason to not expand to 128-bit blocks per individual transfer was due to the concern of forced alignment within the blocks.
+While transferring aligned blocks of data from one memory location to another is \todo{Yaman said this. Source needed}common, switching a 32-bit word's position inside a block would not be possible for the DMA, if we were to expand the size without making considerable change to the DMA. 
+We were concerned that this could prevent us from transferring data between neighbour registers on the tile.
+Furthermore, it was concidered outside the scope of the project to further enhance the DMA Module, as the main idea was that this would enhance SHMAC generally, but not the hashing module.
+In order to focus remaining project time on the Hashing module, and to have the option of writing to any register inside the tile, 32-bit data transfer were therefore chosen.
+
+Nevertheless, we recommend enhancing the DMA Module for 128-bit transfers, since SHMAC as a whole will benefit greatly on this, reducing the work down to a fourth.
+Not only may total throughput increase, but the DMA Module has less overhead in transferring data, compared to a CPU that does branching to control its own data transfer.
+
+Expanding the data registers and lines to 128 bits is straightforward, but if it is desirable to store 32-bit words to new block positions, then the DMA itself must be changed to account for this.
+DMA Module must be changed with smarter logic, that can put together new 128-bit blocks for storing, with the fetched data.
+Alternatively, the system may contain two DMA Modules: One for 32-bit transfers that can access the entire address space, and one for 128-bit transfers that will be most efficient for data transfers when alignment is not a problem.
+
+The DMA Module only supports classic single cycle transfers.
+If burst mode is to be supported, both the DMA WB Master and the channel arbiter must be modified to allow burst mode.
+In the current system, the arbiter it will select data alternatively from channels 0 and 1 if both are active, which may prevent burst mode, and the WB Master does only 1 request per transfer cycle.     
+
+There is also another option: The WISHBONE Public Domain Library for VHDL offers a DMA Module of its own.
+It is intended only for educational and benchmarking purposes, and is thus very simple, but it can be adapted for more serious work.
+It supports both single transfers and burst transfers.
+However, it only does 32-bit transfers, thus it has the same issues as the DMA Module we have implemented, regarding the 128-bit bus.
+Its initiation is vaguely described in the Library manual, and there are no description of any slave interface, which implies that adapting this module will require expantion with a slave interface, similar to the one implemented for this project, in order to function on SHMAC
+\cite{WBLibrary}.
