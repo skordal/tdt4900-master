@@ -1,51 +1,88 @@
 \chapter{Architecture}
 \label{cha:architecture}
 
-In order to accelerate SHA256 hashing in SHMAC, an accelerator for the SHA256 algorithm
+In order to accelerate SHA-256 hashing in SHMAC, an accelerator for the SHA-256 algorithm
 was developed. To further increase performance, a DMA was developed to move data between
-memory and the accelerator. The new modules were then added to SHMAC in a new tile.
+memory and the accelerator. The new modules were then added to a CPU tile.
 
 \section{Accelerated Hashing Tile}
 \label{sec:aht}
 
-In order to test the effects of accelerating SHA256 hashing, a new tile containing a hashing
+In order to test the effects of accelerating SHA-256 hashing, a new tile containing a hashing
 accelerator and a DMA was developed for SHMAC. A high-level overview of the new tile can be
 seen in figure \ref{fig:SHA-Tile}.
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1.0\textwidth]{Figures/Tile/HashingTile}
-    \caption{SHMAC tile with SHA256 accelerator and DMA. The added components are highlighted in red.}
+    \caption{SHMAC tile with SHA-256 accelerator and DMA. Added components are highlighted in red.}
     \label{fig:SHA-Tile}
 \end{figure}
 
-\todo{Turbo Amber should have been described at this point. Suggest removing this repeat}The new tile is derived from the existing Turbo Amber tile for SHMAC, the Turbo Amber tile, which contains
-a ``Turbo Amber'' CPU, which is an improved version of the open-source Amber CPU, providing various
-performance optimizations over the original Amber and supporting the ARMv4t instruction set \cite{turboamber}.
+The new tile is derived from an existing CPU tile for SHMAC, the Turbo Amber tile, which contains
+a Turbo Amber CPU and peripherals such as an interrupt controller and timer modules, connected
+together with a wishbone bus.
 
-In addition to a Turbo-Amber CPU, the tile provides two timer modules and an interrupt controller,
-and the required tile interfaces and router module.\todo{Consider adding this to figure?}
+The SHA-256 accelerator and the DMA's slave interface is added to this bus.
+
+\subsection{Wishbone Arbiter}
+Since the DMA includes a wishbone master interface, a wishbone arbiter is also added to the tile.
+The tile needs an arbiter to arbitrate between the DMA and the CPU on the wishbone bus.
+For this purpose, the reference arbiter from the Wishbone Public Domain Library for VHDL % \cite{WBLibrary}
+was adapted for use. This is a round-robin arbiter, illustrated in figure \ref{fig:WBArbiter}.
+
+%
+%For this project, the ARB0001a: 4 Level, Round-robin Arbiter from WISHBONE Public Domain Library for VHDL has been taken in use.
+%Figure \cite{fig:WBArbiter} shows how the arbitration works, with Round-robin.
+%The arbiter will in turn check each input master for bus requests, and grants access thereby.
+%If a master has no request, the arbiter will continue to the next.
+%For this project, only two masters are present.
+%Arbitration normally take a full clock cycle.
+%See \cite{WBLibrary} for detailed implementation.
+%
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Figures/Tile/WBArbiter}
+    \caption{Wishbone Round-robin Arbiter, as seen in \cite{WBLibrary}.}
+    \label{fig:WBArbiter}
+\end{figure}
+
+Round-robin arbiters work well in data acquisition systems where data is collected and placed into memory, since peripherals must often store data to memory.
+The choice of this arbiter is because using an already established wishbone arbiter saves time as opposed to desiging a new one, which may end up less efficient in the worst case.
+%These are usually disadvantagous in said systems, but does not have the arbitration overhead \cite{WBLibrary}.\
+%\todo{Discussion of alternatives. The following may be moved to future work.}
+
+%An alternative to round-robin arbiters is priority arbiters.
+%In the case of arbitration between a CPU and a DMA module, a priority arbiter may be used to achieve either burst mode, where the DMA gets full access on the bus until the transfer is finished, or transparent mode, where the CPU always has priority on the bus.
+%The latter mode gives the slowest DMA transfer, but has been shown to give best overall system performance. \todo{Find those book sources again, if time. Current source does not validate claim of overall performance} \cite{DMA-lecture}.
+% %**NOTE: Do we need this? Perhaps more on round-robin arbiters instead if more is needed.
 
 \subsection{SHA-256 Hashing Module}
-\todo{They still want a figure}
 The hashing module made for this project is a simple implementation of the algorithm described in
 appendix \ref{app:hashing-algo}. It uses 65 cycles to compute the hash of its input data, running
-one iteration of the SHA256 compression function every cycle except cycle 65, which is used to
+one iteration of the SHA-256 compression function every cycle except cycle 65, which is used to
 form new intermediate hash values from the results of the compression function.
 
 In order for the module to remain generic, so that it can also be used in cryptography, it
 is also not optimized specifically for bitcoin mining; specifically, this means that the module
 does not support doing the two-pass hashing required by the bitcoin protocol, instead relying
 on software to set up correct input data for the second pass. It also relies on software to
-do the neccessary padding of the input data as required by the SHA256 algorithm.
+do the neccessary padding of the input data as required by the SHA-256 algorithm.
 
-Even for generic SHA256 hashing, several optimizations are possible. The SHA256 algorithm
+Even for generic SHA-256 hashing, several optimizations are possible. The SHA-256 algorithm
 includes 64 32-bit constants, one for each round of the compression function. These can be
-stored in a block RAM memory to save some logic resources. However, this occupies valuable
+stored in a block RAM memory to save some logic resources \cite{optimizing-sha2}. However, this occupies valuable
 block ram resources that, in SHMAC, is used both by CPUs and scratchpad memory tiles. Thus,
 using block RAMs for optimization would place limits on how many tiles can be included in
-a SHMAC design; indeed, it was observed when synthesizing that designs with many cores
-would run out of block RAM before other resources according to the synthesis logs.
+a SHMAC design; indeed, it was observed when synthesizing large designs with many cores
+that the FPGA would run out of block RAM before any other resources according to the synthesis logs.
+
+Another optimization, that has already been mentioned in section \ref{sec:fpga-mining}, is
+pipelining. This can increase the throughput to as much as one hash per cycle, but will require
+a large amount of additional logic because of the amount of data required by each iteration
+of the SHA-256 compression function. The state required would include 2048~bits of storage
+for the expanded message block in addition to the two sets of 8 32~bit words needed for
+state and the intermediate hash value respectively.
 
 The module is controlled by the processor using a memory-mapped interface. This allows the use
 of a DMA to offload data transfer between memory and the hashing module. The memory-mapped interface
@@ -67,8 +104,8 @@ data to and from the module, making the hashing process much more dependent on t
 its benefits as an accelerator for offloading work from the processor.
 
 \subsection{DMA Module}
-%Originally made for the \todo{would need a reference} project during the Autumn 2014 at NTNU, the DMA Module has been modified further for use in this project.
-%It can be seen in figure \ref{fig:DMATop}.
+
+The DMA module was designed to test if separate data transfers with a DMA module could improve throughput and energy efficiency in the hashing process, freeing up the on-tile CPU for other work.
 
 \begin{figure}[htb]
     \centering
@@ -77,56 +114,23 @@ its benefits as an accelerator for offloading work from the processor.
     \label{fig:DMATop}
 \end{figure}
 
-The DMA module was made as part of the project to test if separate data transfers with a DMA module could improve performance and energy efficiency in the hashing process, freeing up the on-tile CPU for other work.
+The DMA module consists of the DMA logic, in addition to a wishbone slave interface for configuration
+and a wishbone master interface for transferring data.
 
-The DMA consists of a wishbone slave interface accessible for configuration, a wishbone master
-interface for transferring data and the DMA module itself.
+The DMA transfers words of 32-bit data using single wishbone transfers.  In addition, the DMA supports
+swapping the endianness of the data it copies. This improves performance when used with the SHA256
+accelerator, because the results from the accelerator are in big-endian
+and must be converted to little-endian to give the correct results when used by the software running on the processor.
+Converting endianness in software adds several additional instructions per hash, which are now avoided.
 
 %NOTE TO SELF: The way the text is now, there is no explanation of the figure's components.
 %Must keep an eye on the feedback.
-
-%\todo{The 14th commandment: Thou shall satisfy Kristian. The 13th commandment: Thou shall satisfy ME!!!}
-\todo{Hmmm... Can agree that this is a little bit nit-picky. See if this can be summed up shorter and better.}
+%
 The Wishbone Slave consists of three registers for each DMA Channel, making it six in total.
 The registers are used for base source, base destination and detailing the transfer request.
 When request is activated, the selected channel receives data from the slave, and executes the transfer.
 An arbiter arbitrates between the channels if both are active.
 Every single command, either load or store, are passed from the channels to the Wishbone master, where they are executed.
-Any received data from a load command is sent on to the correct channel, and when a channel if finished, the imformation is passed from the Wishbone Master to the Wishbone Slave, so it can modify its registers and interrupt the CPU. 
+Any received data from a load command is sent on to the correct channel, and when a channel if finished, the imformation is passed from the Wishbone Master to the Wishbone Slave, so it can modify its registers and interrupt the CPU.\todo{Hmmm... Can agree that this is a little bit nit-picky. See if this can be summed up shorter and better.}
 
-In addition, the DMA supports switching the endianness of the data it copies. This improves performance
-when used with the SHA256 accelerator, because the results from the accelerator are big-endian numbers
-and must be converted to little-endian to be used by the software running on the processor. Converting
-endianness in software adds several several additional store and arithmetic operations, which are now avoided.
-
-\subsection{Wishbone Arbiter}
-With the DMA comes a new WISHBONE master, and the CPU itself no longer has sole ownership of the WISHBONE bus. 
-The tile needs an arbiter to arbitrate between the DMA and the CPU
-on the wishbone bus. For this purpose, the reference arbiter from the Public domain library for VHDL \cite{WBLibrary}
-was adapted for use. This is a round-robin arbiter, illustrated in figure \ref{fig:WBArbiter}.
-
-%
-%For this project, the ARB0001a: 4 Level, Round-robin Arbiter from WISHBONE Public Domain Library for VHDL has been taken in use.
-%Figure \cite{fig:WBArbiter} shows how the arbitration works, with Round-robin.
-%The arbiter will in turn check each input master for bus requests, and grants access thereby.
-%If a master has no request, the arbiter will continue to the next.
-%For this project, only two masters are present.
-%Arbitration normally take a full clock cycle.
-%See \cite{WBLibrary} for detailed implementation.
-%
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=1.0\textwidth]{Figures/Tile/WBArbiter}
-    \caption{Wishbone Round-robin Arbiter, as seen in \cite{WBLibrary}.}
-    \label{fig:WBArbiter}
-\end{figure}
-
-Round-robin arbiters work well in data acquisition systems where data is collected and placed into memory, since peripherals must often store data to memory. % on an equal basis.
-The choice of this arbiter is because using an already established wishbone arbiter saves time as opposed to desiging a new on, which may end up less efficient in worse case.
-An alternative to a round-robin arbiters is a priority arbiter.
-%These are usually disadvantagous in said systems, but does not have the arbitration overhead \cite{WBLibrary}.\
-\todo{Discussion of alternatives. The following may be moved to future work.}
-
-In the case of arbitration between a CPU and a DMA module, a priority arbiter may be used to achieve either burst mode, where the DMA gets full access on the bus until the transfer is finished, or transparent mode, where the CPU always has priority on the bus.
-The latter mode gives the slowest DMA transfer, but has been shown to give best overall system performance. \todo{Find those book sources again, if time. Current source does not validate claim of overall performance} \cite{DMA-lecture}.
 
