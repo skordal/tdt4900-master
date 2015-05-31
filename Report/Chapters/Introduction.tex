@@ -3,13 +3,7 @@
 In recent years, digital currencies know as ``cryptocurrencies'' have become popular
 and most popular of these is Bitcoin. The term ``cryptocurrency'' stems from the fact
 that a cryptographic hash function is at the core of the algorithms involved. For bitcoin,
-the SHA-256 hash algorithm is used, although other currencies uses other algorithms. This
-is more closely described in section \ref{sec:bitcoin}.
-
-%Using bitcoin mining as an application, this project develops a SHA256 accelerator
-%for the Single-ISA Heterogeneous Many-core Computer, SHMAC. To achieve higher throughputs
-%and energy efficiency, a DMA is also developed. The two modules are integrated into
-%a general-purpose CPU tile, and an estimation of the bitcoin mining efficiency is made.
+the SHA-256 hash algorithm is used, although other currencies uses other algorithms.
 
 \section{Original Assignment Text}
 
@@ -29,15 +23,23 @@ of a general-purpose CPU and should constitute a major aspect of the report.
 \section{Comments on the Assignment Text}
 
 Recent hardware developments within the field of bitcoin mining, most important of
-which is the introduction of dedicated ASIC mining chips, have led to bitcoin mining
-using CPUs and GPUs being considered unprofitable and wasteful in terms of the energy
-expended.
+which is the introduction of dedicated ASIC mining chips described in section \ref{sec:asic},
+have led to bitcoin mining using CPUs, GPUs and many FPGA-based designs being considered
+unprofitable and wasteful in terms of the energy expended.
 
-The assignment then boils down to: is bitcoin mining possible using SHMAC? Does the
-mining process benefit from heterogenity and what performance gains are possible
-using a dedicated SHA256 accelerator and a DMA?
+In such an environment, it is doubtful SHMAC can compete with ASIC designs.
+The assignment then basically boils down to: is bitcoin mining possible using SHMAC?
+Does the mining process benefit from heterogenity, and what performance and energy
+efficiency can be expected when using SHMAC as a bitcoin miner?
 
-Other relevant issues are how the system scales; given enough processing cores,
-could SHMAC compare to dedicated bitcoin mining systems in power efficiency or
+Another relevant and interesting issue is how the system scales; given enough processing
+cores, could SHMAC compare to dedicated bitcoin mining systems in power efficiency or
 computing power?
+
+Using bitcoin mining as an application, this project develops a SHA256 accelerator
+for SHMAC. To achieve higher throughputs and energy efficiency, a DMA is also developed.
+The two modules are integrated into a general-purpose CPU tile, and an estimation of the
+bitcoin mining efficiency is made using a benchmark application. Power efficiency is
+also measured by measuring the power used when running the benchmark.
+
 
