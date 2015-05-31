@@ -415,70 +415,56 @@ SMTSIM and Simpoint were used for the simulation.
 Best static scheduling ensures that threads that are least affected by the difference between the EV5 and the EV6, are assigned to the EV5 processors, when all EV6 processors are occupied.
 When the number of threads passes 4, the measured weighted speedup increases on the heterogeneous system, compared to a homogeneous CMP with 4 EV6.
 When the number of threads passes 13, a CMP with 20 EV5 performs better, though this can be changed with a different combination of EV5 and EV6 cores.
-This is shown in figure \ref{fig:Kumar2}.
+This is shown in figure \ref{fig:Kumar2}.\todo{What is a CMP?}
 
 %\todo{Following 2 sentences are nearly ripoff from \cite{heterogeneous-perf}, consider making quote or what?}
-Compared to 4 EV6 cores, the heterogeneous processor performed up to 37\% better with an average 26\% improvement over the configuration considering 1-20 threads. 
-Compared to 20 EV5 cores, the performance was up to 2.3 times better, and averaged 23\% better over that same range. \cite{heterogeneous-perf}
-Using dynamic heuristics for core assignment further increased the performance.
+Compared to 4 EV6 cores, the heterogeneous processor performed up to 37~\% better with an average 26~\% improvement over the configuration considering 1--20 threads. 
+Compared to 20 EV5 cores, the performance was up to 2.3 times better, and averaged 23~\% better over that same range.
+Using dynamic heuristics for core assignment further increased the performance. \cite{heterogeneous-perf}
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.5\textwidth]{Figures/Heterogeneous/Kumar2}
-    \caption{Benefits from heterogeneity - static scheduling for inter-thread diversity, as seen in \cite{heterogeneous-perf}.}
+    \caption{Benefits of heterogeneity - static scheduling for inter-thread diversity \cite{heterogeneous-perf}}
+% %**NOTE: The figure text makes no sense!
     \label{fig:Kumar2}
 \end{figure}
 
-In addition to testing the performance gain, Kumar \textit{et al} also tested the the response time within queue lenght as well.
-This was to give insight on how well heterogeneous processors handles large job queues, compared to best homogeneous systems.
-%For testing response time in an open system, and how various que length affects it, jobs with an average distrubition of 200 million cycles were generated randomly and executed.
-For this test, jobs with an average distrubition of 200 million cycles were generated randomly and executed.
+In addition to testing the performance gain, Kumar \textit{et al} also tested the the response time within the job queue as well.
+This was to give insight on how well heterogeneous processors handles large job queues, compared to the best homogeneous systems.
+For this test, jobs with an average distribution of 200 million cycles were generated randomly and executed.
 Then different mean job arrival rates with exponential distribution were simulated.
-It was revealed a great difference between saturation for a homogenous system with 4 EV6, and the heterogeneous processor.
-For the former, the unbounded response time is seen as the arrival rate approached its maximum throughput around 2 jobs per 100 million cycles.
-From there, the run queue became infinate.
+It was revealed a great difference between saturation for a homogenous system with 4 EV6 processors and the heterogeneous processor.
+For the former, the unbounded response time was seen as the arrival rate approached its maximum throughput around 2 jobs per 100 million cycles.
+From there, the run queue became infinite. % %**NOTE: This makes no sense!
 The heterogeneous system remained stable well beyond that point.
-The degredation was also more graceful under heavier loads than for homogeneous processors.
+The degradation was also more graceful under heavier loads than for homogeneous processors.
 This can be seen in figure \ref{fig:Kumar3}.
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.5\textwidth]{Figures/Heterogeneous/Kumar3}
-    \caption{Limiting response-time for various loads, as seen in \cite{heterogeneous-perf}.}
+    \caption{Limiting response-time for various loads \cite{heterogeneous-perf}.}
     \label{fig:Kumar3}
 \end{figure}
 
 \subsection{Optimal architecture}
 \todo{Subchapter needs double check against source papers}
 \label{subsec:rw_arch}
-Kumar \textit{et al}\cite{heterogeneous-arch} has taken a closer look at what is good heterogeneous design.
+Kumar \textit{et al}\cite{heterogeneous-arch} has taken a closer look at what can be considered good heterogeneous design.
 They argue that while the previous experiments gave increased energy efficiency and performace, a heterogeneous system should be designed from scratch, instead of using pre-existing core designs.
-While they surpassed homogeneous designs, pre-existing cores failed to reach the full potential of heterogeneousy for three reasons: They present low flexibility in choices, the core choices remain monotonic, and best heterogeneous design are composed of specialized core architectures\cite{heterogeneous-arch}.
-But also, if pre-existing cores are not used, additional costs in design, verification and testing must be evaluated, to see if the benefits are worth the cost.
+While they surpassed homogeneous designs, pre-existing cores failed to reach the full potential of heterogenity for three reasons: they present low flexibility in choices, the core choices remain monotonic, and the best heterogeneous designs are composed of specialized core architectures \cite{heterogeneous-arch}.
+However, if pre-existing cores are not used, additional costs in design, verification and testing must be evaluated, to see if the benefits are worth the cost.
 
-They made three significant contributions in this experiment. 
-First, benefits of heterogeneity in power and area efficient architectures is re-evaluated, with new benefits and higher gains shown.
-Secondly, methodologies for for arriving at good heterogeneous designs are demonstrated.
-Thirdly, a number of key principles critical to effective design of future chip multiprocessors are identified.
-
-Several conclusions were derived:
-%\todo{Itemize or cut down at this point}
-The most efficient heterogeneous multiprocessors were not constructed from cores that make good general-purpose uniprocessor cores, or cores that would appear in a good homogeneous multicure architecture.
-Each core was individually tuned for a class of applications with common characteristics.
-The results are usually non-monotonic processors.
-And performance advantages of heterogeneous multiprocessors, including non-monotonic also holds for completely homogeneous workloads.
-In those cases, the diversity across different workloads are exploited.
-
-%\todo{Just a headnote. Remove when agreed or fixed}\textbf{Simplification assumptions dropped}
-
-%A number of 480 unique cores could be made from the various parameters set for this experiment.
-%\todo{Makes absolutely sense at all. Cut down or delete, but some way explain what the parameters were.}These were the issue width, I-cache size, D-cache size, L2 Cache size, Memory Channel, number of FP-IntMul-ALU units, IntQ-fpQ and IntFp PhysReg-ROB (OOO), ITLB-DTLB and LD/St Queue.
-%\todo{Mention the "best fit" problem from monotonic cores?}
-%\textbf{Insert mentioned todo-content or remove. And find suitable place}
-
-A fixed number of four cores were used for this experiment.
-In addition to testing the various core builds, the combinations were tested against varying area and power constraints, with their performance compared to the best homogeneous multiprocessors.
-Static mapping were mainly used for this experiment, but few tests with dynamic mapping showed further increase in performance, since a thread could be moved around to most suitable core at any phase of its execution. 
+%Several additional conclusions were reached in the study:
+%\begin{itemize}
+%\item The most efficient heterogeneous multiprocessors were not constructed from cores that make good general-purpose uniprocessor cores, or cores that would appear in a good homogeneous multicure architecture.
+%\item Each core should be individually tuned for a class of applications with common characteristics.
+%\item The results are usually non-monotonic processors.
+%\item And performance advantages of heterogeneous multiprocessors, including non-monotonic also holds for completely homogeneous workloads.
+%\item In those cases, the diversity across different workloads are exploited.
+%\end{itemize}
+% %***NOTE: The list above makes no sense.
 
 %\todo{Strongly considering deleting (commenting out) the following paragraph. Too much unnecessary details.}The workloads come from seven benchmarks from the SPEC suite, classified int o processor bound or bandwidth bound.
 %The chosen benchmarks are carefully selected, and represents the entire SPEC suite.
@@ -487,18 +473,16 @@ Static mapping were mainly used for this experiment, but few tests with dynamic 
 %\todo{Warning: Direct rip-off. Consider "quote"-form}The former consist of all possible 4-threaded combinations that can be constructed such that each of the 4 threads running at a different time.
 %The latter consists of all combinations that can be constructed so that all the 4 threads running at a time are the same.
 
-%\todo{Direct copy, rewrite the paragraph}We use weighted speedup [21] for our evaluations. In this paper, weighted speedup measures the arithmetic sum of each running thread’s IPC, divided by its IPC on the simplest core considered in this study when running alone. The IPC is derived by running a thread for a fixed amount of time. We believe that this metric guards against multiprocessor design points that produce artificial speedups by simply favoring high-IPC threads.%For completeness reasons, we also performed all our evaluations for total IPC as well and found that while the absolute results were different, there was no significant difference in trends or analysis.
-
-It turned out that the more constricted the anvailable power or chip area, the more gain custom heterogeniety provided, as homogeneous multiprocessors could only perform any task at maximum if the power budget was generous.
+It turns out that the more constricted the available power or chip area is, the more gain custom heterogenity provides, as homogeneous multiprocessors could only perform any task at maximum capacity if the power budget was generous.
 But as designs become more aggressive, one will want to place more cores on the die, and power budgets per core is likely to tighten more severly.
 Heterogeneous designs dampen the effects of constrained power budgets \cite{heterogeneous-arch}.
 
-Any best heterogeneous design for the different tested power and area constraint were very different from best homogeneous design, underlining the need to design heterogeneous processors from a clean slate, rather than modifying an existing core design.
-Monotonous designs (for instance, different generations of cores from same family) does not exploit heterogeneity equally well.
-For instance, the benchmark \textit{mcf} from \cite{heterogeneous-ee} were mapped on EV6 or single-threaded EV8-, in spite of having low ILP.
-The reason was the larger caches of these cores, causing the advances capabilities of these larger cores to be underutulized.
+Any of the best heterogeneous designs tested for different power and area constraints were very different from the best homogeneous design, underlining the need to design heterogeneous processors from a clean slate, rather than modifying an existing core design.
+Monotonous designs, for instance, different generations of cores from same family, does not exploit heterogenity equally well.
+For instance, the benchmark \textit{mcf} from \cite{heterogeneous-ee} were mapped to EV6 or a single-threaded EV8-, in spite of these having low instruction level parallelism.
+The reason for this was that the larger caches of these cores causes the advanced capabilities of these larger cores to be underutilized. % %**NOTE: Makes no sense?
 
-Heterogeneous multicore processors designed from clean slate gives better performance.
+%Heterogeneous multicore processors designed from clean slate gives better performance.
 
 %\subsection{Uncore}
 %\todo{Client worklod description has been cut out. Reconsider if it should be included}
@@ -551,11 +535,12 @@ Heterogeneous multicore processors designed from clean slate gives better perfor
 
 \section{Heterogenity and Bitcoin Mining}
 
-Heterogeneous systems have already been used for bitcoin mining. Using GPUs is a way of exploiting
+Heterogeneous systems have already been well exploited for bitcoin mining. Using GPUs is a way of exploiting
 the heterogeneous capabilities of regular desktop computers. However, since GPUs are designed for
-processing graphics, using them for bitcoin mining is not optimal.
+processing graphics, using them for bitcoin mining is not optimal, and as noted in section \ref{subsec:rw_arch},
+the best heterogeneous solutions are designed from scratch with the application in mind.
 
-However, when using FPGAs it is possible to create more optimized co-processors for accelerating
+When using FPGAs it is possible to create more optimized co-processors for accelerating
 whole or parts of the bitcoin mining algorithm.
 
 One study uses the Zedboard from Xilinx to explore what kind of mining performance it is possible to
@@ -572,19 +557,21 @@ performance of the accelerator with a partially pipelined SHA256 accelerator rea
 % Some funny observations about this article: They have no results for their Zedboard
 % application, their performance graph is performance over time when experiment was run,
 % it is not clear which parameters gave the best results. All in all, a crappy article
-% that should never have been published!
+% that should never have been published! Note to self: remember to include the results
+% so our Master's can dominate this puny article.
 
-%\subsection{The Single-ISA Heterogeneous MAny-core Computer}
 \section{The Single-ISA Heterogeneous MAny-core Computer}
 \label{sec:shmac}
-The Single-ISA Heterogeneous MAny-core Computer is an architecture designed investigating heterogeneous
+
+The Single-ISA Heterogeneous MAny-core Computer is an architecture designed for investigating heterogeneous
 systems at all abstraction levels, as illustrated in figure \ref{fig:shmacAbstractionLevels}.
-%The point is to create a flexible framework in which different heterogeneous processors can be created from a collection of processing elements and accelerators. % - Not anymore?
-The programming model is kept constant across SHMAC-instances, while the underlying implementation changes.
-This way, software design space exploration is facilitated.
+
+The programming model is kept constant across SHMAC instances, while the underlying implementation can change,
+allowing software to be written once and run on different SHMAC instances.
+
 It implements a tile-based architecture with a mesh interconnect. All processor tiles implement the same
 ARM ISA and the same memory model, in order to achieve a common programming model \cite{shmac-plan}.
-An illustration of SHMAC can be seen in figure \ref{fig:shmac}.
+A high-level illustration of SHMAC can be seen in figure \ref{fig:shmac}.
 
 \begin{figure}[htb]
     \centering
@@ -600,17 +587,6 @@ An illustration of SHMAC can be seen in figure \ref{fig:shmac}.
     \label{fig:shmac}
 \end{figure}
 
-%\todo{PROBLEM: This paragraph is way too similar to original text. Must fix, one way or another. }NTNU argues that the SHMAC-approach gives the right tools to reach the research goles outlined in the plan in \cite{shmac-plan}.
-%For software research, SHMAC makes it possible to explore substantially more diverse systems than the ones currently provided by the industry.
-%Furthermore, SHMAC-based computers realized in FPGAs will be significatly faster than using simulators.
-%It is expected that co-developing software and hardware will result in new knowledge that gives insight into both hardware and software issues.
-%Micro- and macro-architecture components can also be combined with novel transistor technologies and ASIC realizations to reach research goals at even lower abstraction levels.
-
-% - Yes, I commented out this stuff: write what you want to say, then use citations to back it up - do not copy from the citations!
-
-%We believe that the SHMAC-approach gives us the right tools to reach the research goals outlined in this plan. For software research, SHMAC makes it possible to explore substantially more diverse systems than those cur- rently provided by the industry. At the same time, SHMAC-architectures realized in FPGAs will be significantly faster than simulator-based approaches. We expect that co-developing software and hardware result in substan- tial cross-fertilization that gives insights into both hardware and software issues. Finally, the SHMAC micro- and macro-architecture components can be combined with novel transistor technologies and ASIC realizations to reach research goals at the lower abstraction levels.
-
-%\subsubsection{SHMAC Architecture}
 \subsection{SHMAC Architecture}
 
 SHMAC is a tile-based architecture, with the processing elements laid out in a rectangular
@@ -635,10 +611,9 @@ Several tile types are supported. The main ones are:
   \item[APB Interface (I/O tile)] --- This tile implements the Advanced Peripherals Bus (APB) slave
   	which gives the host processor on the Versatile Express board access to SHMACs memory space
 	for use when programming the memories \cite{shmac-plan}.
-  \item[Dummy Tile] --- Empty tile which only contains router functionality. Can be used for instance
-  	as a filler tile \cite{shmac-plan}.
+  \item[Dummy Tile] --- Empty tile which only contains router functionality \cite{shmac-plan}. Can be used for instance
+  	as a filler tile.
 \end{description}
-
 
 \begin{figure}[htb]
     \centering
@@ -650,16 +625,12 @@ Several tile types are supported. The main ones are:
 \subsection{SHMAC Memory Map}
 % *** NOTE: I seriously don't think this is relevant information, suggest removing this section.
 
-Figure \ref{fig:shmac-memory} shows how the memory is mapped in ARM-based SHMAC.
-%
-%The Exception table contains 8 instructions, one for each exception type described on \todo{Checked Redmine. Coulnd't find it}Redmine.
-% *** NOTE: That is because it is standard ARM stuff, not SHMAC relevant - K.
-%
-
-The high end of the memory space is reserved for system registers and tile registers. 
-The tile registers are private for each tile and contain information such as the tile's coordinates, CPU number and other useful data.
-In addition the tile memory space contains the memory mapped peripherals for each tile, such as timers and the interrupt controller.
-Any custom peripheral, such as the DMA and the hashing accelerator developed in the project is also mapped into this address space.
+Figure \ref{fig:shmac-memory} shows how the memory is mapped in the ARM-based SHMAC. All
+processor tiles share the same address space with only the tile register space being
+private for each tile. This memory area contains information about the tile itself, such as its coordinates,
+the CPU ID number and other useful data. In addition the tile register space contains the memory-mapped
+peripherals for each tile, such as timers and the interrupt controller.
+Any custom peripheral, such as the DMA and the hashing accelerator developed in the project is mapped into this address space.
 The system registers are used for communication with the host system.
 
 \begin{figure}[htb]
@@ -669,11 +640,11 @@ The system registers are used for communication with the host system.
     \label{fig:shmac-memory}
 \end{figure}
 
-\subsection{SHMAC Interconnection Netwwork}
+\subsection{SHMAC Interconnection Network}
 
-SHMAM uses a 2D mesh-based interconnection network to connect all the tiles.
+SHMAC uses a 2D mesh-based interconnection network to connect all the tiles.
 Store-and-forward switching with on/off flow control is used, and the XY-algorithm is used for deciding the route of each data packet.
-Each tile consists of a router with five ports, for east, north, west, south and local connection, respectively.
+Each tile consists of a router with five ports, one for each of its neighbours and the local connection.
 When multiple packets are inbound from different directions, a round-robin scheme is used to arbitrate between which
 packet to route through, and packets from the local tile has equal priority to those arriving from the other directions.
 
