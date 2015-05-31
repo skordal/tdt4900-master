@@ -35,7 +35,24 @@ with data transfers needed for the hashing benchmark.
     \label{fig:5x4}
 \end{figure}
 
-The system was synthesized using Xilinx' Vivado software suite, version 2013.4, and
+As testing uncovered a hardware bug in the implementation of the scratchpad tiles,
+discussed in section \ref{sec:init-hw-results}, a second design had to be created
+in order to measure the scaling of the performance when using accelerators.
+
+The second design places all processor tiles in a single row. This causes all traffic
+to the memory tiles, placed on the row below, to come from above, which bypasses the
+scratchpad bug previously mentioned.
+
+The design contains 12 CPU tiles and is illustrated in figure \ref{fig:13x2}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Figures/Measurements/13x2}
+    \caption{Second test setup, with BRAM and DRAM tiles on second row, and all CPUs on the first row.}
+    \label{fig:13x2}
+\end{figure}
+
+The test designs were synthesized using Xilinx' Vivado software suite, version 2013.4, and
 uploaded to a Versatile Express machine\todo{Technical details here}.
 
 \section{Measuring the Performance}
