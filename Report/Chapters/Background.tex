@@ -627,168 +627,8 @@ Overall, this is the most unpredictable field of solution. \cite{dark-silicon}
 
 % Please rewrite the above, the word "horseman" is something we shouldn't use.
 
-%\section{Heterogeneous Architectures}
-%\label{sec:heterogeneous}
-%\todo{Used as head chapter, but consider removal if SHMAC is the only heterogeneous computer described.}Heterogeneous multiprocessor contains of specialized processors for different classes of applications, and are the implementation of the specialization approach.
-%One such system is the Single-ISA Heterogeneous MAny-core Computer (SMHAC), which is a research project 
-initiated by EECS on NTNU. \cite{shmac-plan}
-
-%\subsection{The Single-ISA Heterogeneous MAny-core Computer}
-\section{The Single-ISA Heterogeneous MAny-core Computer}
-\label{sec:shmac}
-The Single-ISA Heterogeneous MAny-core Computer is an architecture for investigating heterogeneous systems at all abstraction levels, as illustrated in figure \ref{fig:shmacAbstractionLevels}.
-%The point is to create a flexible framework in which different heterogeneous processors can be created from a collection of processing elements and accelerators. % - Not anymore?
-The programming model is kept constant across SHMAC-instances, while the underlying implementation changes.
-This way, software design space exploration is facilitated.
-It implements a tile-based architecture with a mesh interconnect. All processor tiles implement the same
-ARM ISA and the same memory model, in order to achieve a common programming model \cite{shmac-plan}.
-An illustration of SHMAC can be seen in figure \ref{fig:shmac}.
-
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.5\textwidth]{Figures/Heterogeneous/SHMACAbstractionLevels}
-    \caption{Levels of abstraction in computing systems \cite{shmac-plan}.}
-    \label{fig:shmacAbstractionLevels}
-\end{figure}
-
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.95\textwidth]{Figures/Heterogeneous/SHMAC}
-    \caption{High-Level architecture of SHMAC \cite{shmac-plan}.}
-    \label{fig:shmac}
-\end{figure}
-
-%\todo{PROBLEM: This paragraph is way too similar to original text. Must fix, one way or another. }NTNU argues that the SHMAC-approach gives the right tools to reach the research goles outlined in the plan in \cite{shmac-plan}.
-%For software research, SHMAC makes it possible to explore substantially more diverse systems than the ones currently provided by the industry.
-%Furthermore, SHMAC-based computers realized in FPGAs will be significatly faster than using simulators.
-%It is expected that co-developing software and hardware will result in new knowledge that gives insight into both hardware and software issues.
-%Micro- and macro-architecture components can also be combined with novel transistor technologies and ASIC realizations to reach research goals at even lower abstraction levels.
-
-% - Yes, I commented out this stuff: write what you want to say, then use citations to back it up - do not copy from the citations!
-
-%We believe that the SHMAC-approach gives us the right tools to reach the research goals outlined in this plan. For software research, SHMAC makes it possible to explore substantially more diverse systems than those cur- rently provided by the industry. At the same time, SHMAC-architectures realized in FPGAs will be significantly faster than simulator-based approaches. We expect that co-developing software and hardware result in substan- tial cross-fertilization that gives insights into both hardware and software issues. Finally, the SHMAC micro- and macro-architecture components can be combined with novel transistor technologies and ASIC realizations to reach research goals at the lower abstraction levels.
-
-%\subsubsection{SHMAC Architecture}
-\subsection{SHMAC Architecture}
-
-SHMAC is a tile-based architecture, with the processing elements laid out in a rectangular grid with neighbour-to-neighbour connection, using a mesh interconnect, using XY-routing.
-%Several tile types are currently supported, not including the tile described in this report,
-%with the most important ones being the processor tile, which contains a Turbo Amber CPU
-%\footnote{See section \ref{sec:aht} for a short overview}, a scratchpad tile which functions as
-%fast temporary storage, a DRAM tile and an I/O tile for communicating with a host system.
-
-The supported tile types, not including the new tile described in this report, are the following:
-\todo{Entire following list pretty much rip-off, except Amber and Turbo Amber. Sources from elsewhere needed.}
-\begin{description}
-  \item[Amber Processor Tile] The Processor tile that contains an ARM Amber processor, caches, peripherals and optional accelerators, and the general concept can be seen in figure \ref{fig:shmac-cpu}.
-  \todo{Describe Amber Briefly}
-  \textbf{Describe Amber Briefly}
-  Currently, the peripherals consists of interrupt controller, timers and tile registers.
-  The tile registers are per-tile memory that store local information like the processor ID, the coordinates of the tile, etc. 
-  The caches, router and peripherals are connected to a Wishbone bus.
-  
-%  \todo{IMPORTANT! Affected our results!}Caches reduce the average memory latency, but adding caches also add the possibility for coherence problems.
-%  This is currently solved by placing shared data in uncachable memory regions, through software. 
-%  
-  The processor tile can be equipped with optional accelerators, designed to execute a specified computation in a very effective way.
-%  
-%  
-  \item[Turbo Amber Processor Tile] Same as previous, but has an ARM Turbo Amber processor with higher performance and runs the ARMv4nt instruction set. \cite{turboamber}
-  \item[Scratchpad Tile] Includes memory and a router, but no processing element. 
-  It is is an on-chip memory where the contents are managed by software (e.g. programmer, compiler, system software, etc.).
-  Each scratchpad tile is given a 128 MB address space.
-  The number of scratchpad tiles depends on a number of factors like the amount of block RAM available on the chosen FPGA, the desired access latency, the amount of block RAM used for caches in the processor tiles and the possibility of access contention\cite{shmac-plan}.
-  The memory layout for SHMAC is seen in figure \ref{fig:shmac-memory}.
-  \item[Main Memory Tile] Memory controller tile that gives SHMAC access to off-chip memory.
-  \item[APB Interface] This tile implements the Advanced Peripherals Bus (APB) slave which gives the host processor on the Versatile boards access to SHMACs memory space. 
-  In addition, the APB contains system registers which are used for managing communication with the host system.
-  \item[Dummy Tile] Contains only a router and is used to fill remaining tiles when there is not enough resources available in the target FPGA to fill all tiles with tiles that implement functionality.\end{description}
-
-
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.8\textwidth]{Figures/Heterogeneous/SHMACCPU}
-    \caption{SHMAC Processor tile \cite{shmac-plan}.}
-    \label{fig:shmac-cpu}
-\end{figure}
-
-%\subsubsection{SHMAC Memory Map}
-\subsection{SHMAC Memory Map}
-
-%Figure \ref{fig:shmac-memory} shows how the memory is mapped in ARM-based SHMAC.
-%
-%The Exception table contains 8 instructions, one for each exception type described on \todo{Checked Redmine. Coulnd't find it}Redmine.
-% NOTE: That is because it is standard ARM stuff, not SHMAC relevant - K.
-%
-The high end of the memory space is reserved for system registers and tile registers. 
-The tile registers are private for each tile and contain information such as the tile's coordinates, CPU number and other useful data.
-In addition the tile memory space contains the memory mapped peripherals for each tile, such as timers and the interrupt controller.
-Any custom peripheral, such as the DMA and the hashing accelerator developed in the project is also mapped into this address space.
-The system registers are used for communication with the host system.
-
-%The scratchpad tiles have been given a 128 MB address space. The SHMAC architecture supports 1 to k scratchpad tiles where k can be chosen independently of the number of tiles in the SHMAC instance. The number of scratchpad tiles depends on a number of factors like the amount of block RAM available on the chosen FPGA, the desired access latency, the amount of block RAM used for caches in the processor tiles and the possibility of access contention.
-
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.6\textwidth]{Figures/Heterogeneous/SHMACMemory}
-    \caption{Memory map of ARM-based SHMAC, as seen in \cite{shmac-plan}.}
-    \label{fig:shmac-memory}
-\end{figure}
-
-
-%\subsection{Work packages}
-%\textbf{Currently optional. Remove if nothing is worthwhile to mention. (LA STÅ)}
-
-\subsection{SHMAC Interconnection Netwwork}
-SHMAM uses a 2D mesh-based interconnection network to connect all the tiles.
-Store-and-forward switching with on/off flow control is used, and the XY-algorithm is used for route computation.
-Each tile consists of a router with five ports, for east, north, west, south and local connection, respectively.
-A round-robin scheme is used, and packets from the local tile has equal priority to those arriving from the other directions.
-In the current implementation, it takes 3 cycles for a data packet to transfer from one tile to the next. 
-The architecture of the router can be seen in figure \ref{fig:shmac-router}.
-
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/SHMACRouter}
-    \caption{Architecture of the SHMAC router, as seen in \cite{shmac-plan}.}
-    \label{fig:shmac-router}
-\end{figure}
-
-
-%\section{SHMAC Network on Chip}
-%\textbf{Optional position: Chapter 3 describing SHMAC}
-%Write here the numbers from shmac: Expected tile-to-tile routing time, Max throughput on DRAM-access, etc.etc. Anything we know that may impact our testing of the bitcoin mining
-
-
-%\subsection{SHMAC Performance}
-%\section{SHMAC Performance}
-%\textbf{Optional chapter position (if not in Methodology). DRAM throughput, routing speed, known costs, etc.}
-%
-
-\subsection{Wishbone Bus}
-The WISHBONE SoC Interconnect Architecture was developed by OpenCores Organization as a flexible design methodology for use with semiconductor IP cores.
-WISHBONE makes integration of IP cores more easy as it can be used as a common interface between IP cores, in contrast to using non-standard interconnection that requires custom "glue logic". 
-This improves the portability and reliability of the system, and results in faster time-to-market for the end user.
-
-\todo{Paragraph is rip-off. Write with own words. Or cut out}The WISHBONE architecture offers: a flexible integration solution that can be easily tailored to a specific application, a variety of bus cycles and data path widths to solve various system problems, and allow products to be designed by a variety of suppliers (thereby driving down price while improving performance and quality).
-
-%NOTE: Added these details because they may be relecvant for "future work", especially concerning the DMA Module.
-In the simplest implementation of WISHBONE, a WB master may request only one data transfer (either storing or loading) per transfer cycle, in which both the request and the cycles ends as soon as the request is acknowledged.
-WISHBONE supports also burst mode, in which one cycle may consist of several transfers between the master and the WB slave.
-Each request will last until acknowledged, before the WB master moves on to the next one.
-Pipelining is also supported, in which the requests do not have to wait for acknowledge before ending, allowing multiple requests to be sent out before acknowledges arrive \cite{WISHBONE}.
-
-WISHBONE is implemented as internal bus on the CPU tiles of SHMAC, but currently supports only single transfers with no bursts or pipelining.
-This means that in spite of using switched packet interconnection network on SHMAC, something that opens up for sending out several packets, a WB Master on a tile will only send out one request, before getting the acknowledged response back.
-\todo{Yaman said this. Find out if oral conversations with teachers/staff is allowed for bibliography.}\cite{Yaman}
-And prior to this project, only one WB master existed on each tile, owning the entire WISHBONE network in the tile.
-
-\subsection{Other properties of Vexpress}
-FIND: DDR MEMORY LATENCY AND THROUGHPUT IF POSSIBLE.
-Throughput according to Asbjørn: 128-bit word per cycle.
-Clock is a 50MHz.
-
-\section{Heterogeneous Processors}
+\section{Heterogeneous Architectures}
+\label{sec:heterogeneous}
 
 Heterogenenous architectures offers various possibilities for improved performance and energy efficiency;
 this could be in the systems ability to adapt to various applications or even external conditions such as
@@ -811,7 +651,6 @@ The architecture, with the chosen cores and their relative sizes to one another 
     \caption{Cores used in \cite{heterogeneous-ee}, and their relative sizes.}
     \label{fig:Kumar1}
 \end{figure}
-
 
 14 benchmarks from SPEC2000 were used in this experiment, simulated using SMTSIM, and both energy and energy-delay were measured.
 
@@ -983,19 +822,155 @@ Heterogeneous multicore processors designed from clean slate gives better perfor
 
 \section{Heterogenity and Bitcoin Mining}
 
-Because of the need for all available computing power to solve hashes, heterogeneous architectures
-may not seem the best solution for 
+Heterogeneous systems have already been used for bitcoin mining. Using GPUs is a way of exploiting
+the heterogeneous capabilities of regular desktop computers. However, since GPUs are designed for
+processing graphics, using them for bitcoin mining is not optimal.
 
-Heterogeneous systems may be configured to include bitcoin mining as an application. This can be
-done by either making a complete, separate bitcoin mining core in a heterogeneous computer
-or by incorporating an accelerator into an existing core or as a peripheral in such a system.
+However, when using FPGAs it is possible to create more optimized co-processors for accelerating
+whole or parts of the bitcoin mining algorithm.
 
-The Zedboard is a platform using a Zynq-7020 system-on-chip from Xilinx, which consists of
-two Cortex-A9 processors, various peripherals and an FPGA area. This platform was evaluated
-as a possible bitcoin mining platform, by using a separate bitcoin mining
-accelerator. The accelerator included hardware for accelerating both the double SHA-256 calculation
-and for comparing the result with the target value. At 50 MHz they obtained a performance of about
-0.8~MH/s. \cite{xcell-bitcoin,standridge-master}
+One study uses the Zedboard from Xilinx to explore what kind of mining performance it is possible to
+get from a heterogeneous system when using a dedicated bitcoin mining accelerator. The Zedboard
+uses a Zynq-7020 system-on-chip from Xilinx, which contains two Cortex-A9 processors, various
+peripherals and an FPGA area for implementing custom logic.
+
+The accelerator that was designed for the experiment included two hashing accelerators, one
+for each pass of the double-SHA256 algorithm, and a 256-bit comparator for checking if the
+result was a valid block. Using an unspecified Spartan 6-based development board, the
+performance of the accelerator with a partially pipelined SHA256 accelerator reached
+3.8~MH/s at its peak \cite{xcell-bitcoin}.
+
+% Some funny observations about this article: They have no results for their Zedboard
+% application, their performance graph is performance over time when experiment was run,
+% it is not clear which parameters gave the best results. All in all, a crappy article
+% that should never have been published!
+
+%\subsection{The Single-ISA Heterogeneous MAny-core Computer}
+\section{The Single-ISA Heterogeneous MAny-core Computer}
+\label{sec:shmac}
+The Single-ISA Heterogeneous MAny-core Computer is an architecture designed investigating heterogeneous
+systems at all abstraction levels, as illustrated in figure \ref{fig:shmacAbstractionLevels}.
+%The point is to create a flexible framework in which different heterogeneous processors can be created from a collection of processing elements and accelerators. % - Not anymore?
+The programming model is kept constant across SHMAC-instances, while the underlying implementation changes.
+This way, software design space exploration is facilitated.
+It implements a tile-based architecture with a mesh interconnect. All processor tiles implement the same
+ARM ISA and the same memory model, in order to achieve a common programming model \cite{shmac-plan}.
+An illustration of SHMAC can be seen in figure \ref{fig:shmac}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Figures/Heterogeneous/SHMACAbstractionLevels}
+    \caption{Levels of abstraction in computing systems \cite{shmac-plan}.}
+    \label{fig:shmacAbstractionLevels}
+\end{figure}
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Figures/Heterogeneous/SHMAC}
+    \caption{High-Level architecture of SHMAC \cite{shmac-plan}.}
+    \label{fig:shmac}
+\end{figure}
+
+%\todo{PROBLEM: This paragraph is way too similar to original text. Must fix, one way or another. }NTNU argues that the SHMAC-approach gives the right tools to reach the research goles outlined in the plan in \cite{shmac-plan}.
+%For software research, SHMAC makes it possible to explore substantially more diverse systems than the ones currently provided by the industry.
+%Furthermore, SHMAC-based computers realized in FPGAs will be significatly faster than using simulators.
+%It is expected that co-developing software and hardware will result in new knowledge that gives insight into both hardware and software issues.
+%Micro- and macro-architecture components can also be combined with novel transistor technologies and ASIC realizations to reach research goals at even lower abstraction levels.
+
+% - Yes, I commented out this stuff: write what you want to say, then use citations to back it up - do not copy from the citations!
+
+%We believe that the SHMAC-approach gives us the right tools to reach the research goals outlined in this plan. For software research, SHMAC makes it possible to explore substantially more diverse systems than those cur- rently provided by the industry. At the same time, SHMAC-architectures realized in FPGAs will be significantly faster than simulator-based approaches. We expect that co-developing software and hardware result in substan- tial cross-fertilization that gives insights into both hardware and software issues. Finally, the SHMAC micro- and macro-architecture components can be combined with novel transistor technologies and ASIC realizations to reach research goals at the lower abstraction levels.
+
+%\subsubsection{SHMAC Architecture}
+\subsection{SHMAC Architecture}
+
+SHMAC is a tile-based architecture, with the processing elements laid out in a rectangular
+grid with neighbour-to-neighbour connections, using a mesh interconnect with XY-routing.
+%Several tile types are currently supported, not including the tile described in this report,
+%with the most important ones being the processor tile, which contains a Turbo Amber CPU
+%\footnote{See section \ref{sec:aht} for a short overview}, a scratchpad tile which functions as
+%fast temporary storage, a DRAM tile and an I/O tile for communicating with a host system.
+
+Several tile types are supported. The main ones are:
+
+\begin{description}
+  \item[Turbo Amber Processor Tile] --- an improved version of the open-source Amber processor tile.
+  	The original Amber core provides support for the ARMv2a instruction set, while the Turbo Amber
+	provides support for the ARMv4t instruction set, giving the core the ability to also execute
+	instructions from the 16-bit Thumb instruction set. Several performance optimizations are
+	also added to the core \cite{turboamber}. An overview of a processor core can be seen in
+	figure \ref{fig:shmac-cpu}.
+  \item[Scratchpad Tile] --- A memory tile providing a small amount of memory for use by software.
+  	This memory is provided by the on-chip block RAM resources of the FPGA \cite{shmac-plan}.
+  \item[DDR Memory Tile] --- Memory controller tile that gives SHMAC access to off-chip DDR memory.
+  \item[APB Interface (I/O tile)] --- This tile implements the Advanced Peripherals Bus (APB) slave
+  	which gives the host processor on the Versatile Express board access to SHMACs memory space
+	for use when programming the memories \cite{shmac-plan}.
+  \item[Dummy Tile] --- Empty tile which only contains router functionality. Can be used for instance
+  	as a filler tile \cite{shmac-plan}.
+\end{description}
 
 
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Figures/Heterogeneous/SHMACCPU}
+    \caption{SHMAC processor tile \cite{shmac-plan}.}
+    \label{fig:shmac-cpu}
+\end{figure}
+
+\subsection{SHMAC Memory Map}
+% *** NOTE: I seriously don't think this is relevant information, suggest removing this section.
+
+Figure \ref{fig:shmac-memory} shows how the memory is mapped in ARM-based SHMAC.
+%
+%The Exception table contains 8 instructions, one for each exception type described on \todo{Checked Redmine. Coulnd't find it}Redmine.
+% *** NOTE: That is because it is standard ARM stuff, not SHMAC relevant - K.
+%
+
+The high end of the memory space is reserved for system registers and tile registers. 
+The tile registers are private for each tile and contain information such as the tile's coordinates, CPU number and other useful data.
+In addition the tile memory space contains the memory mapped peripherals for each tile, such as timers and the interrupt controller.
+Any custom peripheral, such as the DMA and the hashing accelerator developed in the project is also mapped into this address space.
+The system registers are used for communication with the host system.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Figures/Heterogeneous/SHMACMemory}
+    \caption{Memory map of ARM-based SHMAC, as seen in \cite{shmac-plan}.}
+    \label{fig:shmac-memory}
+\end{figure}
+
+\subsection{SHMAC Interconnection Netwwork}
+
+SHMAM uses a 2D mesh-based interconnection network to connect all the tiles.
+Store-and-forward switching with on/off flow control is used, and the XY-algorithm is used for deciding the route of each data packet.
+Each tile consists of a router with five ports, for east, north, west, south and local connection, respectively.
+When multiple packets are inbound from different directions, a round-robin scheme is used to arbitrate between which
+packet to route through, and packets from the local tile has equal priority to those arriving from the other directions.
+
+In the current implementation, it takes 3 cycles for a data packet to transfer from one tile to the next. 
+The architecture of the router can be seen in figure \ref{fig:shmac-router}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Figures/Heterogeneous/SHMACRouter}
+    \caption{Architecture of the SHMAC router \cite{shmac-plan}.}
+    \label{fig:shmac-router}
+\end{figure}
+
+\subsection{Wishbone Bus}
+
+Wishbone is a bus architecture developed by OpenCores to create a common interface for use between IP cores, especially in
+open source designs. It supports single-word transfers as well as burst transfers. A pipelined transfer mode is also provided
+which allows multiple requests to be sent from a module without the module having to wait for an acknowledge.
+
+Wishbone is used as internal bus on the CPU tiles of SHMAC. On these tiles, however, burst or pipelined transfers are
+not currently supported, which can limit performance.
+
+%WISHBONE is implemented as internal bus on the CPU tiles of SHMAC, but currently supports only single transfers with no bursts or pipelining.
+%This means that in spite of using switched packet interconnection network on SHMAC, something that opens up for sending out several packets, a WB Master on a tile will only send out one request, before getting the acknowledged response back.
+%\todo{Yaman said this. Find out if oral conversations with teachers/staff is allowed for bibliography.}\cite{Yaman}
+%And prior to this project, only one WB master existed on each tile, owning the entire WISHBONE network in the tile.
+%
+% % ***NOTE: Actually, the mesh interconnect does not support burst transfers as far as I understood. It is hard not to support Wishbone burst transfers... and almost no one uses pipelined transfers in Wishbone.
 
