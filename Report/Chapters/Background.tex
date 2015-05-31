@@ -643,7 +643,8 @@ The system registers are used for communication with the host system.
 
 \subsection{SHMAC Interconnection Network}
 
-SHMAC uses a 2D mesh-based interconnection network to connect all the tiles.
+SHMAC uses a 2D mesh-based interconnection network to connect all the tiles, which is used
+to transport data packets of 128~bits length.
 Store-and-forward switching with on/off flow control is used, and the XY-algorithm is used for deciding the route of each data packet.
 Each tile consists of a router with five ports, one for each of its neighbours and the local connection.
 When multiple packets are inbound from different directions, a round-robin scheme is used to arbitrate between which
