@@ -242,11 +242,12 @@ Under a constant power-budget, there is a shortfall of a factor of 2 in the ener
 and this utilization potential of a chip is falling exponentially by 2 times for each generation.
 If the power limitation were to be based on the current generation, then designs would be 93,75\% dark in eight years.
 This gives rise to the term ``dark silicon'', where a chip must either be underclocked or parts of
-it turned off in order to keep to a set power budget, giving rise to ``dark'' areas of the chip.
+it turned off in order to stay within a defined power budget, giving rise to ``dark'' areas of the chip.
 This is especially true for chips where the cooling solutions are no longer efficient enough to remove
 the generated heat from a fully powered chip.
 
-In order to work around this problem, the CPU industry moved to using multicore processors around 2005.
+In an attempt to work around this problem, the CPU industry moved to using multicore processors around 2005.
+Since the gains from improving ILP was diminishing, the industry focues more on TLP and throughput through multiprocessing, the only other known way of scaling at the time. \cite{computer_architecture} 
 However, adding multiple cores does not circumvent the problem in the long run.
 Multicore chips will not scale as transistors shrink, and the fraction of a chip that can be filled with cores running at full frequency is dropping exponentially with each processor generation. 
 Large fractions of the chip will be left dark --- either switched off for a long time, or significantly underclocked.
@@ -268,10 +269,16 @@ Instead of having dark silicon on the chip, one can simply shrink the chip itsel
 %These chips may rapidly turn into low-margin businesses for which further generations of Moore’s law provide small benefit.
 % %*** NOTE: The above makes no sense.
 
+% %*** NOTE RESPONSE: Very well, here is my second attempt:
+
+All chips may be shrunk to a small extent, but the only chips that truly can gain from only shrinking, will be those on which applied dark silicon is only a waste, and cannot further enhance the product.   
+Specalizing into these types of shrunk chips may turn out to be less profitable business, as the further generations of Moore's law adds little benefit. 
+% Better now?
+
 Futhermore, there are other disadvantages: Exponentially smaller chips are not exponentially cheaper, since mask cost, design cost and I/O pad aread cannot be amortized. 
-Competition will most likely favor chips that utulizes dark silicon to improve the overall product, causing chips that are only shrinked to sell at low market price, leading to loss for the company.
+Competition will most likely favor chips that utulizes dark silicon to improve the overall product, thus chips that are only shrinked will sell at low market price, leading to loss for the company.
 Exponential shrinking also leads to exponential rise in power density, and chip temperature will thus follow suit.
-Meeting the temperature limit will increase the cost, at which the nominal scaling of energy efficiency is reduced below \todo{Feels weird}1.4X.
+Meeting the temperature limit will increase the cost, at which the scaling of energy efficiency is reduced below the nominal 1.4 factor.
 %Meeting the temperature limit will reduce the scaling below the expected energy effeciency, at the nominal \todo{Feels weird}1.4X scaling.
 
 %There are also second-order effects assosiated with shrinking chips:
