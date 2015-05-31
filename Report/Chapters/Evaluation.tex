@@ -1,9 +1,9 @@
-\chapter{Results}
+\chapter{Results and Discussion}
 
 This chapter presents and analyzes the results obtained using the methodology
 presented in the previous chapter.
 
-\section{Performance Results}
+\section{Performance}
 
 %The results from using software only for hashing can be seen in table \ref{tab:Perf-SW}.
 %The table shows the hashes per second for each active processor as number of processors are scaled up, beginning from Processor 0.
@@ -21,49 +21,32 @@ presented in the previous chapter.
 %This suggests that the mapping on SHMAC can improve or hamper performance, depending on the setup.
 %Nevertheless, with memory as main bottleneck, a better mapping will have little effect on performance.
  
-Using software-only hashing produced the results in table \ref{tab:Perf-SW}. As can be seen
-in the plot in figure \ref{fig:sw-scaling} adding more processors after the third produces no
-additional performance gain. \todo{We'll rotate this table or maybe move it to an appendix?}
-\todo{Agreed. Marked for future fix}
-The reason for this is that all cores must make frequent accesses to DRAM, which causes the
-DRAM tile to quickly become congested.
+To establish a baseline for the performance gains obtained when using the accelerators,
+a measurement of the performance when using software hashing was first obtained.
+
+\subsection{Initial Software Results}
+
+Using software-only hashing produced a best result of 16047 H/s. As can be seen
+in the plot in figure \ref{fig:sw-scaling1}, however, adding more processors after the third produces no
+noticeable additional performance gain. The reason for this is that all cores makes frequent
+accesses to DRAM, when running the software algorithm, which causes the DRAM tile to quickly
+become congested. The reason for these frequent accesses is probably due to the use of
+many variables in the code as well as the effect of stack usage. Since the Turbo Amber core
+uses a write-through cache, all memory writes ends up going to DRAM immediately which causes
+additional congestion.
 
 Another interesting effect to note in the results is how the XY routing affects the performance
 of each tile. The more tiles that tries to access main memory through a tile, the less
-performance that tile has; it seems that SHMACs router system favours requests originating
-from other tiles before requests originating from the tile itself.
+performance that tile has; network congestion does, in other words, have a great impact on individual
+tile performance.
 
-Exceptions are processor tile 10, which appears to have no competition with other tiles for the routing, and row 4, as adding processors from this row seems does not decrease the individual performance of other tiles. 
-
-\begin{flushleft}
-\begin{table}
-\tiny
-\begin{tabular}{| l || r r r r | r r r r | r r r | r r r r r |}
-  \hline 
-  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13} & \textbf{14} & \textbf{15}   \\
-  \hline                       
-  \textbf{13041} & 13041 & - & - & - & - & - & - & - & - & - & - & - & - & - & - & - \\
-  \textbf{26105} & 13041 & 13064 & - & - & - & - & - & - & - & - & - & - & - & - & - & - \\
-  \textbf{39185} & 13041 & 13064 & 13080 & - & - & - & - & - & - & - & - & - & - & - & - & - \\
-  \textbf{36470} & 11114 & 10801 & 7258 & 7297 & - & - & - & - & - & - & - & - & - & - & - & - \\
-  \textbf{36449} & 8064 & 8033 & 4065 & 4063 & 12224 & - & - & - & - & - & - & - & - & - & - & - \\
-  \textbf{36452} & 6063 & 6073 & 3047 & 3047 & 9140 & 9082 & - & - & - & - & - & - & - & - & - & - \\
-  \textbf{36450} & 4237 & 4244 & 2125 & 2125 & 6367 & 6367 & 10985 & - & - & - & - & - & - & - & -\\
-  \textbf{36457} & 4044 & 4051 & 2027 & 2027 & 6077 & 6077 & 6077 & 6077 & - & - & - & - & - & - & - \\
-  \textbf{36446} & 2686 & 2691 & 1345 & 1345 & 4035 & 4035 & 4035 & 4035 & 12239 & - & - & - & - & - & - & -\\
-  \textbf{36457} & 2022 & 2026 & 1013 & 1013 & 3039 & 3039 & 3039 & 3039 & 9131 & 9096 & - & - & - & - & - & -\\
-  \textbf{37640} & 1463 & 1467 & 733 & 733 & 2200 & 2200 & 2200 & 2200 & 6600 & 6600 & 11244 & - & - & - & - & -\\
-  \textbf{36442} & 1017 & 1021 & 511 & 511 & 1531 & 1531 & 1531 & 1531 & 4595 & 4595 & 9188 & 8880 & - & - & - & -\\
-  \textbf{36868} & 1020 & 1035 & 517 & 517 & 1550 & 1550 & 1550 & 1550 & 4656 & 4656 & 9161 & 4553 & 4553 & - & - & -\\
-  \textbf{36447} & 1012 & 1016 & 508 & 508 & 1525 & 1525 & 1525 & 1525 & 4573 & 4573 & 9146 & 2266 & 2266 & 4479 & - & -\\
-  \textbf{36444} & 1010 & 1014 & 507 & 507 & 1521 & 1521 & 1521 & 1521 & 4564 & 4564 & 9128 & 1524 & 1524 & 3031 & 2987 & -\\
-  \textbf{37645} & 1042 & 1046 & 523 & 523 & 1569 & 1569 & 1569 & 1569 & 4706 & 4706 & 9411 & 1572 & 1572 & 3124 & 1572 & 1572\\
-  \hline  
-\end{tabular}
-\caption{Software hash results, using varying numbers of cores. Distribution on different tile-rows are highlighted by column separation}
-\label{tab:Perf-SW}
-\end{table}
-\end{flushleft}
+This was especially obvious for processor tile 10, which is located on the end of row 3 with no
+processors on either the left or right sides. This processor showed notably better performance than
+any other processor in the grid. This is because its location means that no data to or from other processors
+have to pass through the processor which gives it more time to process its own requests. In addition,
+this processor can access all memory tiles without having to send or receive data through any other
+processor tiles because of its location. The individual performance of each processor is noted in
+appendix \ref{app:performance}, table \ref{tab:Full-Perf-SW1}.
 
 \begin{figure}
 	\begin{tikzpicture}
@@ -72,113 +55,152 @@ Exceptions are processor tile 10, which appears to have no competition with othe
 			ylabel=H/s,
 			scaled ticks=false]
 		\addplot[color=red,mark=x] coordinates {
-			(1, 13041)
-			(2, 26105)
-			(3, 39185)
-			(4, 36470)
-			(5, 36449)
-			(6, 36452)
-			(7, 36450)
-			(8, 36457)
-			(9, 36446)
-			(10, 36457)
-			(11, 37640)
-			(12, 36442)
-			(13, 36868)
-			(14, 36447)
-			(15, 36444)
-			(16, 37645)
+			(1, 5972)
+			(2, 11950)
+			(3, 17933)
+			(4, 15543)
+			(5, 15540)
+			(6, 15539)
+			(7, 15539)
+			(8, 15549)
+			(9, 15536)
+			(10, 15541)
+			(11, 15539)
+			(12, 15537)
+			(13, 15534)
+			(14, 15540)
+			(15, 15535)
+			(16, 16047)
 		};
 		\end{axis}
 	\end{tikzpicture}
 	\caption{Scaling using software hashing}
-	\label{fig:sw-scaling}
+	\label{fig:sw-scaling1}
 \end{figure}
 
-Tables \ref{tab:Perf-SHA} and \ref{tab:Perf-SHADMA} shows the results when using the SHA-256 hashing accelerator, and without and with DMA module, respectively.
-Only up to four processors where used, as adding in processors from the second row when scaling up caused the application to crash.
-The cause is currently unknown.
+\subsection{Initial Hardware Results}
+\label{sec:init-hw-results}
 
-Both tables shows that the sum of hashes has a near-linear increase, with very low indiviual performance drop, when scaling up.
-The individual perfomance of each processor varies, with some higher than others, and appaers remain stable with the scaling. 
-The application uses scratchpad tiles when the SHA-256 hashing module is in use, and positioning combined with XY-routing may be the reason behind the variying performance.
+Need new results for hardware hashing! We totally forgot this last thursday.
 
-Using DMA shows the same trend, but with further increased performance for each tile.
+Tables \ref{tab:Perf-SHA} and \ref{tab:Perf-SHADMA} shows the results when using the SHA-256 accelerator, without and with the DMA module enabled, respectively.
+Only up to four processors where used, as adding in processors from the second row of processors when scaling up caused the application to crash.
+It was discovered that this was likely because of an undocumented bug in the implementation of the scratchpad memory tile used.
 
-\begin{table}
-\begin{tabular}{| l || r r r r |}
-  \hline 
-  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3}\\
-  \hline                       
-  \textbf{37711} & 37711 & - & - & - \\
-  \textbf{80237} & 37655 & 42582 & - & - \\
-  \textbf{117791} & 37556 & 42450 & 37785 & - \\
-  \textbf{150799} & 37391 & 42271 & 37496 & 33641 \\
-  \hline  
-\end{tabular}
-\caption{Hashing per second, using the SHA256-hashing module. Only up to 4 processors worked}
-\label{tab:Perf-SHA}
-\end{table}
+Both tables shows that the sum of hashes has a near-linear increase when adding more tiles.
+The individual perfomance of each processor varies, which is due to the same congestion effects observed when doing software hashing.
+Using DMA shows the same trend, but with additionally increased performance for each tile.
 
-\begin{table}
-\begin{tabular}{| l || r r r r |}
-  \hline 
-  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3}\\
-  \hline                       
-  \textbf{42209} & 42209 & - & - & - \\
-  \textbf{86979} & 41787 & 45192 & - & - \\
-  \textbf{126705} & 41097 & 44456 & 41152 & - \\
-  \textbf{159372} & 39799 & 43303 & 39824 & 36446 \\
-  \hline  
-\end{tabular}
-\caption{Hashing per second, using the SHA256-hashing module and DMA module. Only up to 4 processors worked}
-\label{tab:Perf-SHADMA}
-\end{table}
+%
+%\begin{table}
+%\centering
+%\begin{tabular}{| l || r r r r |}
+%  \hline 
+%  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3}\\
+%  \hline                       
+%  \textbf{37711} & 37711 & - & - & - \\
+%  \textbf{80237} & 37655 & 42582 & - & - \\
+%  \textbf{117791} & 37556 & 42450 & 37785 & - \\
+%  \textbf{150799} & 37391 & 42271 & 37496 & 33641 \\
+%  \hline  
+%\end{tabular}
+%\caption{Hashing per second, using the SHA256-hashing module. Only up to 4 processors worked}
+%\label{tab:Perf-SHA}
+%\end{table}
+%
+%\begin{table}
+%\centering
+%\begin{tabular}{| l || r r r r |}
+%  \hline 
+%  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3}\\
+%  \hline                       
+%  \textbf{42209} & 42209 & - & - & - \\
+%  \textbf{86979} & 41787 & 45192 & - & - \\
+%  \textbf{126705} & 41097 & 44456 & 41152 & - \\
+%  \textbf{159372} & 39799 & 43303 & 39824 & 36446 \\
+%  \hline  
+%\end{tabular}
+%\caption{Hashes per second, using the SHA-256-hashing module and DMA module.}
+%\label{tab:Perf-SHADMA}
+%\end{table}
+%
+%The results are compared in figure \ref{fig:Perf-plot}.
+%As seen in the figure, the hashing modules far outperforms the software hashing, even with only up to four processors in use.
+%
+%\begin{figure}
+%	\begin{tikzpicture}
+%		\begin{axis}[
+%			xlabel=Active processor tiles,
+%			ylabel=H/S]
+%		\addplot[color=red,mark=x] coordinates {
+%			(1, 13041)
+%			(2, 26105)
+%			(3, 39185)
+%			(4, 36470)
+%			(5, 36449)
+%			(6, 36452)
+%			(7, 36450)
+%			(8, 36457)
+%			(9, 36446)
+%			(10, 36457)
+%			(11, 37640)
+%			(12, 36442)
+%			(13, 36868)
+%			(14, 36447)
+%			(15, 36444)
+%			(16, 37645)
+%		};
+%		\addplot[color=blue,mark=o] coordinates {
+%			(1, 37711)
+%			(2, 80237)
+%			(3, 117791)
+%			(4, 150799)
+%		};
+%		\addplot[color=black,mark=x] coordinates {
+%			(1, 42209)
+%			(2, 86979)
+%			(3, 126705)
+%			(4, 159372)
+%		};
+%		\end{axis}
+%	\end{tikzpicture}
+%	\caption{Sum of hashes per second. Red: Software only, Blue: SHA-256 only, Black: SHA-256 + DMA}
+%	\label{fig:Perf-plot}
+%\end{figure}
+%
+% %***NOTE: Cannot use these anymore because of the double hashing stuffz
 
-The results are compared in figure \ref{fig:Perf-plot}. %, where software hashing is seen in red, accelerator hashing is seen in blue, and accelerator hashing using DMA is seen in black.
-As seen in the figure, the hashing modules far outperforms the software hashing, even with only up to four processors in use.
+\subsection{Alternative Software Results}
+In order to obtain better results with regards to scaling, a new test design was created which works
+around the scratchpad tile bug and places all CPU cores on the same line.
 
 \begin{figure}
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
-			ylabel=Sum of hashes/S]
+			ylabel=H/s,
+			scaled ticks=false]
 		\addplot[color=red,mark=x] coordinates {
-			(1, 13041)
-			(2, 26105)
-			(3, 39185)
-			(4, 36470)
-			(5, 36449)
-			(6, 36452)
-			(7, 36450)
-			(8, 36457)
-			(9, 36446)
-			(10, 36457)
-			(11, 37640)
-			(12, 36442)
-			(13, 36868)
-			(14, 36447)
-			(15, 36444)
-			(16, 37645)
-		};
-		\addplot[color=blue,mark=o] coordinates {
-			(1, 37711)
-			(2, 80237)
-			(3, 117791)
-			(4, 150799)
-		};
-		\addplot[color=black,mark=x] coordinates {
-			(1, 42209)
-			(2, 86979)
-			(3, 126705)
-			(4, 159372)
+			(1, 5963)
+			(2, 11930)
+			(3, 17900)
+			(4, 15566)
+			(5, 15549)
+			(6, 15541)
+			(7, 15536)
+			(8, 15537)
+			(9, 15536)
+			(10, 15534)
+			(11, 15535)
+			(12, 15536)
 		};
 		\end{axis}
 	\end{tikzpicture}
-	\caption{Sum of hashes per second. Red: Software only, Blue: SHA-256 only, Black: SHA-256 + DMA}
-	\label{fig:Perf-plot}
+	\caption{Scaling using software hashing, alternative architecture}
+	\label{fig:sw-scaling2}
 \end{figure}
 
+\subsection{Alternative Hardware Results}
 \section{Power and energy efficiency}
 
 We must measure the power from the wall, before we can add anything here.

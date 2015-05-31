@@ -83,7 +83,8 @@ the previous message block.
 When the final input block has been processed, the final hash is composed by
 concatenating the intermediate hash values. \cite{sha-spec, fips180-4, fordypningsprosjekt}
 
-\chapter{Measuring Performance results}
+\chapter{Additional Performance Results}
+\label{app:performance}
 
 This chapter lists up all the details regarding all the performance measuring done during this thesis.
 For each selected SHMAC architecture, the performance is measured by the double hashes per second.
@@ -143,35 +144,6 @@ Exceptions are processor tile 10, which appears to have no competition with othe
 \label{tab:Full-Perf-SW1}
 \end{sidewaystable}
 
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel=Active processor tiles,
-			ylabel=DH/s,
-			scaled ticks=false]
-		\addplot[color=red,mark=x] coordinates {
-			(1, 5972)
-			(2, 11950)
-			(3, 17933)
-			(4, 15543)
-			(5, 15540)
-			(6, 15539)
-			(7, 15539)
-			(8, 15549)
-			(9, 15536)
-			(10, 15541)
-			(11, 15539)
-			(12, 15537)
-			(13, 15534)
-			(14, 15540)
-			(15, 15535)
-			(16, 16047)
-		};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Scaling using software hashing}
-	\label{fig:sw-scaling1}
-\end{figure}
 
 \subsection{Using SHA-256 accelerator, without and with DMA, 5x4 architecture}
 Tables \ref{tab:Perf-SHA1} and \ref{tab:Perf-SHADMA1} show the results when using the SHA-256 hashing accelerator, without and with DMA module, respectively.
@@ -287,7 +259,6 @@ This one circumwents the scratchpad-but by having all CPU tiles on the same uppe
 This way, the use of more tiles may be measured, with the interest to find a congestion limit when using SHA-256 accelerator.
 It is likely that the interconnect network may beceome congested earlier than in a different architecture, due to the XY-routing, given that the all CPU-tiles will be competing for the network on the upper row.
 
-
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1.0\textwidth]{Figures/Measurements/13x2}
@@ -330,31 +301,6 @@ Once again, congested memory is the reason.
 \end{sidewaystable}
 
 
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel=Active processor tiles,
-			ylabel=DH/s,
-			scaled ticks=false]
-		\addplot[color=red,mark=x] coordinates {
-			(1, 5963)
-			(2, 11930)
-			(3, 17900)
-			(4, 15566)
-			(5, 15549)
-			(6, 15541)
-			(7, 15536)
-			(8, 15537)
-			(9, 15536)
-			(10, 15534)
-			(11, 15535)
-			(12, 15536)
-		};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Scaling using software hashing, 13x2 architecture}
-	\label{fig:sw-scaling2}
-\end{figure}
 
 \subsection{Using SHA-256 accelerator, without and with DMA, 13x2 architecture}
 
