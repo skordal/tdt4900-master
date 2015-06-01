@@ -227,7 +227,7 @@ which ASICs are the most profitable and therefore energy efficiency is a problem
 %    \label{fig:bitcoin-difficulty-devices}
 %\end{figure}
 
-\section{Dark Silicon and Heterogenity}
+\section{The Problem of Dark Silicon}
 \label{sec:dark-silicon}
 
 Moore's law states that transistor density on integrated chips will continue to double every
@@ -269,11 +269,11 @@ Instead of having dark silicon on the chip, one can simply shrink the chip itsel
 %These chips may rapidly turn into low-margin businesses for which further generations of Moore’s law provide small benefit.
 % %*** NOTE: The above makes no sense.
 
-% %*** NOTE RESPONSE: Very well, here is my second attempt:
+% %*** Torbjørn, NOTE RESPONSE: Very well, here is my second attempt:
 
 All chips may be shrunk to a small extent, but the only chips that truly can gain from only shrinking, will be those on which applied dark silicon is only a waste, and cannot further enhance the product.   
 Specalizing into these types of shrunk chips may turn out to be less profitable business, as the further generations of Moore's law adds little benefit. 
-% Better now?
+% Torbjørn: Better now?
 
 Futhermore, there are other disadvantages: Exponentially smaller chips are not exponentially cheaper, since mask cost, design cost and I/O pad aread cannot be amortized. 
 Competition will most likely favor chips that utulizes dark silicon to improve the overall product, thus chips that are only shrinked will sell at low market price, leading to loss for the company.
@@ -304,6 +304,7 @@ The term ``dim silicon'' refers to the use of general purpose logic that typical
 As such, large amounts of otherwise dark silicon area is put to productive use while meeting the power budget.
 
 %The early 90-nm designs of, for instance, Cell and Prescott, were dimmed because actual power exceeded design-estimated power.  % Citation needed!
+% Torbjørn: Nah... not so important.
 
 Lately, more elegant methods are emerging. Among the dim silicon techniques are dynamically varying the frequency with the
 number of cores being used, scaling up the amount of cache logic, employing near threshold voltage (NTV) designs, and redesigning
@@ -357,22 +358,26 @@ the notion of general-purpose computation becomes fragmented, and the clear line
 For instance, CUDA for NVidia GPUs cannot be used for similar architectures, such as AMD GPUs.
 
 There are several cases of overspecialization problems between accelerators, where many of them cannot be used for closely related classes of computation.
+
 %New heterogenenous hardware is more difficult to adopt for third party programmers, due to the cost of programming heterogeneous (where a clear example is the \todo{Hint: Maybe look up more examples?}Sony PlayStation 3, compared to Microsoft XBox). % Citation needed, also sentense makes no sense.
 Specialized hardware also risk becomming obsolete when standards are revised. \cite{dark-silicon}
 
+\todo{Just a reminding note: Look up the source code and argue among yourselves, regarding the PS3 vs XBOX example}
+
 %\subsubsection{The Dues Ex Machina Horseman}
 \subsubsection{Deus Ex Machina}
-The termology ``deus ex machina'' comes from the fields of literature and theater, in which the protagonists seem increasingly doomed until the very last moment, when something completely unexpected comes out of nowhere to save the day.
+The termology ``deus ex machina'' comes from literature and theater, in which the protagonists seem increasingly doomed until the very last moment, when something completely unexpected comes out of nowhere to save the day.
 In the case for dark silicon, a deus ex machina would be a breakthrough in semiconductor device technology.
 The required breakthrough would have to be very fundamental, making it possible to build transistors out of devices other than MOSFETs. 
-There are physical limits to what can be done with \todo{I chose to not elaborate this one further. Remove when delivering, unless we change our mind}leakage from MOFSET transistors, and transistors made of other materials may go beyond these limits.
+There are physical limits to what can be done with %\todo{I chose to not elaborate this one further. Remove when delivering, unless we change our mind}
+leakage from MOFSET transistors, and transistors made of other materials may go beyond these limits.
 New transistors must also be able to compete with MOFSETs in performance.
 Tunnel field-effect transistors (TFET) and nanoelectromechanical system (NEMS) switches are examples on inventions that hint to order-in-magnitude improvements in the leakage problem, although they still fall short in performance. \cite{dark-silicon}
 
-\section{Heterogeneous Architectures}
+\section{Heterogeneous Architecture: Proven Examples}
 \label{sec:heterogeneous}
 
-Heterogenenous architectures offers various possibilities for improved performance and energy efficiency;
+Specialized heterogenenous architectures offers various possibilities for improved performance and energy efficiency;
 this could be in the system's ability to adapt to various applications or even external conditions such as
 power or temperature conditions \cite{heterogeneous-ee, heterogeneous-perf, heterogeneous-arch}.
 
@@ -393,7 +398,7 @@ Only one application would run at the time, on one core, while the others were p
 
 For the simulation, it was assumed that the system knew the needs of every application, and selected core statically. 
 Results showed average energy savings of 32 \%, and average performance loss of only 2,6 \%, relative to using the EV8 core.
-Kumar \textit{et al} also used this experiment to show that dynamic core switching outperforms the best static core selection.
+Kumar \textit{et al} also showed in this experiment that dynamic core switching outperforms the best static core selection.
 Simple heuristics would sample the cores at regular intervals, and execute core switch based on the results.
 The heuristics achieved up to 93 \% of the energy-delay gains compared to the best static selection. 
 
@@ -420,10 +425,10 @@ SMTSIM and Simpoint were used for the simulation.
 %\todo{Mind-blowing, consider removal}Evaluation metric was weighted speedup, which in this context is the arithmetic sum of the individual IPCs of the threads constituting a workload divided by their IPC on a baseline configuration when running alone.
 %In addition to performance gain, application response time within varying queue lengths is tested as well, to give insight on how well heterogeneous processors handles large queues, compared to best homogeneous systems.
 
-Best static scheduling ensures that threads that are least affected by the difference between the EV5 and the EV6, are assigned to the EV5 processors, when all EV6 processors are occupied.
-When the number of threads passes 4, the measured weighted speedup increases on the heterogeneous system, compared to a homogeneous CMP with 4 EV6.
-When the number of threads passes 13, a CMP with 20 EV5 performs better, though this can be changed with a different combination of EV5 and EV6 cores.
-This is shown in figure \ref{fig:Kumar2}.\todo{What is a CMP?}
+Best static scheduling ensured that threads that were least affected by the difference between the EV5 and the EV6, were assigned to the EV5 processors, when all EV6 processors were occupied.
+When the number of threads passed 4, the measured weighted speedup increased on the heterogeneous system, compared to a homogeneous CMP with 4 EV6.
+When the number of threads passed 13, a CMP with 20 EV5 performed better, though this can be changed with a different combination of EV5 and EV6 cores.
+This is shown in figure \ref{fig:Kumar2}.
 
 %\todo{Following 2 sentences are nearly ripoff from \cite{heterogeneous-perf}, consider making quote or what?}
 Compared to 4 EV6 cores, the heterogeneous processor performed up to 37~\% better with an average 26~\% improvement over the configuration considering 1--20 threads. 
@@ -433,8 +438,9 @@ Using dynamic heuristics for core assignment further increased the performance. 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.5\textwidth]{Figures/Heterogeneous/Kumar2}
-    \caption{Benefits of heterogeneity - static scheduling for inter-thread diversity \cite{heterogeneous-perf}}
+    \caption{Weighted speedup, relative to EV6, when comparing the heterogenous multiprocessor with best homogeneous multiprocessors using EV5 and EV6 \cite{heterogeneous-perf}}
 % %**NOTE: The figure text makes no sense!
+% Better now?
     \label{fig:Kumar2}
 \end{figure}
 
@@ -444,7 +450,8 @@ For this test, jobs with an average distribution of 200 million cycles were gene
 Then different mean job arrival rates with exponential distribution were simulated.
 It was revealed a great difference between saturation for a homogenous system with 4 EV6 processors and the heterogeneous processor.
 For the former, the unbounded response time was seen as the arrival rate approached its maximum throughput around 2 jobs per 100 million cycles.
-From there, the run queue became infinite. % %**NOTE: This makes no sense!
+%From there, the run queue became infinite. % %**NOTE: This makes no sense!
+Beyond this point, due to the saturation, the response time became infinate. %Better now?
 The heterogeneous system remained stable well beyond that point.
 The degradation was also more graceful under heavier loads than for homogeneous processors.
 This can be seen in figure \ref{fig:Kumar3}.
@@ -457,22 +464,24 @@ This can be seen in figure \ref{fig:Kumar3}.
 \end{figure}
 
 \subsection{Optimal architecture}
-\todo{Subchapter needs double check against source papers}
+%\todo{Subchapter needs double check against source papers}
 \label{subsec:rw_arch}
-Kumar \textit{et al}\cite{heterogeneous-arch} has taken a closer look at what can be considered good heterogeneous design.
+Kumar \textit{et al}\cite{heterogeneous-arch} has also taken a closer look at what can be considered good heterogeneous design.
 They argue that while the previous experiments gave increased energy efficiency and performace, a heterogeneous system should be designed from scratch, instead of using pre-existing core designs.
-While they surpassed homogeneous designs, pre-existing cores failed to reach the full potential of heterogenity for three reasons: they present low flexibility in choices, the core choices remain monotonic, and the best heterogeneous designs are composed of specialized core architectures \cite{heterogeneous-arch}.
+While they surpassed homogeneous designs, pre-existing cores failed to reach the full potential of heterogenity for three reasons: they present low flexibility in choices, the core choices remain \todo{Citation needed for footnote}monotonic\footnote{\textit{Monotonicity} is defined as a property of a multicore architecture where there is a total ordering among the cores in terms of performance and this ordering remains the same for all applications. A multiprocessor consisting of Alpha EV5 and EV6 cores is a monotonic multiprocessor, since EV6 is strictly superior to EV5 in terms of hardware resources and virtually always performs better than EV5 for a given application given the same cycle time and latencies. The same goes for voltage/frequency scaling of identical cores.}, and the best heterogeneous designs are composed of specialized core architectures \cite{heterogeneous-arch}.
 However, if pre-existing cores are not used, additional costs in design, verification and testing must be evaluated, to see if the benefits are worth the cost.
 
-%Several additional conclusions were reached in the study:
-%\begin{itemize}
-%\item The most efficient heterogeneous multiprocessors were not constructed from cores that make good general-purpose uniprocessor cores, or cores that would appear in a good homogeneous multicure architecture.
-%\item Each core should be individually tuned for a class of applications with common characteristics.
-%\item The results are usually non-monotonic processors.
-%\item And performance advantages of heterogeneous multiprocessors, including non-monotonic also holds for completely homogeneous workloads.
-%\item In those cases, the diversity across different workloads are exploited.
-%\end{itemize}
-% %***NOTE: The list above makes no sense.
+\todo{Improved. Does the list make sense now?.}
+Several additional conclusions were reached in the study:
+\begin{itemize}
+\item The most efficient heterogeneous multiprocessors were not constructed from cores that make good general-purpose uniprocessor cores, or cores that would appear in a good homogeneous multicure architecture.
+\item Each core should be individually tuned for a class of applications with common characteristics.
+      This usually results in non-monotonic processors.
+\item And performance advantages of heterogeneous multiprocessors, including non-monotonic also holds for completely homogeneous workloads (where the task had no differences).
+    In those cases, the diversity across different workloads are exploited.
+\end{itemize}
+ %***NOTE: The list above makes no sense.
+ % Torbjørn: Better now?
 
 %\todo{Strongly considering deleting (commenting out) the following paragraph. Too much unnecessary details.}The workloads come from seven benchmarks from the SPEC suite, classified int o processor bound or bandwidth bound.
 %The chosen benchmarks are carefully selected, and represents the entire SPEC suite.
@@ -482,13 +491,19 @@ However, if pre-existing cores are not used, additional costs in design, verific
 %The latter consists of all combinations that can be constructed so that all the 4 threads running at a time are the same.
 
 It turns out that the more constricted the available power or chip area is, the more gain custom heterogenity provides, as homogeneous multiprocessors could only perform any task at maximum capacity if the power budget was generous.
-But as designs become more aggressive, one will want to place more cores on the die, and power budgets per core is likely to tighten more severly.
-Heterogeneous designs dampen the effects of constrained power budgets \cite{heterogeneous-arch}.
+But as designs become more aggressive, more cores are expected on the die, and power budgets per core is likely to tighten more severly.
+Heterogeneous designs dampen the effects of constrained power budgets. 
+There were different best solutions for the varying power and area constraints, all with clear differences from the best homogeneous design.
+This underlines the need to design from a clean slate, rather than modifying pre-existing core designs.
+Such monotonous designs does not exploit heterogenity equally well, and is considered the upper bounds of the possible benefits from heterogeniety.
+For example, an application may run better on an EV8 than EV6 because of larger caches, while other advanced features of EV8 remains underutulized and is thus wasted.
+\cite{heterogeneous-arch}.
+%Torbjørn: Better now?
 
-Any of the best heterogeneous designs tested for different power and area constraints were very different from the best homogeneous design, underlining the need to design heterogeneous processors from a clean slate, rather than modifying an existing core design.
-Monotonous designs, for instance, different generations of cores from same family, does not exploit heterogenity equally well.
-For instance, the benchmark \textit{mcf} from \cite{heterogeneous-ee} were mapped to EV6 or a single-threaded EV8-, in spite of these having low instruction level parallelism.
-The reason for this was that the larger caches of these cores causes the advanced capabilities of these larger cores to be underutilized. % %**NOTE: Makes no sense?
+%Any of the best heterogeneous designs tested for different power and area constraints were very different from the best homogeneous design, underlining the need to design heterogeneous processors from a clean slate, rather than modifying an existing core design.
+%Monotonous designs, for instance, different generations of cores from same family, does not exploit heterogenity equally well.
+%For instance, the benchmark \textit{mcf} from \cite{heterogeneous-ee} were mapped to EV6 or a single-threaded EV8-, in spite of these having low instruction level parallelism.
+%The reason for this was that the larger caches of these cores causes the advanced capabilities of these larger cores to be underutilized. % %**NOTE: Makes no sense?
 
 %Heterogeneous multicore processors designed from clean slate gives better performance.
 
@@ -568,9 +583,12 @@ performance of the accelerator with a partially pipelined SHA256 accelerator rea
 % that should never have been published! Note to self: remember to include the results
 % so our Master's can dominate this puny article.
 
+% Torbjørn: Hahah, puny article! 
+
 \section{The Single-ISA Heterogeneous MAny-core Computer}
 \label{sec:shmac}
 
+\todo{Did you cut out some content by deleting and not commenting?!}
 The Single-ISA Heterogeneous MAny-core Computer is an architecture designed for investigating heterogeneous
 systems at all abstraction levels, as illustrated in figure \ref{fig:shmacAbstractionLevels}.
 
@@ -607,11 +625,12 @@ grid with neighbour-to-neighbour connections, using a mesh interconnect with XY-
 Several tile types are supported. The main ones are:
 
 \begin{description}
-  \item[Turbo Amber Processor Tile] --- an improved version of the open-source Amber processor tile.
+    % Torbjørn: Joined Amber and Turbo Amber.
+  \item[Processor Tile] Currently two versions are supported: The open source ARM Amber CPU, and  an improved version called Turbo Amber.
   	The original Amber core provides support for the ARMv2a instruction set, while the Turbo Amber
 	provides support for the ARMv4t instruction set, giving the core the ability to also execute
 	instructions from the 16-bit Thumb instruction set. Several performance optimizations are
-	also added to the core \cite{turboamber}. An overview of a processor core can be seen in
+	also added to the core \cite{turboamber}. An overview of the processor tile can be seen in
 	figure \ref{fig:shmac-cpu}.
   \item[Scratchpad Tile] --- A memory tile providing a small amount of memory for use by software.
   	This memory is provided by the on-chip block RAM resources of the FPGA \cite{shmac-plan}.
@@ -632,6 +651,7 @@ Several tile types are supported. The main ones are:
 
 \subsection{SHMAC Memory Map}
 % *** NOTE: I seriously don't think this is relevant information, suggest removing this section.
+% Torbjørn: Disagree, it affects our software programming, when using SHA-256 module, DMA module and Scratchpad memory. Everything that affects our project should be mentioned.
 
 Figure \ref{fig:shmac-memory} shows how the memory is mapped in the ARM-based SHMAC. All
 processor tiles share the same address space with only the tile register space being
@@ -650,7 +670,7 @@ The system registers are used for communication with the host system.
 
 \subsection{SHMAC Interconnection Network}
 
-SHMAC uses a 2D mesh-based interconnection network to connect all the tiles, which is used
+\todo{Lot of "uses" and "used". Could use language improvement}SHMAC uses a 2D mesh-based interconnection network to connect all the tiles, which is used
 to transport data packets of 128~bits length.
 Store-and-forward switching with on/off flow control is used, and the XY-algorithm is used for deciding the route of each data packet.
 Each tile consists of a router with five ports, one for each of its neighbours and the local connection.
@@ -669,12 +689,15 @@ The architecture of the router can be seen in figure \ref{fig:shmac-router}.
 
 \subsection{Wishbone Bus}
 
+\todo{Again, did you delete content instead of commenting out?! Now I'll have to dig it up again from somewhere on git.}
+%Granted, the "purpose" part is probably not necessary, but I hoped it showed some insight on our knowledge of the system, maybe it could impress the cencor a little bit?
+
 Wishbone is a bus architecture developed by OpenCores to create a common interface for use between IP cores, especially in
 open source designs. It supports single-word transfers as well as burst transfers. A pipelined transfer mode is also provided
 which allows multiple requests to be sent from a module without the module having to wait for an acknowledge.
 
-Wishbone is used as internal bus on the CPU tiles of SHMAC. On these tiles, however, burst or pipelined transfers are
-not currently supported, which can limit performance.
+Wishbone is used as internal bus on the CPU tiles of SHMAC. Burst or pipelined transfers are
+not currently supported, neither internally on the tiles, or by the interconnect network, which can limit performance. \cite{Yaman}.
 
 %WISHBONE is implemented as internal bus on the CPU tiles of SHMAC, but currently supports only single transfers with no bursts or pipelining.
 %This means that in spite of using switched packet interconnection network on SHMAC, something that opens up for sending out several packets, a WB Master on a tile will only send out one request, before getting the acknowledged response back.
@@ -682,4 +705,4 @@ not currently supported, which can limit performance.
 %And prior to this project, only one WB master existed on each tile, owning the entire WISHBONE network in the tile.
 %
 % % ***NOTE: Actually, the mesh interconnect does not support burst transfers as far as I understood. It is hard not to support Wishbone burst transfers... and almost no one uses pipelined transfers in Wishbone.
-
+%  Torbjørn: So, we just mention it. Easy-peasy

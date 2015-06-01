@@ -19,11 +19,12 @@ seen in figure \ref{fig:SHA-Tile}.
     \label{fig:SHA-Tile}
 \end{figure}
 
-The new tile is derived from an existing CPU tile for SHMAC, the Turbo Amber tile, which contains
+The new tile is derived from the Turbo Amber tile, which contains
 a Turbo Amber CPU and peripherals such as an interrupt controller and timer modules, connected
 together with a wishbone bus.
 
-The SHA-256 accelerator and the DMA's slave interface is added to this bus.
+The SHA-256 accelerator and the DMA's slave interface and master interface is added to this bus.
+With two masters connected to the Wishbone bus, arbitration is needed, thus an arbiter has been added as well.
 
 \subsection{Wishbone Arbiter}
 Since the DMA includes a wishbone master interface, a wishbone arbiter is also added to the tile.
@@ -48,14 +49,16 @@ was adapted for use. This is a round-robin arbiter, illustrated in figure \ref{f
 \end{figure}
 
 Round-robin arbiters work well in data acquisition systems where data is collected and placed into memory, since peripherals must often store data to memory.
-The choice of this arbiter is because using an already established wishbone arbiter saves time as opposed to desiging a new one, which may end up less efficient in the worst case.
+The choice of this arbiter is because using an already established wishbone arbiter saves time for this project as opposed to desiging a new one, which may end up less efficient if done poorly.
 %These are usually disadvantagous in said systems, but does not have the arbitration overhead \cite{WBLibrary}.\
 %\todo{Discussion of alternatives. The following may be moved to future work.}
 
-%An alternative to round-robin arbiters is priority arbiters.
-%In the case of arbitration between a CPU and a DMA module, a priority arbiter may be used to achieve either burst mode, where the DMA gets full access on the bus until the transfer is finished, or transparent mode, where the CPU always has priority on the bus.
-%The latter mode gives the slowest DMA transfer, but has been shown to give best overall system performance. \todo{Find those book sources again, if time. Current source does not validate claim of overall performance} \cite{DMA-lecture}.
+An alternative to round-robin arbiters is priority arbiters.
+In the case of arbitration between a CPU and a DMA module, a priority arbiter may be used to achieve either burst mode, where the DMA gets full access on the bus until the transfer is finished, or transparent mode, where the CPU always has priority on the bus.
+The latter mode gives the slowest DMA transfer, but has been shown to give best overall system performance. \todo{Find those book sources again, if time. Current source does not validate claim of overall performance} \cite{DMA-lecture}.
+\todo{See NOTE answer in code}
 % %**NOTE: Do we need this? Perhaps more on round-robin arbiters instead if more is needed.
+% Torbjørn: Yes! I have been told all my time on academia that alternatives should be discussed and reasoned. Besides, didn't you just say so for what I wrote for the DMA Module under future work, that alternatives belongs home to Architecture chapter?! 
 
 \subsection{SHA-256 Hashing Module}
 The hashing module made for this project is a simple implementation of the algorithm described in
@@ -123,14 +126,19 @@ accelerator, because the results from the accelerator are in big-endian
 and must be converted to little-endian to give the correct results when used by the software running on the processor.
 Converting endianness in software adds several additional instructions per hash, which are now avoided.
 
-%NOTE TO SELF: The way the text is now, there is no explanation of the figure's components.
-%Must keep an eye on the feedback.
-%
-The Wishbone Slave consists of three registers for each DMA Channel, making it six in total.
-The registers are used for base source, base destination and detailing the transfer request.
+The Wishbone Slave consists of three registers for each DMA Channel, used for base source, base destination and detailing the transfer request.
 When request is activated, the selected channel receives data from the slave, and executes the transfer.
 An arbiter arbitrates between the channels if both are active.
 Every single command, either load or store, are passed from the channels to the Wishbone master, where they are executed.
-Any received data from a load command is sent on to the correct channel, and when a channel if finished, the imformation is passed from the Wishbone Master to the Wishbone Slave, so it can modify its registers and interrupt the CPU.\todo{Hmmm... Can agree that this is a little bit nit-picky. See if this can be summed up shorter and better.}
+Loaded data is passed on to the corresponding channel, and a channel informs the WB master when it's finished, so that the slave interface is informed when final transfer is done executing.
+The corresponding request detail register is modified, and the CPU is interrupted.
 
+If endian swapping is active, the data bytes are simply swapped combinatorcially in a switch module before it is passed on to the wishbone master.
 
+The current DMA Module only supports transfers of single 32-bit words, while the interconnect used in SHMAC supports 128-bit words.
+This means four transfers are done on the network where ideally only one is would be needed. 
+The reason to not expand to 128-bit blocks per individual transfer was due to the concern of forced alignment within the blocks.
+While transferring aligned blocks of data from one memory location to another is \todo{Yaman said this. Source needed}common, switching a 32-bit word's position inside a block would not be possible for the DMA, if we were to expand the size without making considerable change to the DMA. 
+We were concerned that this could prevent us from transferring data between neighbour registers on the tile.
+Furthermore, it was concidered outside the scope of the project to further enhance the DMA Module, as the main idea was that this would enhance SHMAC generally, but not the hashing module.
+In order to focus remaining project time on the Hashing module, and to have the ability to write to any register inside the tile, 32-bit data transfer were chosen.
