@@ -61,6 +61,7 @@ The latter mode gives the slowest DMA transfer, but has been shown to give best 
 % Torbjørn: Yes! I have been told all my time on academia that alternatives should be discussed and reasoned. Besides, didn't you just say so for what I wrote for the DMA Module under future work, that alternatives belongs home to Architecture chapter?! 
 
 \subsection{SHA-256 Hashing Module}
+
 The hashing module made for this project is a simple implementation of the algorithm described in
 appendix \ref{app:hashing-algo}. It uses 65 cycles to compute the hash of its input data, running
 one iteration of the SHA-256 compression function every cycle except cycle 65, which is used to
@@ -105,6 +106,8 @@ which can be communicated with using the \texttt{mrc} and \texttt{mcr} instructi
 interface for the hashing module would, however, have made it impossible to use a DMA to transfer
 data to and from the module, making the hashing process much more dependent on the CPU, limiting
 its benefits as an accelerator for offloading work from the processor.
+
+% Figure
 
 \subsection{DMA Module}
 

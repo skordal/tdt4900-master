@@ -24,6 +24,8 @@ has to be done through a brute-force search, and this prevents the network from 
 new blocks. The target value is decided by the network ``difficulty'' and is set to such a value
 that, on average, six new blocks are generated per hour.
 
+% TODO: Add figure from Bitcoin paper
+
 To get people to participate in creating new blocks, a reward is offered to whomever manages to
 create a block. This reward also ensures that more money is added into circulation. The size of
 the reward decreases over time until a predetermined number of bitcoins have entered circulation.
@@ -82,6 +84,7 @@ is rewarded according to their contribution.
 As such, pooled mining lets anyone with weaker hardware participate in bitcoin mining in exchange for
 a smaller reward. However, using hardware such as regular CPUs and GPUs is still considered unprofitable
 because of these processors' relative performance compared to specialized bitcoin mining ASICs.
+% Rewrite last sentense?
 
 \section{The SHA-256 Hash Algorithm}
 
@@ -89,7 +92,7 @@ The SHA-256 hash algorithm is defined in FIPS180-4 \cite{fips180-4} and is a mem
 family of hash functions. Like all hash functions, it works by accepting an arbitrary
 amount of input data and producing a constant-length output. The function is one-way,
 that is, given a hash, it is impossible to determine the input data used to produce
-the hash.
+the hash.\todo{Mention all 3 attributes}
 
 The SHA-256 algorithm works on blocks of 512~bits. Each of these blocks are expanded into a
 block of 64 32-bit long words using a message expansion function. Each of these words are
@@ -135,6 +138,7 @@ of the compression loop. Multiple hash calculations are run simultaneously explo
 offered by GPUs. Many miners tweaked various parameters of their hardware, such as the voltage and
 clock frequencies of both the video RAM and the GPU core in order to get higher throughput
 and thus reduce the cost of running each GPU, in order to obtain greater profits \cite{bespoke-silicon}.
+% Maybe mention rigs?
 
 \subsection{FPGA Mining}
 \label{sec:fpga-mining}
@@ -626,7 +630,7 @@ Several tile types are supported. The main ones are:
 
 \begin{description}
     % Torbjørn: Joined Amber and Turbo Amber.
-  \item[Processor Tile] Currently two versions are supported: The open source ARM Amber CPU, and  an improved version called Turbo Amber.
+  \item[Processor Tile] Currently two versions are supported: the open source ARM Amber CPU, and an improved version called Turbo Amber.
   	The original Amber core provides support for the ARMv2a instruction set, while the Turbo Amber
 	provides support for the ARMv4t instruction set, giving the core the ability to also execute
 	instructions from the 16-bit Thumb instruction set. Several performance optimizations are
