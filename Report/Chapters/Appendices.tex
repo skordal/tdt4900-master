@@ -366,9 +366,7 @@ Judging from the positions in figure \ref{fig:13x2-2}It seems that the closer a 
 \caption{Double Hashing per second, using the SHA256-hashing accelerator with the DMA module. 13x2 architecture.}
 \label{tab:Perf-SHADMA2}
 \end{sidewaystable}
-		
-		
-			
+
 \begin{figure}
 	\begin{tikzpicture}
 		\begin{axis}[
@@ -405,10 +403,9 @@ Judging from the positions in figure \ref{fig:13x2-2}It seems that the closer a 
 		};
 		\end{axis}
 	\end{tikzpicture}
-	\caption{Sum of double hashes per second. Red: Software only, Black: SHA-256 + DMA. 13x2 architecture.}
+	\caption{Double hashes per second using only the accelerator (red) and using both the accelerator and DMA (black). 13x2 architecture.}
 	\label{fig:shadmacomp-scaling2}
 \end{figure}
-
 
 \subsection{Comparison, 13x2}
 
