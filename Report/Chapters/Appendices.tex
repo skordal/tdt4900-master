@@ -83,44 +83,30 @@ the previous message block.
 When the final input block has been processed, the final hash is composed by
 concatenating the intermediate hash values. \cite{sha-spec, fips180-4, fordypningsprosjekt}
 
-\chapter{Additional Performance Results}
+\chapter{Additional Results}
 \label{app:performance}
 
-This chapter lists up all the details regarding all the performance measuring done during this thesis.
-For each selected SHMAC architecture, the performance is measured by double hashes per second.
-Every architecture have been measured when running software-only hashing, when running the SHA-256 accelerator without using the DMA Module, and then with using the DMA Module. 
+This chapter lists up all the details regarding the various measurements done during this thesis.
+For each selected SHMAC architecture, the performance and power usage is measured for varying numbers
+of active cores. Every architecture have been measured when running software-only hashing, when running
+the SHA-256 accelerator without using the DMA module, and then with using the DMA module. 
 
-\section{5X4 Tile Architecture}
+\section{Performance Measurements}
 
-The first and original architecture used for measuring, as seen in figure \ref{fig:5x4-2}.
-Unfortunately, while software hashing worked on all tiles, the application crashed when using the SHA-256 accelerator on more than one row.
+\subsection{Initial Architecture}
 
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=0.5\textwidth]{Figures/Measurements/5x4}
-    \caption{Test setup 1, with 5x4 architecture, using BRAM tiles as scratchpad and DRAM as main memory, placed in center.}
-    \label{fig:5x4-2}
-\end{figure}
+The first architecture used for measuring, is the 5 by 4 grid architecture described in section \ref{sec:SHMAC_setup}.
+Unfortunately, while software hashing worked on all tiles, the application crashed when using the SHA-256 accelerator on more than one row
+and was discarded. The reasons are discussed in section \ref{sec:init-results}.
 
-\subsection{Software hashing}
-
-The results from doing the hashing in software is listed up in table \ref{tab:Full-Perf-SW1}. 
-As can be seen in the plot in figure \ref{fig:sw-scaling1APP} adding more processors after the fourth does not increase performance.
-
-The reason for this is that all cores must make frequent accesses to external memory, which causes the
-DDR-RAM tile to quickly become congested.
-
-Another interesting effect to note in the results is how the XY routing affects the performance
-of each tile. The more tiles that tries to access main memory through a tile, the less
-performance the individual tile has; \todo{Incorrect, round robin is used. Should affect venter tiles the more. What made you write this?}it seems that SHMACs router system favours requests originating
-from other tiles before requests originating from the tile itself.
-
-Exceptions are processor tile 10, which appears to have no competition with other tiles for the routing, and row 4, as adding processors from this row seems does not decrease the individual performance of other tiles. 
+The performance obtained when doing software hashing is listed in table \ref{tab:Full-Perf-SW1}. 
+As can be seen in the plot in figure \ref{fig:sw-scaling1APP}, adding more processors after the fourth does not increase performance.
 
 \begin{sidewaystable}
+\centering
 \begin{tabular}{| l || r r r r | r r r r | r r r | r r r r r |}
   \hline 
-  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13} & \textbf{14} & \textbf{15}   \\
+  \textbf{Sum} [dH/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13} & \textbf{14} & \textbf{15}   \\
   \hline                       
   \textbf{6450} & 6450 & - & - & - & - & - & - & - & - & - & - & - & - & - & - & - \\
   \textbf{12895} & 6446 &6449 & - & - & - & - & - & - & - & - & - & - & - & - & - & - \\
@@ -140,58 +126,20 @@ Exceptions are processor tile 10, which appears to have no competition with othe
   \textbf{18191} & 528 & 530 & 276 & 276 & 806 & 805 & 806 & 805 & 2402 & 2402 & 3723 & 827 & 828 & 1490 & 844 & 843\\
   \hline  
 \end{tabular}
-\caption{Software double hash results, using varying numbers of cores. Distribution on different tile-rows are highlighted by column separation}
+\caption{Software performance, for an increasing number of cores active.}
 \label{tab:Full-Perf-SW1}
 \end{sidewaystable}
 
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel=Active processor tiles,
-			ylabel=DH/s,
-			scaled ticks=false]
-		\addplot[color=red,mark=x] coordinates {
-		    (1, 6450)
-			(2, 12895)
-			(3, 19190)
-			(4, 21261)
-			(5, 19310)
-			(6, 18388)
-			(7, 18265)
-			(8, 18191)
-			(9, 18195)
-			(10, 18192)
-			(11, 18194)
-			(12, 18192)
-			(13, 18192)
-			(14, 18191)
-			(15, 18191)
-			(16, 18191)
-		};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Scaling using software hashing, 5x4 architecture}
-	\label{fig:sw-scaling1APP}
-\end{figure}
-	
-
-\subsection{Using SHA-256 accelerator, without and with DMA, 5x4 architecture}
 Tables \ref{tab:Perf-SHA1} and \ref{tab:Perf-SHADMA1} show the results when using the SHA-256 hashing accelerator, without and with DMA module, respectively.
-Only up to four processors where used, as adding in processors from the second row when scaling up caused the application to crash.
+Only four cores were used because of the scratchpad bug mentioned in section \ref{sec:init-results}.
 
-\todo{Must be explained in the text}The scratchpad-bug is believed to be the cause.
-
-Both tables shows that the sum of hashes has a near-linear increase, with very low indiviual performance drop, when scaling up.
-Using DMA shows slightly increased performance for each tile.
-The individual performance of each processor varies, with some higher than others, and it appaers to remain stable with the scaling. 
-The application uses scratchpad tiles when the SHA-256 hashing module is in use, and positioning combined with XY-routing may be the reason behind the varying performance.
-
-The linear increase and the comparison between the two can be seen in the plots of figure \ref{fig:shadmacomp-scaling1}, where the scaling without DMA is seen in red, and with DMA is seen in black.
+%The linear increase and the comparison between the two can be seen in the plots of figure \ref{fig:shadmacomp-scaling1}.
 
 \begin{table}
+\centering
 \begin{tabular}{| l || r r r r |}
   \hline 
-  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3}\\
+  \textbf{Sum} [dH/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3}\\
   \hline                       
   \textbf{17557} & 17557 & - & - & - \\
   \textbf{37539} & 17528 & 20011 & - & - \\
@@ -199,15 +147,16 @@ The linear increase and the comparison between the two can be seen in the plots 
   \textbf{70179} & 17400 & 19891 & 17411 & 15477 \\
   \hline  
 \end{tabular}
-\caption{Double Hashing per second, using the SHA256-hashing module. 15x2 architecture.}
+\caption{Performance when using the SHA-256 accelerator only in the initial architecture.}
 \label{tab:Perf-SHA1}
 \end{table}
 
 
 \begin{table}
+\centering
 \begin{tabular}{| l || r r r r |}
   \hline 
-  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3}\\
+  \textbf{Sum} [dH/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3}\\
   \hline                       
   \textbf{18230} & 18230 & - & - & - \\
   \textbf{38267} & 18189 & 20078 & - & - \\
@@ -215,104 +164,73 @@ The linear increase and the comparison between the two can be seen in the plots 
   \textbf{71840} & 17973 & 19577 & 17984 & 16306 \\
   \hline  
 \end{tabular}
-\caption{Double Hashing per second, using the SHA256-hashing module and DMA module. Only up to 4 processors worked}
+\caption{Performance when using the SHA-256 accelerator and DMA in the initial architecture.}
 \label{tab:Perf-SHADMA1}
 \end{table}
 		
+%\subsection{Comparison, 5x4}
+%
+%The difference between software hashing and use of accelerator with DMA are compared in figure \ref{fig:comp-plot1}, where software hashing is seen in red plot, and accelerator hashing is seen in black plot.
+%As seen in the figure, the hashing modules greatly outperforms the software hashing, even with only up to four processors in use.
+%
+%\begin{figure}
+%	\begin{tikzpicture}
+%		\begin{axis}[
+%			xlabel=Active processor tiles,
+%			ylabel=Sum of hashes/S]
+%		\addplot[color=red,mark=x] coordinates {
+%			(1, 6450)
+%			(2, 12895)
+%			(3, 19190)
+%			(4, 21261)
+%			(5, 19310)
+%			(6, 18388)
+%			(7, 18265)
+%			(8, 18191)
+%			(9, 18195)
+%			(10, 18192)
+%			(11, 18194)
+%			(12, 18192)
+%			(13, 18192)
+%			(14, 18191)
+%			(15, 18191)
+%			(16, 18191)
+%		};
+%		\addplot[color=black,mark=o] coordinates {
+%			(1, 18230)
+%			(2, 38267)
+%			(3, 56150)
+%			(4, 71840)
+%		};
+%		\end{axis}
+%	\end{tikzpicture}
+%	\caption{Sum of double hashes per second. Red: Software only, Black: SHA-256 + DMA, 5x4 architecture}
+%	\label{fig:comp-plot1}
+%\end{figure}
 
-				
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel=Active processor tiles,
-			ylabel=DH/s,
-			scaled ticks=false]
-		\addplot[color=red,mark=x] coordinates {
-			(1, 17557)
-			(2, 37539)
-			(3, 54912)
-			(4, 70179)
-		};
-		\addplot[color=black,mark=o] coordinates {
-			(1, 18230)
-			(2, 38267)
-			(3, 56150)
-			(4, 71840)
-		};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Scaling using SHA-256 accelerator. Red: Without DMA. Black: With DMA.}
-	\label{fig:shadmacomp-scaling1}
-\end{figure}
+\subsection{Alternative Architecture}
 
-\subsection{Comparison, 5x4}
+%Since the scratchpad-bug prevents us from measuring more than one tile row, a different architecture has been synthesized and tested, as seen in figure \ref{fig:15x2-2}.
+%This one circumwents the scratchpad-but by having all CPU tiles on the same upper row, while filling the second with BRAM, DDR-RAM and empty tiles only.
+%This way, the use of more tiles may be measured, with the interest to find a possible congestion limit when using SHA-256 accelerator.
+%15 tiles per row (or more likely, 14 CPU tiles on upper row) was the maximum number, allowed by the compiler.
+%It is likely that the interconnect network may become congested earlier than in a different architecture, due to the XY-routing, given that the all CPU-tiles will be competing for the network on the upper row, while the lower row is almost unused.
+%
+%\begin{figure}[htb]
+%    \centering
+%    \includegraphics[width=1.0\textwidth]{Figures/Measurements/15x2}
+%    \caption{Test setup 2, with BRAM and DDR-RAM tiles on second row, and all CPU's and I/O on the first row.}
+%    \label{fig:15x2-2}
+%\end{figure}
+%
 
-The difference between software hashing and use of accelerator with DMA are compared in figure \ref{fig:comp-plot1}, where software hashing is seen in red plot, and accelerator hashing is seen in black plot.
-As seen in the figure, the hashing modules greatly outperforms the software hashing, even with only up to four processors in use.
-
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel=Active processor tiles,
-			ylabel=Sum of hashes/S]
-		\addplot[color=red,mark=x] coordinates {
-			(1, 6450)
-			(2, 12895)
-			(3, 19190)
-			(4, 21261)
-			(5, 19310)
-			(6, 18388)
-			(7, 18265)
-			(8, 18191)
-			(9, 18195)
-			(10, 18192)
-			(11, 18194)
-			(12, 18192)
-			(13, 18192)
-			(14, 18191)
-			(15, 18191)
-			(16, 18191)
-		};
-		\addplot[color=black,mark=o] coordinates {
-			(1, 18230)
-			(2, 38267)
-			(3, 56150)
-			(4, 71840)
-		};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Sum of double hashes per second. Red: Software only, Black: SHA-256 + DMA, 5x4 architecture}
-	\label{fig:comp-plot1}
-\end{figure}
-
-\section{15x2 Tile Architecture}
-
-
-Since the scratchpad-bug prevents us from measuring more than one tile row, a different architecture has been synthesized and tested, as seen in figure \ref{fig:15x2-2}.
-This one circumwents the scratchpad-but by having all CPU tiles on the same upper row, while filling the second with BRAM, DDR-RAM and empty tiles only.
-This way, the use of more tiles may be measured, with the interest to find a possible congestion limit when using SHA-256 accelerator.
-15 tiles per row (or more likely, 14 CPU tiles on upper row) was the maximum number, allowed by the compiler.
-It is likely that the interconnect network may become congested earlier than in a different architecture, due to the XY-routing, given that the all CPU-tiles will be competing for the network on the upper row, while the lower row is almost unused.
-
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=1.0\textwidth]{Figures/Measurements/15x2}
-    \caption{Test setup 2, with BRAM and DDR-RAM tiles on second row, and all CPU's and I/O on the first row.}
-    \label{fig:15x2-2}
-\end{figure}
-
-\subsection{Software Hashing, 15x2}
-
-The results from doing the hashing in software for this architecture is listed up in table \ref{tab:Full-Perf-SW2}. 
-The CPU tiles nearest the DDR-RAM tile have highest individual performance, compared to others present.
-The plot in figure \ref{fig:sw-scaling2APP} confirms that the pattern is the same: The application does not improve beyond four active tiles.
-Once again, congested memory is the reason.
-
-
-
-\todo{Add architectural difference observation, if you see any. Double check}
+The results from doing the software hashing for this architecture is listed in table \ref{tab:Full-Perf-SW2}. 
+The CPU tiles nearest the DRAM tile have highest individual performance compared to others present.
+%The plot in figure \ref{fig:sw-scaling2APP} confirms that the pattern is the same: The application does not improve beyond four active tiles.
+%Once again, congested memory is the reason.
 
 \begin{sidewaystable}
+\centering
 \begin{tabular}{| l || r r r r r r r r r r r r r r|}
   \hline 
   \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13}\\
@@ -333,67 +251,37 @@ Once again, congested memory is the reason.
   \textbf{18190} & 307 &310 & 570 & 1030 & 1809 & 2962 & 4211 & 2971 & 1809 & 1034 & 564 & 298 & 158 & 157\\
   \hline  
 \end{tabular}
-\caption{Software double hash results, this time on the 15x2 architecture}
+\caption{Software performance results for the alternative architecture.}
 \label{tab:Full-Perf-SW2}
 \end{sidewaystable}
 
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel=Active processor tiles,
-			ylabel=DH/s,
-			scaled ticks=false]
-		\addplot[color=red,mark=x] coordinates {
-		    (1, 6418)
-			(2, 12841)
-			(3, 19130)
-			(4, 21364)
-			(5, 19404)
-			(6, 18420)
-			(7, 18253)
-			(8, 18206)
-			(9, 18193)
-			(10, 18192)
-			(11, 18192)
-			(12, 18192)
-			(13, 18191)
-			(14, 18190)
-		};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Scaling using software hashing, 5x4 architecture}
-	\label{fig:sw-scaling2APP}
-\end{figure}
+Tables \ref{tab:Perf-SHA2} and \ref{tab:Perf-SHADMA2} show the results when using the SHA-256 accelerator in the alternative architecture, without and with DMA module, respectively.
+This time, using an architecture that circumvents the cache-bug problem, all available CPUs are used in the tests.
 
-
-\subsection{Using SHA-256 accelerator, without and with DMA, 15x2 architecture}
-
-Tables \ref{tab:Perf-SHA2} and \ref{tab:Perf-SHADMA2} show the results when using the SHA-256 hashing accelerator in the 15x2 architecture, without and with DMA module, respectively.
-This time, using an architecture that circumvents the cache-bug problem, all available CPU's were functioning when using the SHA-256 accelerator.
-
-The trend is the same, with a near-linear increase.
-It may be observed from the table results that the closer a specific tile is in proximity to the BRAM-tiles, the higher the individual performance, with highest performance observed at CPU tiles 4-6.
-This counts for both without and with DMA. 
-The plots in figure \ref{fig:shadmacomp-scaling2} seems to confirm this trend: The increase become greater as the processors closer to the middle become active, and lessens beyond that point.
-It also seems that the increase when adding the final tiles are less, compared to when adding the first tiles from left, indicating that the system is reaching a saturation point.
-However, there were not enough CPU-tiles available for reaching maximum performance.
-
-An interesting observation, seen in the tables, is that as more tiles are added, the gain from using the DMA is reduced per tile.
-As all CPU tiles become active, CPU tiles 0-6 shows less performace compared to not using DMA, with CPU tile 5 having the biggest drop of nearly 4000 double hashes. 
-CPU tiles 6-11 shows a steady increase per tile, but only up to around 500 double hashes per second.
-The total performance loss becomes so negative that after adding the 13th CPU tile, omitting the DMA module actually increases the performance.
-This is seen in figure \ref{fig:shadmacomp-scaling2}-
-
-Judging from the positions in figure \ref{fig:15x2-2APP}It seems that the closer a CPU tile is to the  BRAM-tiles from left, the more negative the use of DMA is.
-
-The cause is likely the 32-bit data transfers by the DMA module on all tiles.
-For each 128-bit block, the DMA Module must do four individual transfers, requesting data from the same block four times over.
-While a single DMA Module cleary performs better than a Turbo Amber CPU, the collective number of DMA transfers must be causing the interconnect network to saturate much faster, reaching a point where the performance gain is lowered much faster.
+%The trend is the same, with a near-linear increase.
+%It may be observed from the table results that the closer a specific tile is in proximity to the BRAM-tiles, the higher the individual performance, with highest performance observed at CPU tiles 4-6.
+%This counts for both without and with DMA. 
+%The plots in figure \ref{fig:shadmacomp-scaling2} seems to confirm this trend: The increase become greater as the processors closer to the middle become active, and lessens beyond that point.
+%It also seems that the increase when adding the final tiles are less, compared to when adding the first tiles from left, indicating that the system is reaching a saturation point.
+%However, there were not enough CPU-tiles available for reaching maximum performance.
+%
+%An interesting observation, seen in the tables, is that as more tiles are added, the gain from using the DMA is reduced per tile.
+%As all CPU tiles become active, CPU tiles 0-6 shows less performace compared to not using DMA, with CPU tile 5 having the biggest drop of nearly 4000 double hashes. 
+%CPU tiles 6-11 shows a steady increase per tile, but only up to around 500 double hashes per second.
+%The total performance loss becomes so negative that after adding the 13th CPU tile, omitting the DMA module actually increases the performance.
+%This is seen in figure \ref{fig:shadmacomp-scaling2}-
+%
+%Judging from the positions in figure \ref{fig:15x2-2APP}It seems that the closer a CPU tile is to the  BRAM-tiles from left, the more negative the use of DMA is.
+%
+%The cause is likely the 32-bit data transfers by the DMA module on all tiles.
+%For each 128-bit block, the DMA Module must do four individual transfers, requesting data from the same block four times over.
+%While a single DMA Module cleary performs better than a Turbo Amber CPU, the collective number of DMA transfers must be causing the interconnect network to saturate much faster, reaching a point where the performance gain is lowered much faster.
 
 \begin{sidewaystable}
+\centering
 \begin{tabular}{| l || r r r r r r r r r r r r r r |}
   \hline 
-  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13}\\
+  \textbf{Sum} [dH/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13}\\
   \hline                       
   \textbf{11676} & 11676 & - & - & - & - & - & - & - & - & - & - & - & - & -\\
   \textbf{24394} & 11664 & 12730 & - & - & - & - & - & - & - & - & - & - & - & -\\
@@ -411,11 +299,12 @@ While a single DMA Module cleary performs better than a Turbo Amber CPU, the col
   \textbf{179526} & 10944 & 11891 & 13045 & 14461 & 16329 & 19123 & 16306 & 14347 & 12839 & 11669 & 10721 & 9925 & 9253 & 8673 \\
   \hline  
 \end{tabular}
-\caption{Double Hashing per second, using the SHA256-hashing accelerator. 15x2 architecture.}
+\caption{Performance results when using the SHA-256 accelerator in the alternative architecture.}
 \label{tab:Perf-SHA2}
 \end{sidewaystable}
 
 \begin{sidewaystable}
+\centering
 \begin{tabular}{| l || r r r r r r r r r r r r r r |}
   \hline 
   \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13}\\
@@ -436,156 +325,98 @@ While a single DMA Module cleary performs better than a Turbo Amber CPU, the col
   \textbf{175711} & 10625 & 11447 & 12461 & 13803 & 15040 & 15282 & 15274 & 14942 & 13676 & 12374 & 11375 & 10559 & 9726 & 9127\\
   \hline  
 \end{tabular}
-\caption{Double Hashing per second, using the SHA256-hashing accelerator with the DMA module. 15x2 architecture.}
+\caption{Performance results when using the SHA-256 accelerator with DMA in the alternative architecture.}
 \label{tab:Perf-SHADMA2}
 \end{sidewaystable}
 
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel=Active processor tiles,
-			ylabel=DH/s,
-			scaled ticks=false]
-		\addplot[color=red,mark=x] coordinates {
-			(1, 11676)
-			(2, 24394)
-			(3, 38329)
-			(4, 53760)
-			(5, 70983)
-			(6, 90590)
-			(7, 107510)
-			(8, 122186)
-			(9, 135009)
-			(10, 146221)
-			(11, 156133)
-			(12, 164860)
-			(13, 172381)
-			(14, 179526)
-		};
-		\addplot[color=black,mark=o] coordinates {
-			(1, 13227)
-			(2, 27410)
-			(3, 42627)
-			(4, 58989)
-			(5, 76556)
-			(6, 95259)
-			(7, 112599)
-			(8, 127515)
-			(9, 139937)
-			(10, 150069)
-			(11, 158421)
-			(12, 165271)
-			(13, 171143)
-			(14, 175711)
-		};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Double hashes per second using only the accelerator (red) and using both the accelerator and DMA (black). 15x2 architecture.}
-	\label{fig:shadmacomp-scaling2}
-\end{figure}
+%\subsection{Comparison, 15x2}
+%
+%The difference between software hashing and use of accelerator with omitting the DMA (as this gives best performance in the end) are compared in figure \ref{fig:comp-plot2}, where software hashing is seen in red plot, and accelerator hashing is seen in black plot.
+%As seen in the figure, the hashing modules greatly outperforms the software hashing by far.
+%
+%\begin{figure}
+%	\begin{tikzpicture}
+%		\begin{axis}[
+%			xlabel=Active processor tiles,
+%			ylabel=Sum of double hashes/S]
+%		\addplot[color=red,mark=x] coordinates {
+%			(1, 6418)
+%			(2, 12841)
+%			(3, 19130)
+%			(4, 21364)
+%			(5, 19404)
+%			(6, 18420)
+%			(7, 18253)
+%			(8, 18206)
+%			(9, 18193)
+%			(10, 18192)
+%			(11, 18192)
+%			(12, 18192)
+%			(13, 18191)
+%			(14, 18190)
+%		};
+%		\addplot[color=black,mark=o] coordinates {
+%			(1, 11676)
+%			(2, 24394)
+%			(3, 38329)
+%			(4, 53760)
+%			(5, 70983)
+%			(6, 90590)
+%			(7, 107510)
+%			(8, 122186)
+%			(9, 135009)
+%			(10, 146221)
+%			(11, 156133)
+%			(12, 164860)
+%			(13, 172381)
+%			(14, 179526)
+%		};
+%		\end{axis}
+%	\end{tikzpicture}
+%	\caption{Sum of hashes per second. Red: Software only, Black: SHA-256 (no DMA), 15x2 architecture}
+%	\label{fig:comp-plot2}
+%\end{figure}
 
-\subsection{Comparison, 15x2}
+\section{Power measurements}
 
-The difference between software hashing and use of accelerator with omitting the DMA (as this gives best performance in the end) are compared in figure \ref{fig:comp-plot2}, where software hashing is seen in red plot, and accelerator hashing is seen in black plot.
-As seen in the figure, the hashing modules greatly outperforms the software hashing by far.
+%\section{Methodology}
+%
+%For a chosen architecture, and for a set of active CPU's, the power was measured along with performance.
+%It turned out that it constantly fluctuated, and therefore we have chosen the average based on observations of highest and lower power consumption observed.
+%The average power consumption together with uncertainty per measurement are filled into the tables in this chapter, and for each power consumption number, the power usage of the application is calculated.
+%Calculated power usage is then plotted into graphs, with the uncertainty omitted. 
+%
+%The smallest unit we could measure in was 0.1 W. 
 
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel=Active processor tiles,
-			ylabel=Sum of double hashes/S]
-		\addplot[color=red,mark=x] coordinates {
-			(1, 6418)
-			(2, 12841)
-			(3, 19130)
-			(4, 21364)
-			(5, 19404)
-			(6, 18420)
-			(7, 18253)
-			(8, 18206)
-			(9, 18193)
-			(10, 18192)
-			(11, 18192)
-			(12, 18192)
-			(13, 18191)
-			(14, 18190)
-		};
-		\addplot[color=black,mark=o] coordinates {
-			(1, 11676)
-			(2, 24394)
-			(3, 38329)
-			(4, 53760)
-			(5, 70983)
-			(6, 90590)
-			(7, 107510)
-			(8, 122186)
-			(9, 135009)
-			(10, 146221)
-			(11, 156133)
-			(12, 164860)
-			(13, 172381)
-			(14, 179526)
-		};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Sum of hashes per second. Red: Software only, Black: SHA-256 (no DMA), 15x2 architecture}
-	\label{fig:comp-plot2}
-\end{figure}
+%It should be noted that the power changed somewhat over time. For instance, after measuring every tile configuration on the 15x2 architecture using the SHA-256 module with DMA, turning the number of active CPU tiles back to 1 showed an increase in average power of 0.3 W.
+%This highligts the potential uncertainty about the test.
+%Causes can be due to the environment (for instance, room temperature) or the system in Versatile Express that we have no control over.
+%
+%Due to the changing power consumption, we have constantly measured idle power between each individual test, and idle power used for calculations is based on the average from measuring first tile to all tiles in a set architecture and \todo{Kristian will add "Makes no sense" to this sentence. Improve later}configuration.
+%
+%\section{5x4 Architecture}
+%
+%\subsection{Software hashing power consumption, 5x4 Architecture.}
 
+\subsection{Energy Efficiency for the Initial Test Setup}
+\label{sec:energy-initial}
 
-
-\chapter{Power measurements}
-
-\section{Methodology}
-
-As written in section \ref{sec:power-measure}
-Power usage for the application is determined by measuring the wall-power of the box
-that SHMAC is running on both when idle and when running the test applications. The
-power usage of the application is then determined using the following formula, where
-$P$ is the power in watts:
-
-\[P_{application} = P_{running} - P_{idle}\]
-
-Using the result of the power measurement, the energy efficiency can be obtained as
-the number of hashes per second per watt.
-
-To obtain the power usage of SHMAC, a Yokogawa WT210 power meter was used to measure
-the power drawn by the Versatile Express box from the power socket in the wall while
-idle and when running the bitcoin application. This method provides some uncertainty
-in the result of the measurements, as the Versatile Express also runs a Linux host
-system, it was not possible to obtain power measurements directly from the FPGA running
-SHMAC. 
-
-For a chosen architecture, and for a set of active CPU's, the power was measured along with performance.
-It turned out that it constantly fluctuated, and therefore we have chosen the average based on observations of highest and lower power consumption observed.
-The average power consumption together with uncertainty per measurement are filled into the tables in this chapter, and for each power consumption number, the power usage of the application is calculated.
-Calculated power usage is then plotted into graphs, with the uncertainty omitted. 
-
-The smallest unit we could measure in was 0.1 W. 
-
-It should be noted that the power changed somewhat over time. For instance, after measuring every tile configuration on the 15x2 architecture using the SHA-256 module with DMA, turning the number of active CPU tiles back to 1 showed an increase in average power of 0.3 W.
-This highligts the potential uncertainty about the test.
-Causes can be due to the environment (for instance, room temperature) or the system in Versatile Express that we have no control over.
-
-Due to the changing power consumption, we have constantly measured idle power between each individual test, and idle power used for calculations is based on the average from measuring first tile to all tiles in a set architecture and \todo{Kristian will add "Makes no sense" to this sentence. Improve later}configuration.
-
-\section{5x4 Architecture}
-
-\subsection{Software hashing power consumption, 5x4 Architecture.}
-
-Table \ref{tab:SW-power1} shows the measured power usage, along with uncertainty and calculated application power, while \ref{fig:SW-power1} shows the plotting.
-Interestingly, the more tiles are active, the less power is consumed by the system.
-It appears that stalling more CPU's in waiting for memory transfer, saves power.
-Most likely, before the memory congestion happens, the CPU's spend more energy in executing the hashes.
-
-How this affects the inactive CPU's is not known.
+Table \ref{tab:SW-power1} shows the measured power usage, along with uncertainty and calculated application power of the initial test architecture.
+The data is plotted in figure \ref{fig:SW-power1}.
+%It appears that the more tiles are active, the less power is consumed by the system.
+%On reason for this may be that as more tiles are added, longer periods of stalling is needed for each core to wait for data from the main memory.
+%When cores are inactive, they are waiting in a nop-operation loop, a software loop consisting of a \textsc{nop} operation.
+%Executing this loop causes the processor to have to decode and execute two instructions, the no-operation instruction
+%and the branch instruction. However, when stalling, the processor does not decode or execute new instructions,
+%which may cause less switching to happen internally in the processor.
 
 \begin{table}
+\centering
 \begin{tabular}{| l | r | r || r |}
   \hline 
-  \textbf{Cores} & \textbf{Average System Power} & \textbf{Uncertainty} & \textbf{Application Power} \\
+  \textbf{Cores} & \textbf{Average System Power [W]} & \textbf{Uncertainty} & \textbf{Application Power [W]} \\
   \hline                       
-  \textbf{IDLE} &  34.3 & 0.4 & 0.0\\
+  \textbf{Idle} &  34.3 & 0.4 & 0.0\\
   \textbf{1} &  36.6 & 0.4 & 2.3\\
   \textbf{2} &  36.7 & 0.3 & 2.4\\
   \textbf{3} &  36.7 & 0.4 & 2.4\\
@@ -604,11 +435,12 @@ How this affects the inactive CPU's is not known.
   \textbf{16} &  34.8 & 0.2 & 0.5\\
   \hline 
 \end{tabular}
-\caption{Measured power usage in Watts, software only, 5x4 architecture.}
+\caption{Measured power usage for software hashing using the initial test architecture.}
 \label{tab:SW-power1}
 \end{table}
 
 \begin{figure}
+\centering
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
@@ -636,41 +468,56 @@ How this affects the inactive CPU's is not known.
 		};
 		\end{axis}
 	\end{tikzpicture}
-	\caption{Calculated power consumption using software hashing, 5x4 architecture}
+	\caption{Measured power consumption for software hashing using the initial test architecture.}
 	\label{fig:SW-power1}
 \end{figure}
 
-
-\subsection{SHA-256 hashing power consumption, without and with DMA, 5x4 Architecture.}
-
-Tables \ref{tab:SHA-power1} and \ref{tab:SHADMA-power1} shows the individual measured power usage when using the SHA-256 accelerator without and with DMA module, respectively. 
-Uncertainty and calculated application power are included as well.
-Figure \ref{fig:SHA-power1} and \ref{fig:SHADMA-power1} shows the respective plottings.
-
-As can be seen from the tables and figures, there is no noteworthy difference in power usage.
+Tables \ref{tab:SHA-power1} and \ref{tab:SHADMA-power1} shows the individual power usage measured when using the SHA-256 accelerator without and with DMA module, respectively. 
+Uncertainty and calculated application power is included as well. The data are plotted in figures \ref{fig:SHA-power1}.
+As can be seen from the tables and figure, there is no significant difference in power usage when running with and without the DMA.
 
 \begin{table}
+\centering
 \begin{tabular}{| l | r | r || r |}
   \hline 
-  \textbf{Cores} & \textbf{Average System Power} & \textbf{Uncertainty} & \textbf{Application Power} \\
+  \textbf{Cores} & \textbf{Average System Power [W]} & \textbf{Uncertainty} & \textbf{Application Power [W]} \\
   \hline                       
-  \textbf{IDLE} &  34.3 & 0.4 & 0.0 \\
+  \textbf{Idle} &  34.3 & 0.4 & 0.0 \\
   \textbf{1} &  36.5 & 0.5 & 2.2\\
   \textbf{2} &  36.5 & 0.5 & 2.2\\
   \textbf{3} &  36.3 & 0.4 & 2.0\\
   \textbf{4} &  36.4 & 0.4 & 2.1\\
   \hline 
 \end{tabular}
-\caption{Measured power usage in Watts, using SHA-256 accelerator, 5x4 architecture.}
+\caption{Power usage using the SHA-256 accelerator using the initial test architecture.}
 \label{tab:SHA-power1}
 \end{table}
 
+\begin{table}
+\centering
+\begin{tabular}{| l | r | r || r |}
+  \hline 
+  \textbf{Cores} & \textbf{Average System Power [W]} & \textbf{Uncertainty} & \textbf{Application Power [W]} \\
+  \hline                          
+  \textbf{Idle} &  34.3 & 0.4 & 0.0 \\
+  \textbf{1} &  36.4 & 0.4 & 2.1\\
+  \textbf{2} &  36.7 & 0.3 & 2.3\\
+  \textbf{3} &  36.6 & 0.4 & 2.2\\
+  \textbf{4} &  36.6 & 0.4 & 2.2\\
+  \hline 
+\end{tabular}
+\caption{Power usage using the SHA-256 accelerator and DMA using the initial test architecture.}
+\label{tab:SHADMA-power1}
+\end{table}
+
 \begin{figure}
+\centering
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
 			ylabel=Power consumption (W),
-			scaled ticks=false]
+			scaled ticks=false,
+			legend cell align=left]
 		\addplot[color=red,mark=x] coordinates {
 			(0, 0)
 			(1, 2.2)
@@ -678,60 +525,32 @@ As can be seen from the tables and figures, there is no noteworthy difference in
 			(3, 2.0)
 			(4, 2.1)
 		};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Calculated power consumption using SHA-256 accelerator, 5x4 architecture}
-	\label{fig:SHA-power1}
-\end{figure}
-
-\begin{table}
-\begin{tabular}{| l | r | r || r |}
-  \hline 
-  \textbf{Cores} & \textbf{Average System Power} & \textbf{Uncertainty} & \textbf{Application Power} \\
-  \hline                          
-  \textbf{IDLE} &  34.3 & 0.4 & 0.0 \\
-  \textbf{1} &  36.4 & 0.4 & 2.1\\
-  \textbf{2} &  36.7 & 0.3 & 2.3\\
-  \textbf{3} &  36.6 & 0.4 & 2.2\\
-  \textbf{4} &  36.6 & 0.4 & 2.2\\
-  \hline 
-\end{tabular}
-\caption{Measured power usage in Watts, using SHA-256 accelerator and DMA module, 5x4 architecture.}
-\label{tab:SHADMA-power1}
-\end{table}
-
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel=Active processor tiles,
-			ylabel=Power consumption (W),
-			scaled ticks=false]
-		\addplot[color=red,mark=x] coordinates {
+		\addlegendentry{Without DMA}
+		\addplot[color=black,mark=o] coordinates {
 			(0, 0)
 			(1, 2.1)
 			(2, 2.3)
 			(3, 2.2)
 			(4, 2.2)
 		};
+		\addlegendentry{With DMA}
 		\end{axis}
 	\end{tikzpicture}
-	\caption{Calculated power consumption using SHA-256 accelerator and DMA module, 5x4 architecture}
-	\label{fig:SHADMA-power1}
+	\caption{Calculated power consumption using hardware accelerators}
+	\label{fig:SHA-power1}
 \end{figure}
 
-\section {15x2 Architecture}
+\subsection{Alternative Architecture}
 
-\subsection{Software hashing power consumption, 15x2 Architecture.}
-
-Table \ref{tab:SW-power2} and figure \ref{fig:SW-power2} shows the measured power.
-Again, the trend remains the same, as less power is consumed the more tiles are active.
+Table \ref{tab:SW-power2} and figure \ref{fig:SW-power2} shows the power measurements for the alternative architecture.
 
 \begin{table}
+\centering
 \begin{tabular}{| l | r | r || r |}
   \hline 
-  \textbf{Cores} & \textbf{Average System Power} & \textbf{Uncertainty} & \textbf{Application Power} \\
+  \textbf{Cores} & \textbf{Average System Power [W]} & \textbf{Uncertainty} & \textbf{Application Power [W]} \\
   \hline                         
-  \textbf{IDLE} & 33.9 & 0.3 & 0.0\\
+  \textbf{Idle} & 33.9 & 0.3 & 0.0\\
   \textbf{1} & 36.2 & 0.3 & 2.3\\
   \textbf{2} & 36.4 & 0.4 & 2.5\\
   \textbf{3} & 36.2 & 0.4 & 2.3\\
@@ -748,57 +567,20 @@ Again, the trend remains the same, as less power is consumed the more tiles are 
   \textbf{14} & 34.6 & 0.4 & 0.7\\
   \hline 
 \end{tabular}
-\caption{Measured power usage in Watts, software only, 15x2 architecture.}
+\caption{Measured power usage when doing software hashing in the alternative architecture.}
 \label{tab:SW-power2}
 \end{table}
 
-
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel=Active processor tiles,
-			ylabel=Power consumption (W),
-			scaled ticks=false]
-		\addplot[color=red,mark=x] coordinates {
-			(0, 0)
-			(1, 2.3)
-			(2, 2.5)
-			(3, 2.3)
-			(4, 1.0)
-			(5, 0.9)
-			(6, 0.8)
-			(7, 0.8)
-			(8, 0.8)
-			(9, 0.7)
-			(10, 0.7)
-			(11, 0.8)
-			(12, 0.8)
-			(13, 0.7)
-			(14, 0.7)
-			
-		};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Calculated power consumption using software hashing, 15x2 architecture}
-	\label{fig:SW-power2}
-\end{figure}
-
-\subsection{SHA-256 accelerator power consumption, without and with DMA, 15x2 Architecture.}
-\label{sec:SHA-power15x2}
-
-Tables \ref{tab:SHA-power2} and \ref{tab:SHADMA-power2} shows the individual measured power usage when using the SHA-256 accelerator without and with DMA module, respectively. 
+Tables \ref{tab:SHA-power2} and \ref{tab:SHADMA-power2} shows the individual power usage when using the SHA-256 accelerator without and with DMA module, respectively. 
 Uncertainty and calculated application power are included as well.
-Figure \ref{fig:SHA-power2} and \ref{fig:SHADMA-power2} shows the respective plottings.
-
-In contrast from the 5x4 architecture, this one allows all CPU-tiles to be active when using the SHA-256 accelerators.
-The trend is similar to software hashing: As more tiles are active, power usage drops slightly. The drop appears to be somewhat greater when omitting any use of the DMA module.
 
 \begin{table}
+\centering
 \begin{tabular}{| l | r | r || r |}
   \hline 
-  \textbf{Cores} & \textbf{Average System Power} & \textbf{Uncertainty} & \textbf{Application Power} \\
+  \textbf{Cores} & \textbf{Average System Power [W]} & \textbf{Uncertainty} & \textbf{Application Power [W]} \\
   \hline                           
-  \textbf{IDLE} & 33.8 & 0.3 & 0.0\\
+  \textbf{Idle} & 33.8 & 0.3 & 0.0\\
   \textbf{1} & 35.9 & 0.3 & 2.1\\
   \textbf{2} & 35.9 & 0.3 & 2.1\\
   \textbf{3} & 35.9 & 0.3 & 2.1\\
@@ -815,46 +597,17 @@ The trend is similar to software hashing: As more tiles are active, power usage 
   \textbf{14} & 34.9 & 0.3 & 1.1\\
   \hline 
 \end{tabular}
-\caption{Measured power usage in Watts, SHA-256 accelerator, 15x2 architecture.}
+\caption{Measured power usage when using the SHA-256 accelerator without the DMA in the alternative architecture.}
 \label{tab:SHA-power2}
 \end{table}
 
-
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel=Active processor tiles,
-			ylabel=Power consumption (W),
-			scaled ticks=false]
-		\addplot[color=red,mark=x] coordinates {
-			(0, 0)
-			(1, 2.1)
-			(2, 2.1)
-			(3, 2.1)
-			(4, 2.1)
-			(5, 2.1)
-			(6, 2.1)
-			(7, 2.0)
-			(8, 1.9)
-			(9, 1.8)
-			(10, 1.6)
-			(11, 1.6)
-			(12, 1.5)
-			(13, 1.3)
-			(14, 1.1)
-		};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Calculated power consumption using SHA-256 accelerator, 15x2 architecture}
-	\label{fig:SHA-power2}
-\end{figure}
-
 \begin{table}
+\centering
 \begin{tabular}{| l | r | r || r |}
   \hline 
-  \textbf{Cores} & \textbf{Average System Power} & \textbf{Uncertainty} & \textbf{Application Power} \\
+  \textbf{Cores} & \textbf{Average System Power [W]} & \textbf{Uncertainty} & \textbf{Application Power [W]} \\
   \hline                       
-  \textbf{IDLE} &  33.8 & 0.3 & 0.0\\
+  \textbf{Idle} &  33.8 & 0.3 & 0.0\\
   \textbf{1} &  36.0 & 0.3 & 2.2\\
   \textbf{2} &  36.2 & 0.3 & 2.4\\
   \textbf{3} &  36.1 & 0.4 & 2.3\\
@@ -871,61 +624,23 @@ The trend is similar to software hashing: As more tiles are active, power usage 
   \textbf{14} &  35.5 & 0.4 & 1.7\\
   \hline 
 \end{tabular}
-\caption{Measured power usage in Watts, SHA-256 accelerator with DMA, 15x2 architecture.}
+\caption{Measured power usage when using the SHA-256 accelerator with DMA in the alternative architecture.}
 \label{tab:SHADMA-power2}
 \end{table}
 
+\section{Energy Efficiency}
 
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel=Active processor tiles,
-			ylabel=Power consumption (W),
-			scaled ticks=false]
-		\addplot[color=red,mark=x] coordinates {
-			(0, 0.0)
-			(1, 2.2)
-			(2, 2.4)
-			(3, 2.3)
-			(4, 2.4)
-			(5, 2.4)
-			(6, 2.4)
-			(7, 2.3)
-			(8, 2.2)
-			(9, 1.9)
-			(10, 2.0)
-			(11, 1.9)
-			(12, 2.0)
-			(13, 1.9)
-			(14, 1.7)
-		};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Calculated power consumption using SHA-256 accelerator with DMA, 15x2 architecture}
-	\label{fig:SHADMA-power2}
-\end{figure}
+In this chapter, the energy efficiency is presented, calculated from the measured performance and energy usage.
 
-\chapter{Calculated efficiency per Hash}
+\subsection{Initial Architecture}
 
-In this chapter, the efficiency will be calculated from the measured performance and energy usage.
-Each architecture and configuration will be presented, where tables list up the DH/s, the power usage, and efficienty based on DH/s / W
-
-\section{5x4 Architecture}
-
-As a reminder, all tiles were measured when running software hashing, but only the four first tiles were measured when using the SHA-256 accelerators.
-
-\subsection{Software hashing}
-
-The calculation regarding the efficiency of the software hashing can be seen in table \ref{tab:SW-eff1}, and the corresponding plotting in figure \ref{fig:SW-eff1}.
-
-It is interesting to observe that in spite of maximum performance being at 4 tiles only, with reduced performance beyond, the efficiency actually increases well beyond 4 tiles.
-The drop in power usage is the main reason why. 
-
+The energy efficiency of software hashing in the initial architecture can be seen in table \ref{tab:SW-eff1}, and the corresponding plot in figure \ref{fig:SW-eff1}.
 
 \begin{table}
+\centering
 \begin{tabular}{| l | r | r || r |}
   \hline 
-  \textbf{Cores} & \textbf{DH/s} & \textbf{W} & \textbf{DH/s/W} \\
+  \textbf{Cores} & \textbf{dH/s} & \textbf{W} & \textbf{dH/s/W} \\
   \hline                       
   \textbf{1} &  6450 & 2.3 & 2804.3\\
   \textbf{2} &  12895 & 2.4 & 5372.9\\
@@ -945,18 +660,18 @@ The drop in power usage is the main reason why.
   \textbf{16} &  18191 & 0.5 & 36382\\
   \hline 
 \end{tabular}
-\caption{Efficiency, software only, 5x4 architecture.}
+\caption{Energy efficiency of software hashing in the initial architecture.}
 \label{tab:SW-eff1}
 \end{table}
 
 \begin{figure}
+\centering
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
-			ylabel=Efficiency (DH/s/W),
+			ylabel=Efficiency (dH/s/W),
 			scaled ticks=false]
 		\addplot[color=red,mark=x] coordinates {
-			(0, 0)
 			(1, 2804.3)
 			(2, 5372.9)
 			(3, 7995.8)
@@ -976,29 +691,26 @@ The drop in power usage is the main reason why.
 		};
 		\end{axis}
 	\end{tikzpicture}
-	\caption{Efficiency, software only, 5x4 architecture}
+	\caption{Energy efficiency of software hashing in the initial architecture.}
 	\label{fig:SW-eff1}
 \end{figure}
 
+Tables \ref{tab:SHA-eff1} and \ref{tab:SHADMA-eff1} shows the energy efficiency of the SHA-256 accelerator, without and with using the DMA module, respectively.
+The plot for both can be seen in figure \ref{SHADMA-eff1}, where they are compared to each other.
 
-
-\subsection{SHA-256 accelerator efficiency, without and with DMA}
-
-Tables \ref{tab:SHA-eff1} and \ref{tab:SHADMA-eff1} shows the efficiency calculation of the SHA-256 accelerator, without and with using the DMA module, respectively.
-
-The plotting for both can be seen in figure \ref{SHADMA-eff1}, where they are compared to each other.
-While using the DMA in the start is slightly more efficient, it drops below omitting it when 2 or more tiles are active.
-The performance is slightly higher, but so is the energy consumption, if only with few mere units of '0.1 W's.
-This implies the very sensitivity due to the uncertainty around measuring the fluctuating power from the wall.
-
-It is known from measuring power usage in section \label{sec:SHA-power15x2} that power usage is above 2.0 W when using 6 or less CPU tiles, and is reduced beyond this point.
-Since only up to 4 CPU tiles could be measured when using the SHA-256 accelerator, this drop could not occur.
-Greater difference in efficiency would have been better visible beyond this point, and without this power drop, the difference remains \todo{OK?}inconclusive.
+%While using the DMA in the start is slightly more efficient, it drops below omitting it when 2 or more tiles are active.
+%The performance is slightly higher, but so is the energy consumption, if only with few mere units of '0.1 W's.
+%This implies the very sensitivity due to the uncertainty around measuring the fluctuating power from the wall.
+%
+%It is known from measuring power usage in section \label{sec:SHA-power15x2} that power usage is above 2.0 W when using 6 or less CPU tiles, and is reduced beyond this point.
+%Since only up to 4 CPU tiles could be measured when using the SHA-256 accelerator, this drop could not occur.
+%Greater difference in efficiency would have been better visible beyond this point, and without this power drop, the difference remains \todo{OK?}inconclusive.
 
 \begin{table}
+\centering
 \begin{tabular}{| l | r | r || r |}
   \hline 
-  \textbf{Cores} & \textbf{DH/s} & \textbf{W} & \textbf{DH/s/W} \\
+  \textbf{Cores} & \textbf{dH/s} & \textbf{W} & \textbf{dH/s/W} \\
   \hline                       
   \textbf{1} &  17557 & 2.2 & 7980.4\\
   \textbf{2} &  37539 & 2.2 & 17063.2\\
@@ -1006,14 +718,15 @@ Greater difference in efficiency would have been better visible beyond this poin
   \textbf{4} &  70179 & 2.1 & 33418.6\\
   \hline 
 \end{tabular}
-\caption{Efficiency, SHA-256 accelerator, 5x4 architecture.}
+\caption{Energy efficiency when using the SHA-256 accelerator without DMA in the initial architecture.}
 \label{tab:SHA-eff1}
 \end{table}
 
 \begin{table}
+\centering
 \begin{tabular}{| l | r | r || r |}
   \hline 
-  \textbf{Cores} & \textbf{DH/s} & \textbf{W} & \textbf{DH/s/W} \\
+  \textbf{Cores} & \textbf{dH/s} & \textbf{W} & \textbf{dH/s/W} \\
   \hline                       
   \textbf{1} &  18230 & 2.1 & 8681\\
   \textbf{2} &  38267 & 2.3 & 16637.8\\
@@ -1021,102 +734,96 @@ Greater difference in efficiency would have been better visible beyond this poin
   \textbf{4} &  71840 & 2.2 & 32654.5\\
   \hline 
 \end{tabular}
-\caption{Efficiency, SHA-256 accelerator with DMA, 5x4 architecture.}
+\caption{Energy efficiency when using the SHA-256 accelerator with DMA in the initial architecture.}
 \label{tab:SHADMA-eff1}
 \end{table}
 
 \begin{figure}
+\centering
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
 			ylabel=Efficiency (DH/s/W),
 			scaled ticks=false]
 		\addplot[color=black,mark=o] coordinates {
-			(0, 0)
-			(1, 7980.4)
-			(2, 17063.2)
-			(3, 27456)
-			(4, 33418.6)
-		};
-		\addplot[color=blue,mark=x] coordinates {
-			(0, 0)
 			(1, 8681)
 			(2, 16637.8)
 			(3, 25522.7)
 			(4, 32654.5)
 		};
+		\addlegendentry{With DMA}
+		\addplot[color=red,mark=x] coordinates {
+			(1, 7980.4)
+			(2, 17063.2)
+			(3, 27456)
+			(4, 33418.6)
+		};
+		\addlegendentry{Without DMA}
 		\end{axis}
 	\end{tikzpicture}
-	\caption{Efficiency, SHA-256 accelerator, 5x4 architecture. Black: Without DMA. Blue: With DMA}
+	\caption{Energy efficiency when using hardware accelerators in the initial architecture.}
 	\label{fig:SHADMA-eff1}
 \end{figure}
 
-\subsection{Comparison, efficiency on 5x4 architecture}
+%\subsection{Comparison, efficiency on 5x4 architecture}
+%
+%Surprisingly enough, when vomparing software hashing with SHA-256 accelerator hashing on the 5x4 architecture, greater energy efficiency can be achieved with software hashing when using 11 or 15 tiles.
+%It is possible that this result is due to mere fluctuation in the power measurement, giving us a positive result, but constraining the use of SHA-256 accelerator to only up to four tiles puts great limit on the possible amount of double hashes.
+%Given the near-linear scaling measured, the system could have achieved a much greater number of double hashes per second if it weren't for the constraint, with the possibility of out-performing the efficiency of software hashing by far. 
+%
+%\begin{figure}
+%	\begin{tikzpicture}
+%		\begin{axis}[
+%			xlabel=Active processor tiles,
+%			ylabel=Efficiency (dH/s/W),
+%			scaled ticks=false]
+%		\addplot[color=red,mark=x] coordinates {
+%			(1, 2804.3)
+%			(2, 5372.9)
+%			(3, 7995.8)
+%			(4, 21261)
+%			(5, 27585.7)
+%			(6, 22985)
+%			(7, 26092.9)
+%			(8, 30318.3)
+%			(9, 30325)
+%			(10, 30320)
+%			(11, 30323.3)
+%			(12, 36384)
+%			(13, 30320)
+%			(14, 30318.3)
+%			(15, 25987.1)
+%			(16, 36382)
+%		};
+%		\addplot[color=black,mark=o] coordinates {
+%			(1, 7980.4)
+%			(2, 17063.2)
+%			(3, 27456)
+%			(4, 33418.6)
+%		};
+%		\addplot[color=blue,mark=x] coordinates {
+%			(1, 8681)
+%			(2, 16637.8)
+%			(3, 25522.7)
+%			(4, 32654.5)
+%		};
+%		\end{axis}
+%	\end{tikzpicture}
+%	\caption{Efficiency, Red: Software hashing. Black: SHA-256 accelerator (no DMA). Blue: SHA-256 + DMA. 5x4 architecture}
+%	\label{fig:All-eff1}
+%\end{figure}
 
-Surprisingly enough, when vomparing software hashing with SHA-256 accelerator hashing on the 5x4 architecture, greater energy efficiency can be achieved with software hashing when using 11 or 15 tiles.
-It is possible that this result is due to mere fluctuation in the power measurement, giving us a positive result, but constraining the use of SHA-256 accelerator to only up to four tiles puts great limit on the possible amount of double hashes.
-Given the near-linear scaling measured, the system could have achieved a much greater number of double hashes per second if it weren't for the constraint, with the possibility of out-performing the efficiency of software hashing by far. 
+\subsection{Alternative Architecture}
 
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel=Active processor tiles,
-			ylabel=Efficiency (DH/s/W),
-			scaled ticks=false]
-		\addplot[color=red,mark=x] coordinates {
-			(0, 0)
-			(1, 2804.3)
-			(2, 5372.9)
-			(3, 7995.8)
-			(4, 21261)
-			(5, 27585.7)
-			(6, 22985)
-			(7, 26092.9)
-			(8, 30318.3)
-			(9, 30325)
-			(10, 30320)
-			(11, 30323.3)
-			(12, 36384)
-			(13, 30320)
-			(14, 30318.3)
-			(15, 25987.1)
-			(16, 36382)
-		};
-		\addplot[color=black,mark=o] coordinates {
-			(0, 0)
-			(1, 7980.4)
-			(2, 17063.2)
-			(3, 27456)
-			(4, 33418.6)
-		};
-		\addplot[color=blue,mark=x] coordinates {
-			(0, 0)
-			(1, 8681)
-			(2, 16637.8)
-			(3, 25522.7)
-			(4, 32654.5)
-		};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Efficiency, Red: Software hashing. Black: SHA-256 accelerator (no DMA). Blue: SHA-256 + DMA. 5x4 architecture}
-	\label{fig:All-eff1}
-\end{figure}
-
-
-
-\section{15x2 Architecture}
-
-In contrast to the 5x4 architecture, all tiles were used for software hashing and SHA-256 accelerator hashing.
-
-\subsection{Software hashing, 15x2 architecture}
-
-The efficiency, calculated from the numbers in \ref{tab:SW-eff2} and plotted in figure \ref{fig:SW-eff2}, shows the same trend as in the 5x4 architecture.
-While performance is greates with only 4 tiles, the reduction in power usage makes usage of many tiles (measured 9-10 and 13-14) more efficient. 
+Table \ref{tab:SW-eff2} shows the energy efficiency of doing software hasing in the alternative architecture. The numbers
+are plotted in figure \ref{fig:SW-eff2}. While performance is greates with only 4 tiles, the reduction in power usage
+makes using of more tiles more efficient. 
 
 \begin{table}
+\centering
 \begin{tabular}{| l | r | r || r |}
   \hline 
-  \textbf{Cores} & \textbf{DH/s} & \textbf{W} & \textbf{DH/s/W} \\
+  \textbf{Cores} & \textbf{dH/s} & \textbf{W} & \textbf{dH/s/W} \\
   \hline                       
   \textbf{1} &  6418 & 2,3 & 2790.4\\
   \textbf{2} &  12841 & 2,5 & 5136.4\\
@@ -1134,15 +841,16 @@ While performance is greates with only 4 tiles, the reduction in power usage mak
   \textbf{14} &  18190 & 0.7 & 25985.7\\
   \hline 
 \end{tabular}
-\caption{Efficiency, software only, 15x2 architecture.}
+\caption{Energy efficiency when using software hasing only for the alternative architecture.}
 \label{tab:SW-eff2}
 \end{table}
 
 \begin{figure}
+\centering
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
-			ylabel=Efficiency (DH/s/W),
+			ylabel=Efficiency (dH/s/W),
 			scaled ticks=false]
 		\addplot[color=red,mark=x] coordinates {
 			(0, 0)
@@ -1163,21 +871,18 @@ While performance is greates with only 4 tiles, the reduction in power usage mak
 		};
 		\end{axis}
 	\end{tikzpicture}
-	\caption{Efficiency, software only, 15x2 architecture}
+	\caption{Energy efficiency when using software hashing only in the alternative architecture.}
 	\label{fig:SW-eff2}
 \end{figure}
-		
-		
-\subsection{SHA-256 hashing, without and with DMA, 15x2 architecture}
 
-This time, with all tiles available for SHA-256 accelerator hashing, the different scaling is much more clear.
-Tables \ref{tab:SHA-eff2} and \ref{tab:SHADMA-eff2} shows the calculated efficiency for the SHA-256 accelerator, without and with DMA module respectively, when scaling from 1 to all 14 CPU tiles.
-They are plotted and compared in figure \ref{fig:SHADMA-eff2}.
-With the full scaling up to 14 tiles, it becomes much more clear that the use of DMA does not scale as well as without.
-Not is the poor performance of the SHA-256 + DMA usage the only reason, but using the DMA increases the power usage as well.
-It is clear that the system is more efficient when omitting the DMA Module, by up to 150\%, when all tiles become active.
+Tables \ref{tab:SHA-eff2} and \ref{tab:SHADMA-eff2} shows the energy efficiency for the SHA-256 accelerator, without and with DMA module respectively.
+%The numbers are plotted and compared in figure \ref{fig:SHADMA-eff2}.
+%With the full scaling up to 14 tiles, it becomes much more clear that the use of DMA does not scale as well as without.
+%Not is the poor performance of the SHA-256 + DMA usage the only reason, but using the DMA increases the power usage as well.
+%It is clear that the system is more efficient when omitting the DMA Module, by up to 150\%, when all tiles become active.
 
 \begin{table}
+\centering
 \begin{tabular}{| l | r | r || r |}
   \hline 
   \textbf{Cores} & \textbf{DH/s} & \textbf{W} & \textbf{DH/s/W} \\
@@ -1198,12 +903,12 @@ It is clear that the system is more efficient when omitting the DMA Module, by u
   \textbf{14} & 179526 & 1.1 & 163205.5\\
   \hline 
 \end{tabular}
-\caption{Efficiency, SHA-256 accelerator, 15x2 architecture.}
+\caption{Energy efficiency using the SHA-256 accelerator for the alternative architecture.}
 \label{tab:SHA-eff2}
 \end{table}
 
-
 \begin{table}
+\centering
 \begin{tabular}{| l | r | r || r |}
   \hline 
   \textbf{Cores} & \textbf{DH/s} & \textbf{W} & \textbf{DH/s/W} \\
@@ -1224,135 +929,18 @@ It is clear that the system is more efficient when omitting the DMA Module, by u
   \textbf{14} & 175711 & 1.7 & 103359.4\\
   \hline 
 \end{tabular}
-\caption{Efficiency, SHA-256 accelerator with DMA, 15x2 architecture.}
+\caption{Energy efficiency using the SHA-256 accelerator with DMA for the alternative architecture.}
 \label{tab:SHADMA-eff2}
 \end{table}
 
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel=Active processor tiles,
-			ylabel=Efficiency (DH/s/W),
-			scaled ticks=false]
-		\addplot[color=black,mark=o] coordinates {
-			(0, 0)
-			(1, 5560)
-			(2, 11616.2)
-			(3, 18251.9)
-			(4, 25600)
-			(5,	33801.4)		
-			(6, 43138.1)
-			(7, 53755)
-			(8, 64308.4)
-			(9, 75005)
-			(10, 91388.1)
-			(11, 97583.1)
-			(12, 109906.7)
-			(13, 132600.8)
-			(14, 163205.5)
-		};
-		\addplot[color=blue,mark=x] coordinates {
-			(0, 0)
-			(1, 6012.3)
-			(2, 11420.8)
-			(3, 18533.5)
-			(4,	24578.8)		
-			(5, 31898.3)
-			(6, 39691.3)
-			(7, 48956.1)
-			(8, 57961.4)
-			(9, 73651.1)
-			(10, 75034.5)
-			(11, 83379.5)
-			(12, 82635.5)
-			(13, 90075.3)
-			(14, 103359.4)
-		};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Efficiency, SHA-256 accelerator, 5x12 architecture. Black: Without DMA. Blue: With DMA}
-	\label{fig:SHADMA-eff2}
-\end{figure}
-		
-		
-\subsection{Comparison, efficiency on 15x2 architecture}
-And at last, all 3 efficiency results are compared in figure \ref{fig:All-eff2}, and with the full scaling range of the SHA-256 accelerators, the difference between software-hashing and SHA-256 accelerator hashing becomes fully clear.
-With performance scaling continually when using the accelerators, and with power usage dropping as more tiles are active, the best SHA-256 accelerator solution (no DMA) is more than 6 times more efficient than software hashing at 14 tiles.
-
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{axis}[
-			xlabel=Active processor tiles,
-			ylabel=Efficiency (DH/s/W),
-			scaled ticks=false]
-		\addplot[color=red,mark=x] coordinates {
-			(0, 0)
-			(1, 2790.4)
-			(2, 5136.4)
-			(3, 8317.4)
-			(4, 21364)
-			(5, 21560)
-			(6, 23025)
-			(7, 22816.3)
-			(8, 22757.5)
-			(9, 25990)
-			(10, 25988.6)
-			(11, 22740)
-			(12, 22740)
-			(13, 25987.1)
-			(14, 25985.7)
-		};
-		\addplot[color=black,mark=o] coordinates {
-			(0, 0)
-			(1, 5560)
-			(2, 11616.2)
-			(3, 18251.9)
-			(4, 25600)
-			(5,	33801.4)		
-			(6, 43138.1)
-			(7, 53755)
-			(8, 64308.4)
-			(9, 75005)
-			(10, 91388.1)
-			(11, 97583.1)
-			(12, 109906.7)
-			(13, 132600.8)
-			(14, 163205.5)
-		};
-		\addplot[color=blue,mark=x] coordinates {
-			(0, 0)
-			(1, 6012.3)
-			(2, 11420.8)
-			(3, 18533.5)
-			(4,	24578.8)		
-			(5, 31898.3)
-			(6, 39691.3)
-			(7, 48956.1)
-			(8, 57961.4)
-			(9, 73651.1)
-			(10, 75034.5)
-			(11, 83379.5)
-			(12, 82635.5)
-			(13, 90075.3)
-			(14, 103359.4)
-		};
-		\end{axis}
-	\end{tikzpicture}
-	\caption{Efficiency, Red: Software hashing. Black: SHA-256 accelerator (no DMA). Blue: SHA-256 + DMA. 15x2 architecture}
-	\label{fig:All-eff2}
-\end{figure}
-
-\section{Final notes}
-\todo{Yep}\textbf{Optional, if we need to note something extra. Remove if proven unnecessary}
-
-Reminder: DMA modules have four times the individual transfers, compared to CPU. Saturates the interconnect network faster.
-128-bit transfers would have increased efficiency greatly, by acting four times faster, and reduced traffic on the network.
-
-
-
-	
-	
-
+%\section{Final notes}
+%\todo{Yep}\textbf{Optional, if we need to note something extra. Remove if proven unnecessary}
+%
+%Reminder: DMA modules have four times the individual transfers, compared to CPU. Saturates the interconnect network faster.
+%
+% %***NOTE: not correct, for normal data transfers the CPU also does 32-bit transfers. Only for cache line loads does the CPU do 128 bit transfers.
+%
+%128-bit transfers would have increased efficiency greatly, by acting four times faster, and reduced traffic on the network.
 
 \end{appendix}
 

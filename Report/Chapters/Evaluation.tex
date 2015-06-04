@@ -5,29 +5,14 @@ presented in the previous chapter.
 
 \section{Performance}
 
-%The results from using software only for hashing can be seen in table \ref{tab:Perf-SW}.
-%The table shows the hashes per second for each active processor as number of processors are scaled up, beginning from Processor 0.
-%The different rows are also grouped together, to highlight the distribution.
-%The system reaches highest performance with only 3 active processors, and is saturated beyond this point.
-%When using additional processors beyond this point, the hashing performance of each processor drops for each new that is added to the system.
-%We believe that the stable number on the sum of hashes suggests that access to memory is the main bottleneck.
-
-%It is interesting to note that performance drop for each processor on rows 0-2 no longer drops when fourth row has its processors added, one by one.
-%It can also be observed that processor 10 has much greater performance.
-%This is likely due to the SHMAC layout, combined with the current XY-routing.
-%\todo{Should be improved by numbering the T-tiles in the figure, and cut down this sentence}Processor 10 is the T-tile on 2nd row, to the right edge, seen in figure \ref{fig:5x4}
-%With XY-routing, there is no competition for routing between it and the DRAM-tile.
-%There is either no competition for routing between the bottom row and the rest of the tiles either.
-%This suggests that the mapping on SHMAC can improve or hamper performance, depending on the setup.
-%Nevertheless, with memory as main bottleneck, a better mapping will have little effect on performance.
- 
 To establish a baseline for the performance gains obtained when using the accelerators,
 a measurement of the performance when using software hashing was first obtained.
 
-\subsection{Initial Software Results}
+\subsection{Initial Results}
+\label{sec:init-results}
 
 Using software-only hashing produced a best result of 16047 H/s. As can be seen
-in the plot in figure \ref{fig:sw-scaling1}, however, adding more processors after the third produces no
+in the plot in figure \ref{fig:sw-scaling1}, however, adding more processors after the fourth produces no
 noticeable additional performance gain. The reason for this is that all cores makes frequent
 accesses to DRAM, when running the software algorithm, which causes the DRAM tile to quickly
 become congested. The reason for these frequent accesses is probably due to the use of
@@ -49,88 +34,366 @@ processor tiles because of its location. The individual performance of each proc
 appendix \ref{app:performance}, table \ref{tab:Full-Perf-SW1}.
 
 \begin{figure}
+	\centering
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
-			ylabel=H/s,
+			ylabel=dH/s,
 			scaled ticks=false]
 		\addplot[color=red,mark=x] coordinates {
-			(1, 5972)
-			(2, 11950)
-			(3, 17933)
-			(4, 15543)
-			(5, 15540)
-			(6, 15539)
-			(7, 15539)
-			(8, 15549)
-			(9, 15536)
-			(10, 15541)
-			(11, 15539)
-			(12, 15537)
-			(13, 15534)
-			(14, 15540)
-			(15, 15535)
-			(16, 16047)
+		        (1, 6450)
+			(2, 12895)
+			(3, 19190)
+			(4, 21261)
+			(5, 19310)
+			(6, 18388)
+			(7, 18265)
+			(8, 18191)
+			(9, 18195)
+			(10, 18192)
+			(11, 18194)
+			(12, 18192)
+			(13, 18192)
+			(14, 18191)
+			(15, 18191)
+			(16, 18191)
 		};
 		\end{axis}
 	\end{tikzpicture}
-	\caption{Scaling using software hashing}
+	\caption{Software performance}
 	\label{fig:sw-scaling1}
 \end{figure}
 
-\subsection{Initial Hardware Results}
-\label{sec:init-hw-results}
-
-Need new results for hardware hashing! We totally forgot this last thursday.
-
-Tables \ref{tab:Perf-SHA} and \ref{tab:Perf-SHADMA} shows the results when using the SHA-256 accelerator, without and with the DMA module enabled, respectively.
+Figure \ref{fig:shadmacomp-scaling1} shows the results when using the SHA-256 accelerator, without and with the DMA module enabled, respectively
+Looking at the case where only one core is running, one can see that the performance when using the accelerator is about 2,8 times faster than
+using the software version.
 Only up to four processors where used, as adding in processors from the second row of processors when scaling up caused the application to crash.
 It was discovered that this was likely because of an undocumented bug in the implementation of the scratchpad memory tile used.
 
-Both tables shows that the sum of hashes has a near-linear increase when adding more tiles.
-The individual perfomance of each processor varies, which is due to the same congestion effects observed when doing software hashing.
-Using DMA shows the same trend, but with additionally increased performance for each tile.
-
-
-\subsection{Alternative Software Results}
-In order to obtain better results with regards to scaling, a new test design was created which works
-around the scratchpad tile bug and places all CPU cores on the same line.
+Because of the more or less linear scaling it is not possible to predict how many cores can be active and hashing at the same time
+before reaching the memory congestion limit, nor is it possible to see if the DMA has any significant effect on the performance.
+It was decided to attempt to work around the scratchpad bug with a new design, in order to better measure how the performance of
+hardware hashing scales and what effect using a DMA will have when more tiles are active.
 
 \begin{figure}
+	\centering
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
-			ylabel=H/s,
+			ylabel=dH/s,
+			scaled ticks=false,
+			legend pos=north west,
+			legend cell align=left]
+		\addplot[color=black,mark=o] coordinates {
+			(1, 18230)
+			(2, 38267)
+			(3, 56150)
+			(4, 71840)
+		};
+		\addlegendentry{With DMA}
+		\addplot[color=red,mark=x] coordinates {
+			(1, 17557)
+			(2, 37539)
+			(3, 54912)
+			(4, 70179)
+		};
+		\addlegendentry{Without DMA}
+		\addplot[color=green,mark=triangle] coordinates {
+		        (1, 6450)
+			(2, 12895)
+			(3, 19190)
+			(4, 21261)
+		};
+		\addlegendentry{Software}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Hardware hashing performance, with software performance added for comparison}
+	\label{fig:shadmacomp-scaling1}
+\end{figure}
+
+\subsection{Results from the Alternative Design}
+In order to obtain better results with regards to scaling, a new test design was created which works
+around the scratchpad tile bug and places 14 CPU cores on the same line in the grid. The design
+is described in section \ref{sec:SHMAC_setup}. The performance obtained using only software hashing
+is plotted in figure \ref{fig:sw-scaling2}. Like the results obtained from the original design,
+adding more cores after the fourth does not provide any additional performance.
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=dH/s,
 			scaled ticks=false]
 		\addplot[color=red,mark=x] coordinates {
-			(1, 5963)
-			(2, 11930)
-			(3, 17900)
-			(4, 15566)
-			(5, 15549)
-			(6, 15541)
-			(7, 15536)
-			(8, 15537)
-			(9, 15536)
-			(10, 15534)
-			(11, 15535)
-			(12, 15536)
+		    (1, 6418)
+			(2, 12841)
+			(3, 19130)
+			(4, 21364)
+			(5, 19404)
+			(6, 18420)
+			(7, 18253)
+			(8, 18206)
+			(9, 18193)
+			(10, 18192)
+			(11, 18192)
+			(12, 18192)
+			(13, 18191)
+			(14, 18190)
 		};
 		\end{axis}
 	\end{tikzpicture}
-	\caption{Scaling using software hashing, alternative architecture}
+	\caption{Software hashing performance for the alternative hardware design}
 	\label{fig:sw-scaling2}
 \end{figure}
 
-\subsection{Alternative Hardware Results}
+The performance results obtained using the hardware modules are plotted in figure \ref{fig:shadmacomp-scaling2}.
+From these results, it can be observed that the performance continues to scale almost linearly up until around
+the tenth core is added. At this point, memory congestion is probably starting to affect the scaling.
+
+Furthermore, using the DMA for data transfer provides a consistently small performance increase when using less than 
+12 cores. The reason for this is unknown.\todo{Find reason}
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=dH/s,
+			scaled ticks=false,
+			yticklabel style={/pgf/number format/fixed},
+			legend pos=north west,
+			legend cell align=left]
+		\addplot[color=black,mark=o] coordinates {
+			(1, 13227)
+			(2, 27410)
+			(3, 42627)
+			(4, 58989)
+			(5, 76556)
+			(6, 95259)
+			(7, 112599)
+			(8, 127515)
+			(9, 139937)
+			(10, 150069)
+			(11, 158421)
+			(12, 165271)
+			(13, 171143)
+			(14, 175711)
+		};
+		\addlegendentry{With DMA}
+		\addplot[color=red,mark=x] coordinates {
+			(1, 11676)
+			(2, 24394)
+			(3, 38329)
+			(4, 53760)
+			(5, 70983)
+			(6, 90590)
+			(7, 107510)
+			(8, 122186)
+			(9, 135009)
+			(10, 146221)
+			(11, 156133)
+			(12, 164860)
+			(13, 172381)
+			(14, 179526)
+		};
+		\addlegendentry{Without DMA}
+		\addplot[color=green,mark=triangle] coordinates {
+		    (1, 6418)
+			(2, 12841)
+			(3, 19130)
+			(4, 21364)
+			(5, 19404)
+			(6, 18420)
+			(7, 18253)
+			(8, 18206)
+			(9, 18193)
+			(10, 18192)
+			(11, 18192)
+			(12, 18192)
+			(13, 18191)
+			(14, 18190)
+		};
+		\addlegendentry{Software}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Hardware results for the alternative hardware design with software results added for comparison.}
+	\label{fig:shadmacomp-scaling2}
+\end{figure}
+
 \section{Power and energy efficiency}
 
-We must measure the power from the wall, before we can add anything here.
+The energy efficiency was calculated by measuring the power usage of the application, as described in section \ref{sec:power-measure},
+and looking at how many double hashes the system does. This provides a number of double hashes per second per watt.
 
-\section{Discussion about NoC efficiency}
-\section{Discussion about SHMAC bugs}
+Obtaining the power measurements provided a difficult task, as the idle power of the Versatile Express box seemed to be
+steadily rising over time. This can be caused my multiple factors, such as the host system working, changes in temperature
+due to the benchmark application running or environmental factors. Because of this, the idle power was measured between
+each individual test run to make sure the power usage of the application was measured as correctly as possible.
 
-\section{Discossion on various issues}
+Because of the problems encountered with the initial test design, only the power results from the alternative design
+is discussed here. However, both designs shows the same trends, and the results from the initial design can be seen in
+the appendix, section \ref{sec:energy-initial}.
+
+Figure \ref{fig:power-plot} shows the measured power usage when running with software hashing, accelerated hashing without DMA
+and accelerated hashing without DMA.
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=Power consumption (W),
+			legend cell align=left,
+			legend style={font=\footnotesize},
+			scaled ticks=false]
+		\addplot[color=black,mark=o] coordinates {
+			(1, 2.2)
+			(2, 2.4)
+			(3, 2.3)
+			(4, 2.4)
+			(5, 2.4)
+			(6, 2.4)
+			(7, 2.3)
+			(8, 2.2)
+			(9, 1.9)
+			(10, 2.0)
+			(11, 1.9)
+			(12, 2.0)
+			(13, 1.9)
+			(14, 1.7)
+		};
+		\addlegendentry{With DMA}
+		\addplot[color=red,mark=x] coordinates {
+			(1, 2.1)
+			(2, 2.1)
+			(3, 2.1)
+			(4, 2.1)
+			(5, 2.1)
+			(6, 2.1)
+			(7, 2.0)
+			(8, 1.9)
+			(9, 1.8)
+			(10, 1.6)
+			(11, 1.6)
+			(12, 1.5)
+			(13, 1.3)
+			(14, 1.1)
+		};
+		\addlegendentry{Without DMA}
+		\addplot[color=green,mark=triangle] coordinates {
+			(1, 2.3)
+			(2, 2.5)
+			(3, 2.3)
+			(4, 1.0)
+			(5, 0.9)
+			(6, 0.8)
+			(7, 0.8)
+			(8, 0.8)
+			(9, 0.7)
+			(10, 0.7)
+			(11, 0.8)
+			(12, 0.8)
+			(13, 0.7)
+			(14, 0.7)
+		};
+		\addlegendentry{Software}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Measured power consumption using software and hardware accelerators.}
+	\label{fig:power-plot}
+\end{figure}
+
+For software-only hashing, it is interesting to note that less power is used when adding more cores. On reason for
+this may be that as more tiles are added, longer periods of stalling is needed for each core to wait for data from
+the main memory. When cores are inactive, they are waiting in a nop-operation loop, a software loop consisting of a
+\textsc{nop} operation. Executing this loop causes the processor to have to decode and execute two instructions,
+the no-operation instruction and the branch instruction. However, when stalling, the processor does not decode or
+execute new instructions, which may cause less switching to happen internally in the processor, thus reducing power
+wastage from transistor switching. This could be a good indicator that the Turbo Amber processor could benefit
+from a form of sleep or wait-for-interrupt instruction that will allow it to stall as long as it has no work to do.
+
+The same trend can be seend when using hardware, although the drop in power usage comes later. This is likely
+because it takes longer for the traffic to the memories to be large enough to cause longer periods of stalling in the
+processor and DMA module.
+
+The energy efficiency is shown in figure \ref{fig:efficiency-plot}. It is evident that using a hardware accelerated
+hashing module provides large gains in energy efficiency, which becomes especially clear when adding more than 4 cores,
+because of the much higher performance the accelerators can provide with little overhead in energy use. At 14 active
+tiles, hardware acceleration provides over 6 times better energy efficiency than software hashing.
+
+It is interesting to note that the energy efficiency when using a DMA becomes notably less than when not using the
+DMA when the interconnect network is starting to become congested, around the point where 10 cores and more are active.
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+			xlabel=Active processor tiles,
+			ylabel=Energy efficiency (dH/s/W),
+			yticklabel style={/pgf/number format/fixed},
+			legend pos=north west,
+			legend cell align=left,
+			scaled ticks=false]
+		\addplot[color=red,mark=x] coordinates {
+			(1, 5560)
+			(2, 11616.2)
+			(3, 18251.9)
+			(4, 25600)
+			(5, 33801.4)		
+			(6, 43138.1)
+			(7, 53755)
+			(8, 64308.4)
+			(9, 75005)
+			(10, 91388.1)
+			(11, 97583.1)
+			(12, 109906.7)
+			(13, 132600.8)
+			(14, 163205.5)
+		};
+		\addlegendentry{Without DMA}
+		\addplot[color=black,mark=x] coordinates {
+			(1, 6012.3)
+			(2, 11420.8)
+			(3, 18533.5)
+			(4, 24578.8)		
+			(5, 31898.3)
+			(6, 39691.3)
+			(7, 48956.1)
+			(8, 57961.4)
+			(9, 73651.1)
+			(10, 75034.5)
+			(11, 83379.5)
+			(12, 82635.5)
+			(13, 90075.3)
+			(14, 103359.4)
+		};
+		\addlegendentry{With DMA}
+		\addplot[color=green,mark=triangle] coordinates {
+			(1, 2790.4)
+			(2, 5136.4)
+			(3, 8317.4)
+			(4, 21364)
+			(5, 21560)
+			(6, 23025)
+			(7, 22816.3)
+			(8, 22757.5)
+			(9, 25990)
+			(10, 25988.6)
+			(11, 22740)
+			(12, 22740)
+			(13, 25987.1)
+			(14, 25985.7)
+		};
+		\addlegendentry{Software}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Energy efficiency}
+	\label{fig:efficiency-plot}
+\end{figure}
+
+%\section{Discussion about NoC efficiency}
+
 % Relevant stuffz copied from methodology:
 %
 %Caches were turned on for each testing, but a bug in the caches can cause several processors to halt over time, making measurements more difficult.

@@ -43,13 +43,15 @@ The second design places all processor tiles in a single row. This causes all tr
 to the memory tiles, placed on the row below, to come from above, which bypasses the
 scratchpad bug previously mentioned.
 
-The design contains 12 CPU tiles and is illustrated in figure \ref{fig:13x2}.
+The design contains 14 CPU tiles and is illustrated in figure \ref{fig:15x2}. The
+current implementation of SHMAC does not allow more than 15 tiles on each row due
+to only using 4 bits to represent each grid coordinate.\todo{Check sources}
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=1.0\textwidth]{Figures/Measurements/13x2}
-    \caption{Second test setup, with BRAM and DRAM tiles on second row, and all CPUs on the first row.}
-    \label{fig:13x2}
+    \includegraphics[width=1.0\textwidth]{Figures/Measurements/15x2}
+    \caption{Alternative test setup.}
+    \label{fig:15x2}
 \end{figure}
 
 The test designs were synthesized using Xilinx' Vivado software suite, version 2013.4, and
@@ -103,7 +105,7 @@ To obtain the power usage of SHMAC, a Yokogawa WT210 power meter was used to mea
 the power drawn by the Versatile Express box from the power socket in the wall while
 idle and when running the bitcoin application. This method provides some uncertainty
 in the result of the measurements, as the Versatile Express also runs a Linux host
-system, it was not possible to obtain power measurements directly from the FPGA running
+system. It was not possible to obtain power measurements directly from the FPGA running
 SHMAC. % Cannot find a source for the power measurement instrumentation that is in-the-works.
 \todo{Remember to underline this uncertainty in the discussion/evaluation part, since}
 
