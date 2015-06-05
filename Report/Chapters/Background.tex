@@ -648,12 +648,11 @@ The system registers are used for communication with the host system.
 
 \subsection{SHMAC Interconnection Network}
 
-\todo{Lot of "uses" and "used". Could use language improvement}SHMAC uses a 2D mesh-based interconnection network to connect all the tiles, which is used
-to transport data packets of 128~bits length.
+SHMAC utilizes a 2D mesh-based interconnection network to connect all the tiles, which is used to transport data packets of 128~bits length.
 Store-and-forward switching with on/off flow control is used, and the XY-algorithm is used for deciding the route of each data packet.
 Each tile consists of a router with five ports, one for each of its neighbours and the local connection.
 When multiple packets are inbound from different directions, a round-robin scheme is used to arbitrate between which
-packet to route through, and packets from the local tile has equal priority to those arriving from the other directions.
+packet to route through, and packets from the local tile has equal priority to those arriving from the other directions. \cite{shmac-plan}
 
 In the current implementation, it takes 3 cycles for a data packet to transfer from one tile to the next. 
 The architecture of the router can be seen in figure \ref{fig:shmac-router}.
@@ -672,7 +671,7 @@ open source designs. It supports single-word transfers as well as burst transfer
 which allows multiple requests to be sent from a module without the module having to wait for an acknowledge.
 
 Wishbone is used as internal bus on the CPU tiles of SHMAC. Burst or pipelined transfers are
-not currently supported, neither internally on the tiles, or by the interconnect network, which can limit performance. \cite{Yaman}.
+not currently supported, neither internally on the tiles, or by the interconnect network, which can limit performance.
 
 %WISHBONE is implemented as internal bus on the CPU tiles of SHMAC, but currently supports only single transfers with no bursts or pipelining.
 %This means that in spite of using switched packet interconnection network on SHMAC, something that opens up for sending out several packets, a WB Master on a tile will only send out one request, before getting the acknowledged response back.
