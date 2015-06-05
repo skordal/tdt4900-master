@@ -60,11 +60,11 @@ as the canonical block chain by the rest of the network. \cite{bitcoin}
 Because an increasing amount of computing power is being used to mine bitcoins, the difficulty of finding
 a block has increased to such a level that no single bitcoin miner can hope to find a block on his or her
 own any longer. Figure \ref{fig:difficulty} illustrates how the difficulty level have risen on the bitcoin network
-since the beginning. The current total hashrate is about 396,5~EH/s\footnote{$396,5\cdot 10^{18}$ H/s} according to the
-statistics available from \texttt{blockchain.info}. This means that the amount of work one can expect to
-do in order to find a block is, on average, 237,9~ZH\footnote{$237,9\cdot 10^{21}$ hashes}. Using, for instance,
-a GPU-based bitcoin miner with a hashrate of 1~GH/s, it would take, on average, $237,9\cdot 10^{14}$ seconds,
-or 7~543~759 years to find a block.
+since the beginning. The hashrate of systems used in bitcoin mining is measured in double SHA-256 hashes per second,
+abbreviated H/s. The current total hashrate is about 396,5~EH/s\footnote{$396,5\cdot 10^{18}$ H/s} according to the
+statistics available from \texttt{blockchain.info}. This means that the amount of work needed to find a single block is,
+on average, 237,9~ZH\footnote{$237,9\cdot 10^{21}$ hashes}. Using, for instance, a GPU-based bitcoin miner with a
+hashrate of 1~GH/s, it would take, on average, $237,9\cdot 10^{14}$ seconds, or 7~543~759 years to find a block.
 
 \begin{figure}[htb]
     \centering
@@ -83,8 +83,8 @@ is rewarded according to their contribution.
 
 As such, pooled mining lets anyone with weaker hardware participate in bitcoin mining in exchange for
 a smaller reward. However, using hardware such as regular CPUs and GPUs is still considered unprofitable
-because of these processors' relative performance compared to specialized bitcoin mining ASICs.
-% Rewrite last sentense?
+because of these processors' relative performance compared to specialized bitcoin mining ASICs, as
+discussed in section \ref{sec:bitcoin-history}.
 
 \section{The SHA-256 Hash Algorithm}
 
@@ -114,7 +114,8 @@ algorithm. \cite{fips180-4}
 
 % Is this too little or too vague?
 
-\section{History of Bitcoin Mining}
+\section{Evolution of Bitcoin Mining Hardware}
+\label{sec:bitcoin-history}
 
 Because of the bitcoin currency's popularity and the competitiveness involved in mining it, there exists
 many different accelerators to improve the performance and energy efficiency of mining systems.
@@ -145,7 +146,7 @@ and thus reduce the cost of running each GPU, in order to obtain greater profits
 
 FPGA miners appeared in June 2011, providing better energy efficiency compared to GPUs \cite{bespoke-silicon}.
 Early designs were mostly based on the Spartan 6 FPGAs from Xilinx, and could provide a
-performance of between 200~MH/s and 220~MH/s per chip, about the same as contemporary GPUs \cite{bitcoin-hardware-cmp}
+performance of between 200~MH/s and 220~MH/s per chip, about the same as contemporary GPUs \cite{bitcoin-hardware-cmp},
 but consuming as little as a fifth of the power used by their GPU counterparts \cite{bespoke-silicon}.
 
 % Note: Taylor managed to get the release year of the GPUs he compares performance to wrong,
@@ -169,7 +170,7 @@ on providing enough power and cooling with minimal unused resources, became popu
 \subsection{ASIC Miners}
 \label{sec:asic}
 
-Neither GPUs nor GPUs can compare to ASICs, specialized chips that started to appear on the network
+Neither GPUs nor FPGAs can compare to ASICs, specialized chips that started to appear on the network
 in the beginning of 2013 \cite{first-asic-miner}. It was the need for more high-performance and power
 efficient bitcoin miners caused implementors of bitcoin miners to turn to ASIC solutions.
 
@@ -180,14 +181,15 @@ delayed when the chips ended up consuming more power than expected and had to be
 in order to be able to cool the chips properly.
 
 ASICMINER was another of the earliest designs, including only one SHA256 hash unit on a chip,
-replicating a single FPGA-based design at a much higher frequency, with better power efficiency
+replicating a single FPGA-based design at a much higher frequency, with better energy efficiency
 and a cheaper price. \cite{bespoke-silicon}
 
 \subsubsection{The Goldstrike 1}
 Another ASIC design is the Goldstrike 1 architecture, noteworthy because its architecture is
-described in an article in IEEE Micro. Because of the competitive nature of bitcoin mining,
-it is not common for designers of ASIC solutions to reveal too many details about the architecture
-of their chips and few scientific papers exist on the topic.
+described in an article in IEEE Micro by Javed Barkatullah and Timo Hanke \cite{goldstrike}.
+Because of the competitive nature of bitcoin mining, it is not common for designers of ASIC
+solutions to reveal too many details about the architecture of their chips and few scientific
+papers exist on the topic.
 
 The Goldstrike is an ASIC-based bitcoin mining solution capable of reaching 2~TH/s. To reach the performance
 requirements, a bitcoin mining core was created that was able to perform at 125 GH/s. Four of
@@ -202,7 +204,7 @@ The hash engines uses a pipelined double-SHA-256 implementation, with each round
 unrolled into a pipeline.
 
 The finished ASIC chips, each with four bitcoin mining cores, were measured to provide 504~GH/s while using
-500~W of power. This gives a power efficiency of about 1~GH/J.
+500~W of power. This gives an energy efficiency of about 1~GH/J.
 
 Interestingly, the architecture provided challenges with regards to to powering and cooling the chips.
 Because the architecture uses all available computing power for bitcoin mining all the time while
