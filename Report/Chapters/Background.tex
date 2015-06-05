@@ -563,35 +563,6 @@ For example, an application may run better on an EV8 than EV6 because of larger 
 %    \label{fig:Uncore3}
 %\end{figure}
 
-\section{Heterogenity and Bitcoin Mining}
-
-Heterogeneous systems have already been well exploited for bitcoin mining. Using GPUs is a way of exploiting
-the heterogeneous capabilities of regular desktop computers. However, since GPUs are designed for
-processing graphics, using them for bitcoin mining is not optimal, and as noted in section \ref{subsec:rw_arch},
-the best heterogeneous solutions are designed from scratch with the application in mind.
-
-When using FPGAs it is possible to create more optimized co-processors for accelerating
-whole or parts of the bitcoin mining algorithm.
-
-One study uses the Zedboard from Xilinx to explore what kind of mining performance it is possible to
-get from a heterogeneous system when using a dedicated bitcoin mining accelerator. The Zedboard
-uses a Zynq-7020 system-on-chip from Xilinx, which contains two Cortex-A9 processors, various
-peripherals and an FPGA area for implementing custom logic.
-
-The accelerator that was designed for the experiment included two hashing accelerators, one
-for each pass of the double-SHA256 algorithm, and a 256-bit comparator for checking if the
-result was a valid block. Using an unspecified Spartan 6-based development board, the
-performance of the accelerator with a partially pipelined SHA256 accelerator reached
-3.8~MH/s at its peak \cite{xcell-bitcoin}.
-
-% Some funny observations about this article: They have no results for their Zedboard
-% application, their performance graph is performance over time when experiment was run,
-% it is not clear which parameters gave the best results. All in all, a crappy article
-% that should never have been published! Note to self: remember to include the results
-% so our Master's can dominate this puny article.
-
-% Torbjørn: Hahah, puny article! 
-
 \section{The Single-ISA Heterogeneous MAny-core Computer}
 \label{sec:shmac}
 
