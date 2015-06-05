@@ -569,13 +569,14 @@ For example, an application may run better on an EV8 than EV6 because of larger 
 \todo{Did you cut out some content by deleting and not commenting?!}
 The Single-ISA Heterogeneous MAny-core Computer is an architecture designed for investigating heterogeneous
 systems at all abstraction levels, as illustrated in figure \ref{fig:shmacAbstractionLevels}.
-
-The programming model is kept constant across SHMAC instances, while the underlying implementation can change,
-allowing software to be written once and run on different SHMAC instances.
-
 It implements a tile-based architecture with a mesh interconnect. All processor tiles implement the same
 ARM ISA and the same memory model, in order to achieve a common programming model \cite{shmac-plan}.
 A high-level illustration of SHMAC can be seen in figure \ref{fig:shmac}.
+
+Because the programming model is kep constant, the underlying implementation of the system can change.
+This means that the same application can be run on SHMAC instances with different tile layouts or on
+SHMAC instances implemented on different physical media, such as in FPGAs or ASICs. Currently, SHMAC
+is only run on FPGAs.
 
 \begin{figure}[htb]
     \centering
