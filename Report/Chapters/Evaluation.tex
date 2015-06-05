@@ -6,7 +6,9 @@ presented in the previous chapter.
 \section{Performance}
 
 To establish a baseline for the performance gains obtained when using the accelerators,
-a measurement of the performance when using software hashing was first obtained.
+a measurement of the performance when using software hashing was first obtained. The
+performance is measured in the number of double hashes per second and abbreviated H/s,
+as is the convention for bitcoin mining systems.
 
 \subsection{Initial Results}
 \label{sec:init-results}
@@ -38,7 +40,7 @@ appendix \ref{app:performance}, table \ref{tab:Full-Perf-SW1}.
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
-			ylabel=dH/s,
+			ylabel=H/s,
 			scaled ticks=false]
 		\addplot[color=red,mark=x] coordinates {
 		        (1, 6450)
@@ -80,7 +82,7 @@ hardware hashing scales and what effect using a DMA will have when more tiles ar
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
-			ylabel=dH/s,
+			ylabel=H/s,
 			scaled ticks=false,
 			legend pos=north west,
 			legend cell align=left]
@@ -123,7 +125,7 @@ adding more cores after the fourth does not provide any additional performance.
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
-			ylabel=dH/s,
+			ylabel=H/s,
 			scaled ticks=false]
 		\addplot[color=red,mark=x] coordinates {
 		    (1, 6418)
@@ -159,7 +161,7 @@ Furthermore, using the DMA for data transfer provides a consistently small perfo
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
-			ylabel=dH/s,
+			ylabel=H/s,
 			scaled ticks=false,
 			yticklabel style={/pgf/number format/fixed},
 			legend pos=north west,
@@ -330,7 +332,7 @@ DMA when the interconnect network is starting to become congested, around the po
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
-			ylabel=Energy efficiency (dH/s/W),
+			ylabel=Energy efficiency (H/s/W),
 			yticklabel style={/pgf/number format/fixed},
 			legend pos=north west,
 			legend cell align=left,

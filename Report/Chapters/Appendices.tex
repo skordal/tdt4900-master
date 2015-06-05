@@ -106,7 +106,7 @@ As can be seen in the plot in figure \ref{fig:sw-scaling1APP}, adding more proce
 \centering
 \begin{tabular}{| l || r r r r | r r r r | r r r | r r r r r |}
   \hline 
-  \textbf{Sum} [dH/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13} & \textbf{14} & \textbf{15}   \\
+  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13} & \textbf{14} & \textbf{15}   \\
   \hline                       
   \textbf{6450} & 6450 & - & - & - & - & - & - & - & - & - & - & - & - & - & - & - \\
   \textbf{12895} & 6446 &6449 & - & - & - & - & - & - & - & - & - & - & - & - & - & - \\
@@ -139,7 +139,7 @@ Only four cores were used because of the scratchpad bug mentioned in section \re
 \centering
 \begin{tabular}{| l || r r r r |}
   \hline 
-  \textbf{Sum} [dH/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3}\\
+  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3}\\
   \hline                       
   \textbf{17557} & 17557 & - & - & - \\
   \textbf{37539} & 17528 & 20011 & - & - \\
@@ -156,7 +156,7 @@ Only four cores were used because of the scratchpad bug mentioned in section \re
 \centering
 \begin{tabular}{| l || r r r r |}
   \hline 
-  \textbf{Sum} [dH/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3}\\
+  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3}\\
   \hline                       
   \textbf{18230} & 18230 & - & - & - \\
   \textbf{38267} & 18189 & 20078 & - & - \\
@@ -281,7 +281,7 @@ This time, using an architecture that circumvents the cache-bug problem, all ava
 \centering
 \begin{tabular}{| l || r r r r r r r r r r r r r r |}
   \hline 
-  \textbf{Sum} [dH/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13}\\
+  \textbf{Sum} [H/s] & \textbf{0} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{9} & \textbf{10} & \textbf{11} & \textbf{12} & \textbf{13}\\
   \hline                       
   \textbf{11676} & 11676 & - & - & - & - & - & - & - & - & - & - & - & - & -\\
   \textbf{24394} & 11664 & 12730 & - & - & - & - & - & - & - & - & - & - & - & -\\
@@ -640,7 +640,7 @@ The energy efficiency of software hashing in the initial architecture can be see
 \centering
 \begin{tabular}{| l | r | r || r |}
   \hline 
-  \textbf{Cores} & \textbf{dH/s} & \textbf{W} & \textbf{dH/s/W} \\
+  \textbf{Cores} & \textbf{H/s} & \textbf{W} & \textbf{H/s/W} \\
   \hline                       
   \textbf{1} &  6450 & 2.3 & 2804.3\\
   \textbf{2} &  12895 & 2.4 & 5372.9\\
@@ -669,7 +669,7 @@ The energy efficiency of software hashing in the initial architecture can be see
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
-			ylabel=Efficiency (dH/s/W),
+			ylabel=Efficiency (H/s/W),
 			scaled ticks=false]
 		\addplot[color=red,mark=x] coordinates {
 			(1, 2804.3)
@@ -710,7 +710,7 @@ The plot for both can be seen in figure \ref{SHADMA-eff1}, where they are compar
 \centering
 \begin{tabular}{| l | r | r || r |}
   \hline 
-  \textbf{Cores} & \textbf{dH/s} & \textbf{W} & \textbf{dH/s/W} \\
+  \textbf{Cores} & \textbf{H/s} & \textbf{W} & \textbf{H/s/W} \\
   \hline                       
   \textbf{1} &  17557 & 2.2 & 7980.4\\
   \textbf{2} &  37539 & 2.2 & 17063.2\\
@@ -726,7 +726,7 @@ The plot for both can be seen in figure \ref{SHADMA-eff1}, where they are compar
 \centering
 \begin{tabular}{| l | r | r || r |}
   \hline 
-  \textbf{Cores} & \textbf{dH/s} & \textbf{W} & \textbf{dH/s/W} \\
+  \textbf{Cores} & \textbf{H/s} & \textbf{W} & \textbf{H/s/W} \\
   \hline                       
   \textbf{1} &  18230 & 2.1 & 8681\\
   \textbf{2} &  38267 & 2.3 & 16637.8\\
@@ -775,7 +775,7 @@ The plot for both can be seen in figure \ref{SHADMA-eff1}, where they are compar
 %	\begin{tikzpicture}
 %		\begin{axis}[
 %			xlabel=Active processor tiles,
-%			ylabel=Efficiency (dH/s/W),
+%			ylabel=Efficiency (H/s/W),
 %			scaled ticks=false]
 %		\addplot[color=red,mark=x] coordinates {
 %			(1, 2804.3)
@@ -823,7 +823,7 @@ makes using of more tiles more efficient.
 \centering
 \begin{tabular}{| l | r | r || r |}
   \hline 
-  \textbf{Cores} & \textbf{dH/s} & \textbf{W} & \textbf{dH/s/W} \\
+  \textbf{Cores} & \textbf{H/s} & \textbf{W} & \textbf{H/s/W} \\
   \hline                       
   \textbf{1} &  6418 & 2,3 & 2790.4\\
   \textbf{2} &  12841 & 2,5 & 5136.4\\
@@ -850,7 +850,7 @@ makes using of more tiles more efficient.
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
-			ylabel=Efficiency (dH/s/W),
+			ylabel=Efficiency (H/s/W),
 			scaled ticks=false]
 		\addplot[color=red,mark=x] coordinates {
 			(0, 0)
