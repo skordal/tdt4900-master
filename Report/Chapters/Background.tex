@@ -483,6 +483,10 @@ is only run on FPGAs.
     \label{fig:shmac}
 \end{figure}
 
+\subsection{Versatile Express}
+
+\textbf{Write specs here. Explain the FPGA}
+
 \subsection{SHMAC Architecture}
 
 SHMAC is a tile-based architecture, with the processing elements laid out in a rectangular
@@ -564,6 +568,10 @@ which allows multiple requests to be sent from a module without the module havin
 
 Wishbone is used as internal bus on the CPU tiles of SHMAC. Burst or pipelined transfers are
 not currently supported, neither internally on the tiles, or by the interconnect network, which can limit performance.
+
+\section{Greater throughput using DMA Module}
+
+\textbf{Describe WHY DMA, briefly}
 
 %WISHBONE is implemented as internal bus on the CPU tiles of SHMAC, but currently supports only single transfers with no bursts or pipelining.
 %This means that in spite of using switched packet interconnection network on SHMAC, something that opens up for sending out several packets, a WB Master on a tile will only send out one request, before getting the acknowledged response back.

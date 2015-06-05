@@ -1,9 +1,9 @@
 \chapter{Architecture}
 \label{cha:architecture}
-
+\todo{Introduction needs improvement.}
 In order to accelerate SHA-256 hashing in SHMAC, an accelerator for the SHA-256 algorithm
 was developed. To further increase performance, a DMA was developed to move data between
-memory and the accelerator. The new modules were then added to a CPU tile.
+memory and the accelerator. The new modules were then added to a CPU tile. These tiles have been added into a many-core environment, set up for testing the implementation in a parallel environment.
 
 \section{Accelerated Hashing Tile}
 \label{sec:aht}
@@ -141,7 +141,61 @@ If endian swapping is active, the data bytes are simply swapped combinatorcially
 The current DMA Module only supports transfers of single 32-bit words, while the interconnect used in SHMAC supports 128-bit words.
 This means four transfers are done on the network where ideally only one is would be needed. 
 The reason to not expand to 128-bit blocks per individual transfer was due to the concern of forced alignment within the blocks.
-While transferring aligned blocks of data from one memory location to another is \todo{Yaman said this. Source needed}common, switching a 32-bit word's position inside a block would not be possible for the DMA, if we were to expand the size without making considerable change to the DMA. 
+While transferring aligned blocks of data from one memory location to another is common, switching a 32-bit word's position inside a block would not be possible for the DMA, if we were to expand the size without making considerable change to the DMA. 
 We were concerned that this could prevent us from transferring data between neighbour registers on the tile.
 Furthermore, it was concidered outside the scope of the project to further enhance the DMA Module, as the main idea was that this would enhance SHMAC generally, but not the hashing module.
 In order to focus remaining project time on the Hashing module, and to have the ability to write to any register inside the tile, 32-bit data transfer were chosen.
+
+\section{System architecture}
+\label{sec:SHMAC_sys_arch}
+
+SHA-256 hashing is sequential, with all data depending on each \todo{Was tired when writing. Fix tomorrow}round of calculation.
+Aside from \todo{Is this described earlier yet?}optimizations, the only way to improve performance is running the hashing parallell on multiple independent tiles.
+
+\subsection{5x4 architecture}
+To test the accelerator, and how well it would run in such an environment, a 20~tile setup was used on SHMAC. It was decided to include the following tiles in the design:
+
+\begin{itemize}
+    \item 16 CPU tiles with on-tile DMA and SHA256 accelerator
+    \item 2 scratchpad tiles
+    \item 1 DRAM tile
+    \item 1 I/O tile
+\end{itemize}
+
+The layout is illustrated in figure \ref{fig:5x4}. The I/O tile is placed to the
+left of the first processor in the system, as only the first processor tile is used
+for communicating with the host system. This gives the first processor a ``dedicated''
+connection to the I/O tile, preventing data that is sent to the host from interferring
+with data transfers needed for the hashing benchmark.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Figures/Measurements/5x4}
+    \caption{Test setup, using BRAM tiles as scratchpad and DRAM as main memory.}
+    \label{fig:5x4}
+\end{figure}
+
+\subsection{15x2 architecture}
+As testing uncovered a hardware bug in the implementation of the scratchpad tiles,
+discussed in section \ref{sec:init-hw-results}, a second design had to be created
+in order to measure the scaling of the performance when using accelerators.
+
+The second design places all processor tiles in a single row. This causes all traffic
+to the memory tiles, placed on the row below, to come from above, which bypasses the
+scratchpad bug previously mentioned.
+
+The design contains 14 CPU tiles and is illustrated in figure \ref{fig:15x2}. The
+current implementation of SHMAC didn't allow more than 15 tiles on each row due
+to only using 4 bits to represent each grid coordinate.\todo{Check sources}
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=1.0\textwidth]{Figures/Measurements/15x2}
+    \caption{Alternative test setup.}
+    \label{fig:15x2}
+\end{figure}
+
+The test designs were synthesized using Xilinx' Vivado software suite, version 2013.4, and
+uploaded to a Versatile Express machine.
+
+
