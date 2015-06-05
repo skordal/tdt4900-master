@@ -13,8 +13,8 @@ as is the convention for bitcoin mining systems.
 \subsection{Initial Results}
 \label{sec:init-results}
 
-Using software-only hashing produced a best result of 16047 H/s. As can be seen
-in the plot in figure \ref{fig:sw-scaling1}, however, adding more processors after the fourth produces no
+Using software-only hashing produced a best result of 21~261~H/s when running with only 4 active processors. As can be seen
+in the plot in figure \ref{fig:sw-scaling1}, it can be observed that adding more processors after the fourth produces no
 noticeable additional performance gain. The reason for this is that all cores makes frequent
 accesses to DRAM, when running the software algorithm, which causes the DRAM tile to quickly
 become congested. The reason for these frequent accesses is probably due to the use of
@@ -67,15 +67,15 @@ appendix \ref{app:performance}, table \ref{tab:Full-Perf-SW1}.
 \end{figure}
 
 Figure \ref{fig:shadmacomp-scaling1} shows the results when using the SHA-256 accelerator, without and with the DMA module enabled, respectively
-Looking at the case where only one core is running, one can see that the performance when using the accelerator is about 2,8 times faster than
-using the software version.
-Only up to four processors where used, as adding in processors from the second row of processors when scaling up caused the application to crash.
-It was discovered that this was likely because of an undocumented bug in the implementation of the scratchpad memory tile used.
+Looking at the case where only one core is running, one can see that the performance when using the accelerator and DMA is about 2,8 times faster than
+using the software version, at 18~230~H/s in hardware and 6~450~H/s in software. Adding more processors gives an even higher gain due to the
+near linear scaling of the performance when using the hardware accelerators.
 
-Because of the more or less linear scaling it is not possible to predict how many cores can be active and hashing at the same time
-before reaching the memory congestion limit, nor is it possible to see if the DMA has any significant effect on the performance.
-It was decided to attempt to work around the scratchpad bug with a new design, in order to better measure how the performance of
-hardware hashing scales and what effect using a DMA will have when more tiles are active.
+Only up to four processors where used for this test, as adding in processors from the second row of processors when scaling up caused the application to crash.
+It was discovered that this was likely because of an undocumented bug in the implementation of the scratchpad memory tile used. Because of this bug, itis not
+possible to predict how many cores can be active and hashing using hardware acceleration at the same time before reaching the memory congestion limit,
+nor is it possible to see if the DMA has any significant effect on the performance. It was decided to attempt to work around the scratchpad bug with
+a new design, in order to better measure how the performance and energy efficiency of hardware hashing scales and what effect using a DMA will have when more tiles are active.
 
 \begin{figure}
 	\centering
@@ -117,8 +117,10 @@ hardware hashing scales and what effect using a DMA will have when more tiles ar
 In order to obtain better results with regards to scaling, a new test design was created which works
 around the scratchpad tile bug and places 14 CPU cores on the same line in the grid. The design
 is described in section \ref{sec:SHMAC_setup}. The performance obtained using only software hashing
-is plotted in figure \ref{fig:sw-scaling2}. Like the results obtained from the original design,
-adding more cores after the fourth does not provide any additional performance.
+is plotted in figure \ref{fig:sw-scaling2} and mirrors the results obtained from the original design,
+in that adding more cores after the fourth does not provide any additional performance. The greatest
+performance obtained using software hashing in the alternative design was 21~364~H/s with 4 cores
+active.
 
 \begin{figure}
 	\centering
@@ -151,9 +153,10 @@ adding more cores after the fourth does not provide any additional performance.
 
 The performance results obtained using the hardware modules are plotted in figure \ref{fig:shadmacomp-scaling2}.
 From these results, it can be observed that the performance continues to scale almost linearly up until around
-the tenth core is added. At this point, memory congestion is probably starting to affect the scaling.
-
-Furthermore, using the DMA for data transfer provides a consistently small performance increase when using less than 
+the tenth core is added. At this point, memory congestion is starting to affect the scaling, causing it to
+flatten out. The best performance was obtained when running with all cores active, at 175~711~H/s with DMA
+enabled or 179~526~H/s with the DMA disabled. Even though this case did not show any advantage of using the
+DMA, using the DMA for data transfer \emph{does} provide a small and consistent performance increase when using less than 
 12 cores. The reason for this is unknown.\todo{Find reason}
 
 \begin{figure}
@@ -234,7 +237,7 @@ due to the benchmark application running or environmental factors. Because of th
 each individual test run to make sure the power usage of the application was measured as correctly as possible.
 
 Because of the problems encountered with the initial test design, only the power results from the alternative design
-is discussed here. However, both designs shows the same trends, and the results from the initial design can be seen in
+is discussed here. However, both designs show the same trends, and the results from the initial design can be seen in
 the appendix, section \ref{sec:energy-initial}.
 
 Figure \ref{fig:power-plot} shows the measured power usage when running with software hashing, accelerated hashing without DMA
@@ -306,8 +309,11 @@ and accelerated hashing without DMA.
 	\label{fig:power-plot}
 \end{figure}
 
-For software-only hashing, it is interesting to note that less power is used when adding more cores. On reason for
-this may be that as more tiles are added, longer periods of stalling is needed for each core to wait for data from
+For software-only hashing, it is interesting to note that less power is used when adding more cores. With 1--3 cores
+active, the power usage for the application was measured to be between 2,3~W and 2,5~W, while running at 5 cores and
+more only used between 0,7~W and 0,8~W.
+
+One reason for this may be that as more tiles are added, longer periods of stalling is needed for each core to wait for data from
 the main memory. When cores are inactive, they are waiting in a nop-operation loop, a software loop consisting of a
 \textsc{nop} operation. Executing this loop causes the processor to have to decode and execute two instructions,
 the no-operation instruction and the branch instruction. However, when stalling, the processor does not decode or
@@ -315,24 +321,25 @@ execute new instructions, which may cause less switching to happen internally in
 wastage from transistor switching. This could be a good indicator that the Turbo Amber processor could benefit
 from a form of sleep or wait-for-interrupt instruction that will allow it to stall as long as it has no work to do.
 
-The same trend can be seend when using hardware, although the drop in power usage comes later. This is likely
-because it takes longer for the traffic to the memories to be large enough to cause longer periods of stalling in the
-processor and DMA module.
+The same trend can be seen when using hardware, although the drop in power usage is not as pronounced as in the software-only
+case . This is likely because it takes longer for the traffic to the memories to be large enough to cause longer periods of
+stalling in the processor and DMA module.
 
 The energy efficiency is shown in figure \ref{fig:efficiency-plot}. It is evident that using a hardware accelerated
 hashing module provides large gains in energy efficiency, which becomes especially clear when adding more than 4 cores,
 because of the much higher performance the accelerators can provide with little overhead in energy use. At 14 active
-tiles, hardware acceleration provides over 6 times better energy efficiency than software hashing.
+tiles, hardware acceleration without DMA provides over 6 times better energy efficiency than software hashing,
+at 163~205,5~H/J versus 25~985,5~H/J.
 
-It is interesting to note that the energy efficiency when using a DMA becomes notably less than when not using the
-DMA when the interconnect network is starting to become congested, around the point where 10 cores and more are active.
+It is interesting to note that the energy efficiency when using a DMA becomes notably worse than when the DMA is disabled
+when the interconnect network is starting to become congested, around the point where 10 cores and more are active.
 
 \begin{figure}
 	\centering
 	\begin{tikzpicture}
 		\begin{axis}[
 			xlabel=Active processor tiles,
-			ylabel=Energy efficiency (H/s/W),
+			ylabel=Energy efficiency (H/J),
 			yticklabel style={/pgf/number format/fixed},
 			legend pos=north west,
 			legend cell align=left,
