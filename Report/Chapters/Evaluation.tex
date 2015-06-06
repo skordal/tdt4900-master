@@ -399,7 +399,8 @@ the main memory. When cores are inactive, they are waiting in a nop-operation lo
 the no-operation instruction and the branch instruction. However, when stalling, the processor does not decode or
 execute new instructions, which may cause less switching to happen internally in the processor, thus reducing power
 wasted from transistor switching. This could be a good indicator that the Turbo Amber processor could benefit
-from a form of sleep or wait-for-interrupt instruction that will allow it to stall as long as it has no work to do.
+from a form of sleep or wait-for-interrupt instruction, which is not currently supported by the processor \cite{amber-spec}, that will
+allow it to stall as long as it has no work to do.
 
 The same trend can be seen when using hardware, although the drop in power usage is not as pronounced as in the software-only
 case . This is likely because it takes longer for the traffic to the memories to be large enough to cause longer periods of
