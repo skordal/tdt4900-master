@@ -18,7 +18,7 @@ Using the architecture setup described in section \ref{sec:SHMAC_sys_arch}, test
 following method:
 
 \begin{enumerate}
-    \item Hashing using software only, not using the SHA256 hashing module or DMA module.
+    \item Hashing using software only, not using the SHA-256 hashing module or DMA module.
     All work is done by the on-tile processor.
     \item Hashing using only the hashing accelerator.
     The processor controls and copies data to and from the hashing module.
@@ -144,6 +144,7 @@ using the software version, at 18~230~H/s in hardware and 6~450~H/s in software.
 near linear scaling of the performance when using the hardware accelerators.
 
 Only up to four processors where used for this test, as adding in processors from the second row of processors when scaling up caused the application to crash.
+An attempt at starting processors from the top and bottom row at the same time also led to a crash.
 It was discovered that this was likely because of an undocumented bug in the implementation of the scratchpad memory tile used. Because of this bug, it is not
 possible to predict how many cores can be active and hashing using hardware acceleration at the same time before reaching the memory congestion limit,
 nor is it possible to see if the DMA has any significant effect on the performance. It was decided to attempt to work around the scratchpad bug with
@@ -474,6 +475,11 @@ when the interconnect network is starting to become congested, around the point 
 	\caption{Energy efficiency}
 	\label{fig:efficiency-plot}
 \end{figure}
+
+The numbers obtained here shows that our accelerated hashing tile cannot compete with other FPGA-based bitcoin hashing systems,
+such as BTCMiner, mentioned in section \ref{sec:fpga-mining}, which gets a result of 21~MH/J as opposed to our 163,3~kH/J.
+There are several reasons for this, mainly the lack of pipelining in the SHA-256 accelerator, which slows throughput by 65 times
+compared to a fully unrolled SHA-256 pipeline.
 
 %\section{Discussion about NoC efficiency}
 
