@@ -145,7 +145,8 @@ near linear scaling of the performance when using the hardware accelerators.
 
 Only up to four processors where used for this test, as adding in processors from the second row of processors when scaling up caused the application to crash.
 An attempt at starting processors from the top and bottom row at the same time also led to a crash.
-It was discovered that this was likely because of an undocumented bug in the implementation of the scratchpad memory tile used. Because of this bug, it is not
+It was discovered that this was likely because of an bug in the implementation of the scratchpad memory tile used. An attempt was made at integrating fixes
+to the scratchpad bug from an experimental SHMAC branch, but failed due to differences in the code. Because of this bug, it is not
 possible to predict how many cores can be active and hashing using hardware acceleration at the same time before reaching the memory congestion limit,
 nor is it possible to see if the DMA has any significant effect on the performance. It was decided to attempt to work around the scratchpad bug with
 a new design, in order to better measure how the performance and energy efficiency of hardware hashing scales and what effect using a DMA will have when more tiles are active.
