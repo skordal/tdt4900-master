@@ -231,9 +231,13 @@ the tenth core is added. At this point, memory congestion is starting to affect 
 flatten out. The best performance was obtained when running with all cores active, at 175~711~H/s with DMA
 enabled or 179~526~H/s with the DMA disabled. Even though this case did not show any advantage of using the
 DMA, using the DMA for data transfer \emph{does} provide a small and consistent performance increase when using less than 
-12 cores. The reason for this is unknown.\todo{Find reason}
+12 cores.
 
-\todo{Torbjørn says: Didn't I speculate that the DMA with four requests per block causes earlier saturation?}
+The reason for this is that when the CPU is loading data into the hashing accelerator, it first loads
+data from main memory into its data cache. This is done using 128-bit transfers, transferring an entire
+cache line at a time from the memory. The DMA does, however, only use 32-bit transfers, causing four times
+more traffic in the tile network. The speedup observed while using the DMA is likely because the CPU has more
+overhead when copying the data from its cache to the accelerator than has the DMA.
 
 \begin{figure}
 	\centering
