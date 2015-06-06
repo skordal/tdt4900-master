@@ -132,7 +132,7 @@ The shift to GPU mining started in July 2010, when the first OpenCL miner was wr
 used in a private mining setup. In September that year, the first open source GPU miner,
 which was based on Cuda, was released after the author was paid 10~000 bitcoins, worth about
 \$600 USD at the time, by Jeff Garzik, one of the core bitcoin developers. An open source
-OpenCL-based miner was released shortly after \cite{bitcoin-history}.
+OpenCL-based miner was released shortly after. \cite{bitcoin-history}
 
 OpenCL miners typically compute the double SHA-256 hash using a fully unrolled implementation
 of the compression loop. Multiple hash calculations are run simultaneously exploiting the parallelism
@@ -215,17 +215,17 @@ the chips are in use, no parts of the chips can be turned off to save power. \ci
 
 % Fun fact, GH/Ws = GH/J
 
-\subsection{Scaling of bitcoin hardware}
-Due to the dark silicon problem, future chips will require that parts be powered down or deactivated
-in order to satisfy a given power budget \cite{dark-silicon2}. Bitcoin mining may be close to
-the worst case for dark silicon optimizations, far beyond multicore CPUs or GPUs. Due to bitcoin
-mining's high processing requirements, the logic needed to run the algorithm cannot be turned off without losing
-performance.
-
-Butterfly Labs ran into this problem with their 65~nm chip, and had to scale back the performance to reduce power consumtion
-and manage to cool the chip properly. While bitcoin mining began as a ``race to ASIC'', energy costs now determine
-which ASICs are the most profitable and therefore energy efficiency is a problem that must be addressed. \cite{bespoke-silicon}
-
+%\subsection{Scaling of bitcoin hardware}
+%Due to the dark silicon problem, future chips will require that parts be powered down or deactivated
+%in order to satisfy a given power budget \cite{dark-silicon2}. Bitcoin mining may be close to
+%the worst case for dark silicon optimizations, far beyond multicore CPUs or GPUs. Due to bitcoin
+%mining's high processing requirements, the logic needed to run the algorithm cannot be turned off without losing
+%performance.
+%
+%Butterfly Labs ran into this problem with their 65~nm chip, and had to scale back the performance to reduce power consumtion
+%and manage to cool the chip properly. While bitcoin mining began as a ``race to ASIC'', energy costs now determine
+%which ASICs are the most profitable and therefore energy efficiency is a problem that must be addressed. \cite{bespoke-silicon}
+%
 %Figure \ref{fig:bitcoin-difficulty-devices}, as seen in \cite{bespoke-silicon}, shows the same up to 2014, but also hightligts when each generation was released, from CPU to ASIC.
 %
 %\textbf{Comment the development. Find facts about it. (currently lower priority)}
@@ -241,12 +241,11 @@ which ASICs are the most profitable and therefore energy efficiency is a problem
 \label{sec:dark-silicon}
 
 Moore's law states that transistor density on integrated chips will continue to double every
-two years. In addition, native transistor speeds are increasing with a factor of 1,4.
-According to Dennard scaling, which predicted that the power density of transistors, that
+two years. This has turned out to match reality pretty well, and in addition, native transistor speeds are increasing with a factor of 1,4.
+According to the principle of Dennard scaling, which predicts that the power density of transistors, that
 is the voltage and current used to operate the transistor, would scale down with the
 size of the transistors, this would not be a problem; however, the energy efficiency
-of transistors is only improving by a factor of 1.4, not keeping up with the scaling
-of transistor size.
+of transistors is only improving by a factor of 1.4.
 
 Under a constant power-budget, there is a shortfall of a factor of 2 in the energy budget,
 and this utilization potential of a chip is falling exponentially by 2 times for each generation.
@@ -257,11 +256,11 @@ This is especially true for chips where the cooling solutions are no longer effi
 the generated heat from a fully powered chip.
 
 In an attempt to work around this problem, the CPU industry moved to using multicore processors around 2005.
-Since the gains from improving ILP was diminishing, the industry focues more on TLP and throughput through multiprocessing, the only other known way of scaling at the time. \cite{computer_architecture} 
+Since the gains from improving instruction level parallelism were diminishing, the industry focused more on thread level parallelism and throughput through multiprocessing \cite{computer-architecture}.
 However, adding multiple cores does not circumvent the problem in the long run.
 Multicore chips will not scale as transistors shrink, and the fraction of a chip that can be filled with cores running at full frequency is dropping exponentially with each processor generation. 
-Large fractions of the chip will be left dark --- either switched off for a long time, or significantly underclocked.
-New designs are required, with new architectural techniques to spend area to buy energy efficiency. \cite{dark-silicon}
+Large fractions of the chip will be left dark --- either switched off for a long time, or significantly underclocked. \cite{dark-silicon}
+%New designs are required, with new architectural techniques that spend area to buy energy efficiency. \cite{dark-silicon}
 
 \subsection{Approaches to the Problem of Dark Silicon}
 \label{sec:taylor}
@@ -274,115 +273,49 @@ an unexpected fashion.
 \subsubsection{Shrinking the Chips}
 
 Instead of having dark silicon on the chip, one can simply shrink the chip itself.
-%Taylor\cite{dark-silicon} views these "shrinking chips" as the most pessimistic outcome.
-%Although all chips may eventually shrink somewhat, the ones that shrink the most will be those where dark silicon cannot be applied fruitfully to improve the product.
-%These chips may rapidly turn into low-margin businesses for which further generations of Moore’s law provide small benefit.
-% %*** NOTE: The above makes no sense.
+All chips may be shrunk to a certain small extent, but the only chips that truly can gain from shrinking only, will be those on which dark silicon is only a waste, and cannot be used to further enhance the product.   
+Specalizing into these types of shrunk chips may, however, turn out to be less profitable business, as further generations of Moore's law adds little benefit. 
 
-% %*** Torbjørn, NOTE RESPONSE: Very well, here is my second attempt:
-
-All chips may be shrunk to a small extent, but the only chips that truly can gain from only shrinking, will be those on which applied dark silicon is only a waste, and cannot further enhance the product.   
-Specalizing into these types of shrunk chips may turn out to be less profitable business, as the further generations of Moore's law adds little benefit. 
-% Torbjørn: Better now?
-
-Futhermore, there are other disadvantages: Exponentially smaller chips are not exponentially cheaper, since mask cost, design cost and I/O pad aread cannot be amortized. 
-Competition will most likely favor chips that utulizes dark silicon to improve the overall product, thus chips that are only shrinked will sell at low market price, leading to loss for the company.
-Exponential shrinking also leads to exponential rise in power density, and chip temperature will thus follow suit.
+Futhermore, there are other disadvantages: exponentially smaller chips are not necessarily exponentially cheaper, since mask cost, design cost and I/O pad aread does not also become cheaper. 
+%Competition will most likely favor chips that utilizes dark silicon to improve the overall product, thus chips that are only shrinked will sell at low market price, leading to loss for the company.
+Exponential shrinking also leads to exponential rise in power density, and chip temperature will rise.
 Meeting the temperature limit will increase the cost, at which the scaling of energy efficiency is reduced below the nominal 1.4 factor.
 %Meeting the temperature limit will reduce the scaling below the expected energy effeciency, at the nominal \todo{Feels weird}1.4X scaling.
 
-%There are also second-order effects assosiated with shrinking chips:
-
-%\begin{itemize}
-%    \item Exponentially smaller chips are not exponentially cheaper.
-%    In addition to the silicon itself, cost include mask costs, design costs and I/O pad area.
-%    These cannot be amortized, and the price will increase per mm$^2$, as the chip shrinks.
-%    \item Shrinking the silicon can also shrink the chip selling price, but competition will likely force companies to utilize dark silicon if it can attain a benefit for the end product.
-%    Companies who would rely on shrinking only, may loose the competition and sell chips at catastrophically decreased chip prices.
-%    \item Exponential shrinking leads to exponential rise in power density, and chip temperature will thus follow suit.
-%    Meeting the temperature limit will reduce the scaling below the nominal 1,4x expected energy efficienty. 
-%\end{itemize}
-
-%\subsubsection{The Dim Horseman}
-\subsubsection{Dimming the chip}
-While the fractions of dark transistors of the chip increases exponentially, the silicon area becomes exponentially cheaper
-as a resource, relative to power and energy consumption. This gives the opportunity to spend area to buy energy efficiency,
-and basing new architectures on this. \todo{Consider adding a figure to better illustrate the point}
-Dark silicon areas can be populated with logic that is used only part of the time.
-
+\subsubsection{Dimming the Chips}
 The term ``dim silicon'' refers to the use of general purpose logic that typically employs heavy underclocking or infrequent use.
 As such, large amounts of otherwise dark silicon area is put to productive use while meeting the power budget.
-
-%The early 90-nm designs of, for instance, Cell and Prescott, were dimmed because actual power exceeded design-estimated power.  % Citation needed!
-% Torbjørn: Nah... not so important.
+While the fraction of dark transistors on chips increases exponentially, the silicon area becomes exponentially cheaper
+as a resource, relative to the power and energy consumption. This gives the opportunity to spend area to buy energy efficiency.
+Dark silicon areas can be populated with logic that is used only part of the time.
 
 Lately, more elegant methods are emerging. Among the dim silicon techniques are dynamically varying the frequency with the
 number of cores being used, scaling up the amount of cache logic, employing near threshold voltage (NTV) designs, and redesigning
 architectures to accommodate bursts that temporarily allow the power budget to be exceeded, such as Intel's Turbo Boost technology. \cite{dark-silicon}
 
-% %\todo{This subchapter ended up long. Try to see if it can be reduced. Especially NTV}
-%According to Taylor\cite{dark-silicon}, as exponentially larger fractions of a chip’s transistors become dark transistors, silicon area becomes an exponentially cheaper resource relative to power and energy consumption.
-%Therefore new architectural techniques that spend area to buy energy efficiency is called for.
-%Instead of shrinking silicon, one may consider populating dark silicon area with logic that is used only part of the time, and interesting new design possibilities occurs.%The term "dim silicon" refers to techniques that put large amounts of otherwise-dark silicon area to productive use by employing heavy underclocking or infrequent use to meet the power budget.
-%The architecture has to strategically managing the chip-wide transistor duty cycle to enforce the overall power constraint. 
-%Whereas early 90-nm designs such as Cell and Prescott were dimmed because actual power exceeded design-estimated power, more increasingly more elegant methods are converging, that make better trade-offs.%Among the dim silicon techniques are dynamically varying the frequency with the number of cores being used, scaling up the amount of cache logic, employing near threshold voltage (NTV) processor designs, and redesigning the architecture to accommodate bursts that temporarily allow the power budget to be exceeded, such as Turbo Boost and computational sprinting.
-
-% %\todo{Consider shorting down or removing entire lists from each sub-chapter, to keep the four horsemen short and concise.}Amond dim silicon methods are: 
-
-%\begin{itemize}
-%    \item Turbo boost, where less core are active, the higher the frequency they may run at.
-%    Energy gained from turning off cores is used to increase voltage and frequency of active cores.
-%    This is known as Dynamic voltage and frequency scaling (DVFS).
-%    \item Near-threshold voltage (NTV) Processors.
-%    Transistors were at 2013 operated around 2,5x the threshold voltage, an energy-delay optimal point. 
-%    This is at a point where reducing the voltage severely affects the frequency drop, which reduces the effective gain from downward-DVS.
-%    Nevertheless, researchers have begun exploring this regime.
-%    NTV logiv is a recent approach, where transistors in the near-threshold regime are operated slightly above the threshold voltage.
-%    This provides a more palatable trade-off between energy and delay than subthreshold circuits, for which frequency drops exponentially with voltage decreases.
-%    \todo{Give a proper mention of where the following numbers were taken from}
-%    Although NTV per-processor performance drops faster than the corresponding savings in energy-per-instruction (5X energy improvement for an 8x performance cost), the perfor- mance loss can be offset by using 8x more processors in parallel if the workload allows it.
-%    Then, an additional 5x processors could turn the energy efficiency gains into additional performance. 
-%    \todo{Have to admit, I still don't understand how this is a gain. And this is almost the point of too much. Should remove the example, and find a different way to explain}So, with ideal parallelization, NTV could offer 5x the throughput improvement by absorbing 40x the area. 
-%    But this would also require 40x more free parallelism in the workload relative to the parallelism consumed by an equivalent energylimited super-threshold many-core processor.%    \item Bigger caches.
-%    Because only a subset of cache transistors (such as a wordline) is accessed each cycle, cache memories have low duty cycles and thus are inherently dark. 
-%    Adding cache is therefore one way to simultaneously increase performance and lower power density per square millimeter.
-%    But the less memory-bound a running application is, the less the benefit.
-%    \item Computational sprinting and turbo boost.
-%    One temporarily exceeds the nominal thermal budget but relies on thermal capacitance to buffer against temperature increases, and then ramp back to a comparatively dark state.
-%    These are used within "race to finish" computations.
-
-%\end{itemize}
-
 \subsubsection{Specialization}
 Instead of using general purpose logic, this approach focuses on specialized use of logic for selected tasks.
 Within a set of processors, each are specialized for a subset of tasks, increasing energy efficiency or performance compared to a general purpose processor, for those particular tasks.
 An application is executed on the processor which is deemed the most efficient for the task.
-Cores not in use are power- and clock gated and do not waste energy unnecessarily.
+Cores not in use are power and clock gated so as to not waste energy unnecessarily.
 
-Specialized accelerators are heavily used today, especially in fields such as media and graphics and mobile phone processors.
-These enable orders-of-magnitude improvements in energy efficiency and performance for certain types of computations.
-Systems with more coprocessors than general purpose processors, referred to as coprocessor-dominated architectures, or CoDAs, is predicted to become more and more common.
+%Specialized accelerators are heavily used today, especially in fields such as media and graphics and mobile phone processors.
+%These enable orders-of-magnitude improvements in energy efficiency and performance for certain types of computations.
+%Systems with more coprocessors than general purpose processors, referred to as coprocessor-dominated architectures, or CoDAs, is predicted to become more and more common.
 
 Challenges with these systems are expected as well, one of them being the so-called ``Tower of Babel'' crisis, where
 the notion of general-purpose computation becomes fragmented, and the clear lines of communication between programmers and software and the underlying hardware is no more.
-For instance, CUDA for NVidia GPUs cannot be used for similar architectures, such as AMD GPUs.
-
 There are several cases of overspecialization problems between accelerators, where many of them cannot be used for closely related classes of computation.
-
-%New heterogenenous hardware is more difficult to adopt for third party programmers, due to the cost of programming heterogeneous (where a clear example is the \todo{Hint: Maybe look up more examples?}Sony PlayStation 3, compared to Microsoft XBox). % Citation needed, also sentense makes no sense.
+For instance, CUDA for NVidia GPUs cannot be used for similar architectures, such as AMD GPUs.
 Specialized hardware also risk becomming obsolete when standards are revised. \cite{dark-silicon}
 
-\todo{Just a reminding note: Look up the source code and argue among yourselves, regarding the PS3 vs XBOX example}
-
-%\subsubsection{The Dues Ex Machina Horseman}
 \subsubsection{Deus Ex Machina}
-The termology ``deus ex machina'' comes from literature and theater, in which the protagonists seem increasingly doomed until the very last moment, when something completely unexpected comes out of nowhere to save the day.
-In the case for dark silicon, a deus ex machina would be a breakthrough in semiconductor device technology.
-The required breakthrough would have to be very fundamental, making it possible to build transistors out of devices other than MOSFETs. 
-There are physical limits to what can be done with %\todo{I chose to not elaborate this one further. Remove when delivering, unless we change our mind}
-leakage from MOFSET transistors, and transistors made of other materials may go beyond these limits.
+The term ``deus ex machina'' comes from literature and theater, in which the protagonists seem increasingly doomed until the very last moment, when something completely unexpected comes out of nowhere to save the day.
+In the case of dark silicon, a deus ex machina would be a major breakthrough in semiconductor device technology.
+The required breakthrough would have to be very fundamental, making it possible to build circuits out of devices other than MOSFETs. 
+There are physical limits to what can be done with for instance leakage from MOFSET transistors, and transistors made of other materials may go beyond these limits.
 New transistors must also be able to compete with MOFSETs in performance.
-Tunnel field-effect transistors (TFET) and nanoelectromechanical system (NEMS) switches are examples on inventions that hint to order-in-magnitude improvements in the leakage problem, although they still fall short in performance. \cite{dark-silicon}
+Tunnel field-effect transistors (TFET) and nanoelectromechanical system switches (NEMS) are examples of inventions that may hint to order-of-magnitude improvements to the leakage problem, although they still fall short in performance. \cite{dark-silicon}
 
 \subsection{Benefits of Heterogeneous Architectures}
 \label{sec:heterogeneous}
@@ -443,24 +376,22 @@ Using dynamic heuristics for core assignment further increased the performance.
 %\end{figure}
 
 \cite{heterogeneous-arch} takes a closer look at what can be considered a good heterogeneous design, in making the heterogeneous multiprocessor from scratch instead of using pre-existing core designs.
-Using pre-existing cores presents lower flexibility in choices, which also remain \todo{Define shortly. But how?}monotonic, while best heterogeneous designs are composed of special core architectures.
+Using pre-existing cores presents lower flexibility in choices, while best heterogeneous designs are composed of specialized core architectures.
 The study in \cite{heterogeneous-arch} came to the following conclusions:
 \begin{itemize}
-\item The most efficient heterogeneous multiprocessors were not constructed from cores that make good general-purpose uniprocessor cores, or cores that would appear in a good homogeneous multicure architecture.
+\item The most efficient heterogeneous multiprocessors were not constructed from cores that make good general-purpose uniprocessor cores, nor cores that would appear in good homogeneous multicure architectures.
 \item Each core should be individually tuned for a class of applications with common characteristics.
-      This usually results in non-monotonic processors.
-\item And performance advantages of heterogeneous multiprocessors, including non-monotonic also holds for completely homogeneous workloads (where the task had no differences).
+%      This usually results in non-monotonic processors.
+\item And performance advantages of heterogeneous multiprocessors also hold for completely homogeneous workloads (where the task has no differences).
     In those cases, the diversity across different workloads are exploited.
 \end{itemize}
 
-And the more constrained the area or power budget were, the more benefit the heterogeneous design provide, as homogeneous systems were able to run to the fullest on generous budgets only.
+The more constrained the area or power budget, the more benefit the heterogeneous designs provide, as homogeneous systems were able to run to the fullest on generous budgets only.
 As future designs become more aggressive, with more cores added to the chip, the results underline the impact heterogeneous design will have for the future. 
-
 
 \section{The Single-ISA Heterogeneous MAny-core Computer}
 \label{sec:shmac}
 
-\todo{Did you cut out some content by deleting and not commenting?!}
 The Single-ISA Heterogeneous MAny-core Computer is an architecture designed for investigating heterogeneous
 systems at all abstraction levels, as illustrated in figure \ref{fig:shmacAbstractionLevels}.
 It implements a tile-based architecture with a mesh interconnect. All processor tiles implement the same
