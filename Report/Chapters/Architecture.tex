@@ -1,9 +1,11 @@
 \chapter{Architecture}
 \label{cha:architecture}
-\todo{Introduction needs improvement.}
-In order to accelerate SHA-256 hashing in SHMAC, an accelerator for the SHA-256 algorithm
-was developed. To further increase performance, a DMA was developed to move data between
-memory and the accelerator. The new modules were then added to a CPU tile. These tiles have been added into a many-core environment, set up for testing the implementation in a parallel environment.
+
+In order to develop a bitcoin mining system, a SHA-256 accelerator was developed. In addition,
+it was decided to design and integrate a DMA module in order to improve the throughput of
+the system. The new modules were then added to a CPU tile. Since it is not possible
+to parallelize a single run of the SHA-256 algorithm, multiple, independent tiles
+in a grid are used to run multiple SHA-256 computations at the same time.
 
 \section{Accelerated Hashing Tile}
 \label{sec:aht}
@@ -22,12 +24,12 @@ seen in figure \ref{fig:SHA-Tile}.
 The new tile is derived from the Turbo Amber tile, which contains
 a Turbo Amber CPU and peripherals such as an interrupt controller and timer modules, connected
 together with a wishbone bus.
-
 The SHA-256 accelerator and the DMA's slave interface and master interface is added to this bus.
-With two masters connected to the Wishbone bus, arbitration is needed, thus an arbiter has been added as well.
+With two masters now connected to the wishbone bus, an arbiter is added as well.
 
 \subsection{Wishbone Arbiter}
-Since the DMA includes a wishbone master interface, a wishbone arbiter is also added to the tile.
+
+%Since the DMA includes a wishbone master interface, a wishbone arbiter is also added to the tile.
 The tile needs an arbiter to arbitrate between the DMA and the CPU on the wishbone bus.
 For this purpose, the reference arbiter from the Wishbone Public Domain Library for VHDL % \cite{WBLibrary}
 was adapted for use. This is a round-robin arbiter, illustrated in figure \ref{fig:WBArbiter}.
@@ -44,7 +46,7 @@ was adapted for use. This is a round-robin arbiter, illustrated in figure \ref{f
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1.0\textwidth]{Figures/Tile/WBArbiter}
-    \caption{Wishbone Round-robin Arbiter, as seen in \cite{WBLibrary}.}
+    \caption{Wishbone round-robin arbiter \cite{WBLibrary}.}
     \label{fig:WBArbiter}
 \end{figure}
 
