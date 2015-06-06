@@ -25,11 +25,10 @@ The current DMA Module only supports transfers of single 32-bit words, while the
 This means four transfers are done on the network when only one is needed. Exploiting the unused bandwidth could
 provide a speedup of as much as 75~\% and reduce the workload on the DMA significantly.
 
-%When using the current DMA Module with the SHA-256 hashing, the performance gain is at only \textbf{XXX} percent, while the increase in energy usage is in average about \todo{Due to lack of data, we cannot make the outrageous cry of how bad it is, until we know how bad it is} \textbf{XXX}.
-%\textbf{Insert data about how bad or slightly good this is, when calculations are done.} 
-
 The DMA could also be expanded to include support for burst transfers. This can allow quicker bursts of data
 transfer, potentially improving throughput.
+
+When using the current DMA Module with the SHA-256 hashing, the performance gain is at only \textbf{XXX} percent, while the increase in energy usage is in average about \todo{Due to lack of data, we cannot make the outrageous cry of how bad it is, until we know how bad it is} \textbf{XXX}.
 
 %The reason to not expand to 128-bit blocks per individual transfer was due to the concern of forced alignment within the blocks.
 %While transferring aligned blocks of data from one memory location to another is \todo{Yaman said this. Source needed}common, switching a 32-bit word's position inside a block would not be possible for the DMA, if we were to expand the size without making considerable change to the DMA. 

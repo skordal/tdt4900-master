@@ -100,7 +100,6 @@ Unfortunately, while software hashing worked on all tiles, the application crash
 and was discarded. The reasons are discussed in section \ref{sec:init-results}.
 
 The performance obtained when doing software hashing is listed in table \ref{tab:Full-Perf-SW1}. 
-As can be seen in the plot in figure \ref{fig:sw-scaling1APP}, adding more processors after the fourth does not increase performance.
 
 \begin{sidewaystable}
 \centering
@@ -542,7 +541,7 @@ As can be seen from the tables and figure, there is no significant difference in
 
 \subsection{Alternative Architecture}
 
-Table \ref{tab:SW-power2} and figure \ref{fig:SW-power2} shows the power measurements for the alternative architecture.
+Table \ref{tab:SW-power2} shows the power measurements for the alternative architecture.
 
 \begin{table}
 \centering
@@ -696,7 +695,7 @@ The energy efficiency of software hashing in the initial architecture can be see
 \end{figure}
 
 Tables \ref{tab:SHA-eff1} and \ref{tab:SHADMA-eff1} shows the energy efficiency of the SHA-256 accelerator, without and with using the DMA module, respectively.
-The plot for both can be seen in figure \ref{SHADMA-eff1}, where they are compared to each other.
+The plot for both can be seen in figure \ref{fig:SHADMA-eff1}, where they are compared to each other.
 
 %While using the DMA in the start is slightly more efficient, it drops below omitting it when 2 or more tiles are active.
 %The performance is slightly higher, but so is the energy consumption, if only with few mere units of '0.1 W's.
