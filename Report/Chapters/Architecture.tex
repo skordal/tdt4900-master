@@ -25,12 +25,9 @@ The new tile is derived from the Turbo Amber tile, which contains
 a Turbo Amber CPU and peripherals such as an interrupt controller and timer modules, connected
 together with a wishbone bus.
 The SHA-256 accelerator and the DMA's slave interface and master interface is added to this bus.
+
 With two masters now connected to the wishbone bus, an arbiter is added as well.
-
-\subsection{Wishbone Arbiter}
-
-%Since the DMA includes a wishbone master interface, a wishbone arbiter is also added to the tile.
-The tile needs an arbiter to arbitrate between the DMA and the CPU on the wishbone bus.
+The tile also needs an arbiter to arbitrate between the DMA and the CPU on the wishbone bus.
 For this purpose, the reference arbiter from the Wishbone Public Domain Library for VHDL % \cite{WBLibrary}
 was adapted for use. This is a round-robin arbiter, illustrated in figure \ref{fig:WBArbiter}.
 
@@ -67,7 +64,9 @@ The choice of this arbiter is because using an already established wishbone arbi
 The hashing module made for this project is a simple implementation of the algorithm described in
 appendix \ref{app:hashing-algo}. It uses 65 cycles to compute the hash of its input data, running
 one iteration of the SHA-256 compression function every cycle except cycle 65, which is used to
-form new intermediate hash values from the results of the compression function.
+form new intermediate hash values from the results of the compression function. The algorithm is
+specified in big-endian format in \cite{fips180-4}, including necessary constants, so the module
+was designed to do the calculation in big-endian to reduce the possibility of errors.
 
 In order for the module to remain generic, so that it can also be used in cryptography, it
 is also not optimized specifically for bitcoin mining; specifically, this means that the module
@@ -113,12 +112,12 @@ its benefits as an accelerator for offloading work from the processor.
 
 \subsection{DMA Module}
 
-The DMA module was designed to test if separate data transfers with a DMA module could improve throughput and energy efficiency in the hashing process, freeing up the on-tile CPU for other work.
+The DMA module was designed to investigate whether separate data transfers with a DMA could improve throughput and energy efficiency of the hashing process, and also gain energy savings by freeing up the on-tile CPU for other work or sleeping.
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=1.0\textwidth]{Figures/DMA/DMATopview}
-    \caption{DMA Topview, including Wishbone interface.}
+    \caption{DMA overview, including wishbone interfaces.}
     \label{fig:DMATop}
 \end{figure}
 
@@ -126,36 +125,37 @@ The DMA module consists of the DMA logic, in addition to a wishbone slave interf
 and a wishbone master interface for transferring data.
 
 The DMA transfers words of 32-bit data using single wishbone transfers.  In addition, the DMA supports
-swapping the endianness of the data it copies. This improves performance when used with the SHA256
+swapping the endianness of the data it copies. This improves performance when used with the SHA-256
 accelerator, because the results from the accelerator are in big-endian
 and must be converted to little-endian to give the correct results when used by the software running on the processor.
 Converting endianness in software adds several additional instructions per hash, which are now avoided.
+If endian swapping is active, the data bytes are swapped combinatorcially before being passed on to the wishbone master.
 
-The Wishbone Slave consists of three registers for each DMA Channel, used for base source, base destination and detailing the transfer request.
+The wishbone slave consists of three registers for each DMA channel, used for base source, base destination and detailing the transfer request.
 When request is activated, the selected channel receives data from the slave, and executes the transfer.
 An arbiter arbitrates between the channels if both are active.
-Every single command, either load or store, are passed from the channels to the Wishbone master, where they are executed.
-Loaded data is passed on to the corresponding channel, and a channel informs the WB master when it's finished, so that the slave interface is informed when final transfer is done executing.
-The corresponding request detail register is modified, and the CPU is interrupted.
+Every single command, either load or store, are passed from the channels to the wishbone master, where they are executed.
+Loaded data is passed on to the corresponding channel, and a channel informs the wishbone master when it is finished, so that the slave interface is informed when the final transfer is done executing.
+The corresponding request detail register is modified, and an interrupt request is sent to the interrupt controller.
 
-If endian swapping is active, the data bytes are simply swapped combinatorcially in a switch module before it is passed on to the wishbone master.
-
-The current DMA Module only supports transfers of single 32-bit words, while the interconnect used in SHMAC supports 128-bit words.
-This means four transfers are done on the network where ideally only one is would be needed. 
-The reason to not expand to 128-bit blocks per individual transfer was due to the concern of forced alignment within the blocks.
-While transferring aligned blocks of data from one memory location to another is common, switching a 32-bit word's position inside a block would not be possible for the DMA, if we were to expand the size without making considerable change to the DMA. 
-We were concerned that this could prevent us from transferring data between neighbour registers on the tile.
-Furthermore, it was concidered outside the scope of the project to further enhance the DMA Module, as the main idea was that this would enhance SHMAC generally, but not the hashing module.
-In order to focus remaining project time on the Hashing module, and to have the ability to write to any register inside the tile, 32-bit data transfer were chosen.
+The current DMA module only supports transfers of single 32-bit words, while the interconnect used between tiles in SHMAC supports 128-bit words.
+This means four transfers are done on the network in cases where only one is needed. 
+The reason for not expanding to 128-bit blocks was due to the concern that doing so would force blocks to have an alignment of 128-bits, which would make the DMA harder to use from a software perspective and add additional difficulties in transferring data to and from the registers of the hashing accelerator, which would have had to be changed so that they would be correctly aligned.
+%While transferring aligned blocks of data from one memory location to another is common, switching a 32~bit word's position inside a block would not be possible for the DMA, if we were to expand the size without making considerable change to the DMA. 
+%We were concerned that this could prevent us from transferring data between neighbour registers on the tile.
+%Furthermore, it was concidered outside the scope of the project to further enhance the DMA module, as the main idea was that this would enhance SHMAC generally, but not the hashing module.
+%In order to focus remaining project time on the hashing module, and to have the ability to write to any register inside the tile, 32-bit data transfer were chosen.
 
 \section{System architecture}
 \label{sec:SHMAC_sys_arch}
 
-SHA-256 hashing is sequential, with all data depending on each \todo{Was tired when writing. Fix tomorrow}round of calculation.
-Aside from \todo{Is this described earlier yet?}optimizations, the only way to improve performance is running the hashing parallell on multiple independent tiles.
+The CPU tile with the integrated SHA-256 accelerator and DMA was integrated into a grid in order
+to exploit the thread-level parallelism offered by the SHMAC architecture.
+The test designs were synthesized using Xilinx' Vivado software suite, version 2013.4, and
+uploaded to a Versatile Express machine.
 
-\subsection{5x4 architecture}
-To test the accelerator, and how well it would run in such an environment, a 20~tile setup was used on SHMAC. It was decided to include the following tiles in the design:
+\subsection{Initial 5x4 Grid Architecture}
+Initially, a 20~tile setup was used on SHMAC. The following tiles were included in the design:
 
 \begin{itemize}
     \item 16 CPU tiles with on-tile DMA and SHA256 accelerator
@@ -168,7 +168,9 @@ The layout is illustrated in figure \ref{fig:5x4}. The I/O tile is placed to the
 left of the first processor in the system, as only the first processor tile is used
 for communicating with the host system. This gives the first processor a ``dedicated''
 connection to the I/O tile, preventing data that is sent to the host from interferring
-with data transfers needed for the hashing benchmark.
+with data transfers needed for the hashing benchmark application. In addition, the
+rectangular grid was chosen to ensure that all cores are placed as close as possible
+to the memory tiles to reduce the latency of memory transfers.
 
 \begin{figure}[htb]
     \centering
@@ -177,17 +179,17 @@ with data transfers needed for the hashing benchmark.
     \label{fig:5x4}
 \end{figure}
 
-\subsection{15x2 architecture}
-As testing uncovered a hardware bug in the implementation of the scratchpad tiles,
+\subsection{Alternative 15x2 Grid Architecture}
+As testing uncovered a possible hardware bug in the implementation of the scratchpad tiles,
 discussed in section \ref{sec:init-hw-results}, a second design had to be created
-in order to measure the scaling of the performance when using accelerators.
+in order to measure the scaling of the performance and energy efficiency when using accelerators.
 
 The second design places all processor tiles in a single row. This causes all traffic
 to the memory tiles, placed on the row below, to come from above, which bypasses the
 scratchpad bug previously mentioned.
 
 The design contains 14 CPU tiles and is illustrated in figure \ref{fig:15x2}. The
-current implementation of SHMAC didn't allow more than 15 tiles on each row due
+current implementation of SHMAC does not allow more than 15 tiles on each row due
 to only using 4 bits to represent each grid coordinate.\todo{Check sources}
 
 \begin{figure}[htb]
@@ -196,8 +198,4 @@ to only using 4 bits to represent each grid coordinate.\todo{Check sources}
     \caption{Alternative test setup.}
     \label{fig:15x2}
 \end{figure}
-
-The test designs were synthesized using Xilinx' Vivado software suite, version 2013.4, and
-uploaded to a Versatile Express machine.
-
 
