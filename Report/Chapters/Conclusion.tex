@@ -2,15 +2,10 @@
 \label{cha:conclusion}
 
 Although the performance and energy efficiency obtained in this study cannot compete
-with bitcoin mining ASICs, even if we allow for infinite scaling, it still shows how much a custom-made
-heterogeneous system can improve the performance and energy efficiency of an
-application. Although the system is too slow to be used for bitcoin mining in its present
-condition, the architecture provides a framework for exploring other applications of
-heterogeneous computing, including throughput-oriented applications and cryptography
-using the modules developed for this thesis.
-
-However, there is still work that can be done to improve upon the performance and energy
-efficiency of the provided modules and system.
+with other bitcoin mining solutions in FPGAs, providing 128 times lower energy efficiency than
+a dedicated bitcoin mining system, it still shows that SHMAC is an excellent platform
+for exploiting thread-level parallelism, and using our hardware accelerators provided a
+near-linear performance scaling over 14 CPU cores while retaining good energy efficiency.
 
 \section{Enhancing the SHA-256 Module}
 
@@ -28,7 +23,7 @@ provide a speedup of as much as 75~\% and reduce the workload on the DMA signifi
 The DMA could also be expanded to include support for burst transfers. This can allow quicker bursts of data
 transfer, potentially improving throughput.
 
-When using the current DMA Module with the SHA-256 hashing, the performance gain is at only \textbf{XXX} percent, while the increase in energy usage is in average about \todo{Due to lack of data, we cannot make the outrageous cry of how bad it is, until we know how bad it is} \textbf{XXX}.
+When using the current DMA module with the SHA-256 hashing, the performance gain is at only \textbf{XXX} percent, while the increase in energy usage is in average about \todo{Due to lack of data, we cannot make the outrageous cry of how bad it is, until we know how bad it is} \textbf{XXX}.
 
 %The reason to not expand to 128-bit blocks per individual transfer was due to the concern of forced alignment within the blocks.
 %While transferring aligned blocks of data from one memory location to another is \todo{Yaman said this. Source needed}common, switching a 32-bit word's position inside a block would not be possible for the DMA, if we were to expand the size without making considerable change to the DMA. 
