@@ -1,6 +1,6 @@
 \chapter{Measuring, Results and Discussion}
 
-This chapter presents the methodology and analyzes the results obtained.
+This chapter presents the methodology and obtained results, which are analyzed.
 
 \section{Methodology for measuring}
 
@@ -16,14 +16,14 @@ cores in the network.
 Using the architecture setup described in section \ref{sec:SHMAC_sys_arch}, tests where run using the
 following method:
 
-\begin{itemize}
+\begin{enumerate}
     \item Hashing using software only, not using the SHA256 hashing module or DMA module.
     All work is done by the on-tile processor.
     \item Hashing using only the hashing accelerator.
     The processor controls and copies data to and from the hashing module.
     \item Hashing using the hashing accelerator and DMA.
     The processor controls each module, but the DMA handles data transfer.
-\end{itemize}
+\end{enumerate}
 
 Interrupts are used by the hashing module to signal when it is finished working. However,
 %the DMA does not support interrupts and has to be polled while copying data to and from
@@ -143,7 +143,7 @@ using the software version, at 18~230~H/s in hardware and 6~450~H/s in software.
 near linear scaling of the performance when using the hardware accelerators.
 
 Only up to four processors where used for this test, as adding in processors from the second row of processors when scaling up caused the application to crash.
-It was discovered that this was likely because of an undocumented bug in the implementation of the scratchpad memory tile used. Because of this bug, itis not
+It was discovered that this was likely because of an undocumented bug in the implementation of the scratchpad memory tile used. Because of this bug, it is not
 possible to predict how many cores can be active and hashing using hardware acceleration at the same time before reaching the memory congestion limit,
 nor is it possible to see if the DMA has any significant effect on the performance. It was decided to attempt to work around the scratchpad bug with
 a new design, in order to better measure how the performance and energy efficiency of hardware hashing scales and what effect using a DMA will have when more tiles are active.
@@ -187,7 +187,7 @@ a new design, in order to better measure how the performance and energy efficien
 \subsection{Results from the Alternative Design}
 In order to obtain better results with regards to scaling, a new test design was created which works
 around the scratchpad tile bug and places 14 CPU cores on the same line in the grid. The design
-is described in section \ref{sec:SHMAC_setup}. The performance obtained using only software hashing
+is described in section \ref{sec:SHMAC_sys_arch}. The performance obtained using only software hashing
 is plotted in figure \ref{fig:sw-scaling2} and mirrors the results obtained from the original design,
 in that adding more cores after the fourth does not provide any additional performance. The greatest
 performance obtained using software hashing in the alternative design was 21~364~H/s with 4 cores
@@ -229,6 +229,8 @@ flatten out. The best performance was obtained when running with all cores activ
 enabled or 179~526~H/s with the DMA disabled. Even though this case did not show any advantage of using the
 DMA, using the DMA for data transfer \emph{does} provide a small and consistent performance increase when using less than 
 12 cores. The reason for this is unknown.\todo{Find reason}
+
+\todo{Torbjørn says: Didn't I speculate that the DMA with four requests per block causes earlier saturation?}
 
 \begin{figure}
 	\centering
@@ -303,7 +305,7 @@ The energy efficiency was calculated by measuring the power usage of the applica
 and looking at how many double hashes the system does. This provides a number of double hashes per second per watt.
 
 Obtaining the power measurements provided a difficult task, as the idle power of the Versatile Express box seemed to be
-steadily rising over time. This can be caused my multiple factors, such as the host system working, changes in temperature
+steadily rising over time. This can be caused by multiple factors, such as the host system working, changes in temperature
 due to the benchmark application running or environmental factors. Because of this, the idle power was measured between
 each individual test run to make sure the power usage of the application was measured as correctly as possible.
 
@@ -312,7 +314,7 @@ is discussed here. However, both designs show the same trends, and the results f
 the appendix, section \ref{sec:energy-initial}.
 
 Figure \ref{fig:power-plot} shows the measured power usage when running with software hashing, accelerated hashing without DMA
-and accelerated hashing without DMA.
+and accelerated hashing with DMA.
 
 \begin{figure}
 	\centering
