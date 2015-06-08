@@ -368,7 +368,8 @@ Threads that exploited the EV6 better would be given assigned to the more comple
 Compared to a homogeneous multi-prosessor system with four EV6, the simulation showed that the heterogeneous system performed up to 37~\% better with an average 26 \% improvement over the configuration, considering 1-20 threads.
 Compared to 20 EV5 cores, the performance was up to 2.3 times better, and averaged 23~\% better over that same range.
 Using dynamic heuristics for core assignment further increased the performance.
-\todo{Sentence a bit vague. See if it can be improved, or delete it.}Additionally, the heterogeneous system was tested for its tolerance against increasing job queues, and a homogeneous system with four EV6 becoma saturated much earlier than the heterogeneous system, showing that the latter has higher tolerance to larger amount of work, given the increased thread-level parallelism.
+\todo{Sentence a bit vague. See if it can be improved, or delete it.}Additionally, the heterogeneous system was tested for its tolerance against increasing job queues, and simulation showed that a homogeneous system with four EV6 became saturated much at an significantly earlier point than the heterogeneous system, showing that the latter has higher tolerance to larger amount of work, because of the increased parallelism.
+This can be seen in Figure \ref{fig:Kumar3}.
 \cite{heterogeneous-perf}
 %\begin{figure}[htb]
 %    \centering
@@ -399,12 +400,12 @@ Using dynamic heuristics for core assignment further increased the performance.
 %The degradation was also more graceful under heavier loads than for homogeneous processors.
 %This can be seen in figure \ref{fig:Kumar3}.
 
-%\begin{figure}[htb]
-%    \centering
-%    \includegraphics[width=0.5\textwidth]{Figures/Heterogeneous/Kumar3}
-%    \caption{Limiting response-time for various loads \cite{heterogeneous-perf}.}
-%    \label{fig:Kumar3}
-%\end{figure}
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Figures/Heterogeneous/Kumar3}
+    \caption{Limiting response-time for various loads \cite{heterogeneous-perf}.}
+    \label{fig:Kumar3}
+\end{figure}
 
 \cite{heterogeneous-arch} takes a closer look at what can be considered a good heterogeneous design, in making the heterogeneous multiprocessor from scratch instead of using pre-existing core designs.
 Using pre-existing cores presents lower flexibility in choices, while best heterogeneous designs are composed of specialized core architectures.
