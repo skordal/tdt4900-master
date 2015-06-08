@@ -233,11 +233,16 @@ enabled or 179~526~H/s with the DMA disabled. Even though this case did not show
 DMA, using the DMA for data transfer \emph{does} provide a small and consistent performance increase when using less than 
 12 cores.
 
-The reason for this is that when the CPU is loading data into the hashing accelerator, it first loads
-data from main memory into its data cache. This is done using 128-bit transfers, transferring an entire
-cache line at a time from the memory. The DMA does, however, only use 32-bit transfers, causing four times
-more traffic in the tile network. The speedup observed while using the DMA is likely because the CPU has more
-overhead when copying the data from its cache to the accelerator than has the DMA.
+The reason for this is likely due to difference on the interconnect network data traffic. 
+When the CPU is loading data into the hashing accelerator, it first loads data from main memory into its data cache. 
+This is done using 128-bit block transfers, transferring an entire cache line at a time from the memory.
+The DMA only use 32-bit transfers, causing four times more traffic in the tile network when loading data, as every 128-bit block is accessed four times.
+When it comes to storing, the caches use write-through as strategy, and for every 32-bit word updated in a 128-bit block, the cache will write back to the memory.
+In this case, both the CPU and the DMA will cause the same traffic for each store operation.
+With the CPU's load traffic being 25\% compared to using the DMA, and the store traffic 100\%, using the CPU for data transfers should cause an average of 67.5\% data traffic, compared to using the DMA module.
+
+Still, a slight performance increase is observed while using the DMA module, before reaching 12 tiles. 
+It is likely due to the CPU having more overhead when copying the data from its cache to the accelerator than the DMA module, something the system gains on before the interconnect network becomes saturated. 
 
 \begin{figure}
 	\centering
