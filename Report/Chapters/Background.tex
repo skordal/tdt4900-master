@@ -148,6 +148,9 @@ clock frequencies of both the video RAM and the GPU core in order to get higher 
 and thus reduce the cost of running each GPU, in order to obtain greater profits \cite{bespoke-silicon}.
 % Maybe mention rigs?
 
+\subsection{Mining Rigs}
+\todo{!!}\textbf{FILL IN!}
+
 \subsection{FPGA Mining}
 \label{sec:fpga-mining}
 
@@ -282,12 +285,7 @@ an unexpected fashion.
 Instead of having dark silicon on the chip, one can simply shrink the chip itself.
 All chips may be shrunk to a certain small extent, but the only chips that truly can gain from shrinking only, will be those on which dark silicon is only a waste, and cannot be used to further enhance the product.   
 Specalizing into these types of shrunk chips may, however, turn out to be less profitable business, as further generations of Moore's law adds little benefit. 
-
-Futhermore, there are other disadvantages: exponentially smaller chips are not necessarily exponentially cheaper, since mask cost, design cost and I/O pad aread does not also become cheaper. 
-%Competition will most likely favor chips that utilizes dark silicon to improve the overall product, thus chips that are only shrinked will sell at low market price, leading to loss for the company.
-Exponential shrinking also leads to exponential rise in power density, and chip temperature will rise.
-Meeting the temperature limit will increase the cost, at which the scaling of energy efficiency is reduced below the nominal 1.4 factor.
-%Meeting the temperature limit will reduce the scaling below the expected energy effeciency, at the nominal \todo{Feels weird}1.4X scaling.
+They are not exponentially cheaper either, given that mask cost, design cost and I/O pad areas does not scale equally, and power density will rise exponentially, increasing the chip temperature.
 
 \subsubsection{Dimming the Chips}
 The term ``dim silicon'' refers to the use of general purpose logic that typically employs heavy underclocking or infrequent use.
@@ -399,7 +397,7 @@ As future designs become more aggressive, with more cores added to the chip, the
 \section{The Single-ISA Heterogeneous MAny-core Computer}
 \label{sec:shmac}
 
-The Single-ISA Heterogeneous MAny-core Computer is an architecture designed for investigating heterogeneous
+The Single-ISA Heterogeneous MAny-core Computer (SHMAC) is an architecture designed for investigating heterogeneous
 systems at all abstraction levels, as illustrated in figure \ref{fig:shmacAbstractionLevels}.
 It implements a tile-based architecture with a mesh interconnect. All processor tiles implement the same
 ARM ISA and the same memory model, in order to achieve a common programming model \cite{shmac-plan}.
@@ -426,7 +424,35 @@ is only run on FPGAs.
 
 \subsection{Versatile Express}
 
-\textbf{Write specs here. Explain the FPGA}
+The Versatile Express by ARM is a family of development platforms, made for providing an environment for prototyping future \todo{Check if defined earlier}SoC designs.
+With an already defined and well-proven design environment, the designer may focus on prototyping new designs, instead of creating and debugging the development framework itself. 
+Versatile Express typically consists of the uATX Motherboard, on which daughterboards are supported.
+In some cases, a daughterboard can allow for others to be inserted to it, the concept seen in figure \ref{fig:vexpressTiles}. 
+The most common are the CoreTile Express and LogicTile express daughterboards. 
+CoreTile Express contains the CPU cores that runs the system, and the version used in this project contains four Cortex A9-processors, where three of the four are disabled.
+The LogicTile Express contains at least one FPGA, the number depending on the version, suitable for prototyping new logic designs. 
+Of three different existing versions, our system uses the LogicTile Express 20MG (20 Million ASIC gates equivalent).
+Its FPGA is a Virtex-7 XC7V2000T, and in addition, it also has A DDR3 SODIMM that supports up to 8GBs of 64bit DRAM, \todo{No idea what this meant on the data sheet}4GB SODIMM supplied.
+The architectural relationship between the CoreTile Express and the LogicTile Express used in our system can be seen in figure \ref{fig:logicTile}, where both tiles are connected on the same motherboard. \cite{VexpressHomepage} \cite{LogicTileDataSheet}
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Figures/VersatileExpress/VexpressTiles}
+    \caption{Illustration of Versatile Express build, as seen from \cite{VexpressHomepage}.}
+    \label{fig:vexpressTiles}
+\end{figure}
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Figures/VersatileExpress/OurTiles}
+    \caption{Architectural relationship between CoreTile Express and LogicTile Express, as seen from \cite{LogicTileDataSheet}.}
+    \label{fig:logicTile}
+\end{figure}
+
+Every reference of SHMAC in this report is the implementation that is synthesized and run on the Virtex-7 FPGA.
+Although the system runs Linux version 3.14.25, Linaro 13.12, our application software is to be run by bare metal.   
+  
+\todo{Last sentence on the intro. Is it useful somewhere?}Versatile Express covers a range of products using processors in the ARM Cortex™ family, from Cortex-M to Cortex-A50 series of processors.
 
 \subsection{SHMAC Architecture}
 
@@ -510,9 +536,11 @@ which allows multiple requests to be sent from a module without the module havin
 Wishbone is used as internal bus on the CPU tiles of SHMAC. Burst or pipelined transfers are
 not currently supported, neither internally on the tiles, or by the interconnect network, which can limit performance.
 
-\section{Greater throughput using DMA Module}
+\section{Prior Autumn Project}
 
-\textbf{Describe WHY DMA, briefly}
+\todo{Yep!}\textbf{Describe WHY DMA, briefly}
+
+YAMAN:  The boundaries between what you did last semester and this semester need to be clear and explicit. DMA just drops out of the sky with no prior introduction at all, and only later on you mention that you are using a pre-made DMA module.
 
 %WISHBONE is implemented as internal bus on the CPU tiles of SHMAC, but currently supports only single transfers with no bursts or pipelining.
 %This means that in spite of using switched packet interconnection network on SHMAC, something that opens up for sending out several packets, a WB Master on a tile will only send out one request, before getting the acknowledged response back.
