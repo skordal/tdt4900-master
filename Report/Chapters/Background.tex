@@ -42,7 +42,7 @@ The process begins with the creation of a transaction that transfers the reward 
 into the account of the miner. This transaction is often called the coinbase or generation transaction.
 All transactions transmitted to the bitcoin network since the last block was generated are gathered and
 the hash of each transaction is inserted into a merkle tree, which is a tree where where every interior
-node is labelled with the hash value of its children, see figure \ref{fig:merkle}.
+node is labelled with the hash value of its children, see Figure \ref{fig:merkle}.
 
 The root of the merkle tree is inserted into the header for the new block together with the hash of the
 previous block and various other fields specified by the standard. If the hash of the header is below the
@@ -91,7 +91,7 @@ is rewarded according to their contribution.
 As such, pooled mining lets anyone with weaker hardware participate in bitcoin mining in exchange for
 a smaller reward. However, using hardware such as regular CPUs and GPUs is still considered unprofitable
 because of these processors' relative performance compared to specialized bitcoin mining ASICs, as
-discussed in section \ref{sec:bitcoin-history}.
+discussed in Section \ref{sec:bitcoin-history}.
 
 \section{The SHA-256 Hash Algorithm}
 
@@ -113,7 +113,7 @@ After 64 iterations of the compression function, the result is added to the inte
 hash values from any previous blocks, or, if there are no previous blocks, the initial
 hash value, producing a finished hash.
 
-A more detailed description of the algorithm can be found in appendix \ref{app:hashing-algo}.
+A more detailed description of the algorithm can be found in Appendix \ref{app:hashing-algo}.
 
 In the bitcoin system, a double SHA-256 algorithm is used. To obtain a double hash, the
 output of a previous SHA-256 calculation is simply used as input data to the hashing
@@ -236,7 +236,7 @@ to produce the target performance.
 
 The Goldstrike cores consist of an architecture with 120 hash engines running in parallel.
 A hash engine searches through all possible values of the 32-bit nonce field in the bitcoin header
-(see section \ref{sec:bitcoin-mining}) in order to find a valid hash.
+(see Section \ref{sec:bitcoin-mining}) in order to find a valid hash.
 
 The hash engines uses a pipelined double-SHA-256 implementation, with each round of the hash calculation
 unrolled into a pipeline.
@@ -424,10 +424,10 @@ As future designs become more aggressive, with more cores added to the chip, the
 \label{sec:shmac}
 
 The Single-ISA Heterogeneous MAny-core Computer (SHMAC) is an architecture designed for investigating heterogeneous
-systems at all abstraction levels, as illustrated in figure \ref{fig:shmacAbstractionLevels}.
+systems at all abstraction levels, as illustrated in Figure \ref{fig:shmacAbstractionLevels}.
 It implements a tile-based architecture with a mesh interconnect. All processor tiles implement the same
 ARM ISA and the same memory model, in order to achieve a common programming model \cite{shmac-plan}.
-A high-level illustration of SHMAC can be seen in figure \ref{fig:shmac}.
+A high-level illustration of SHMAC can be seen in Figure \ref{fig:shmac}.
 
 Because the programming model is kep constant, the underlying implementation of the system can change.
 This means that the same application can be run on SHMAC instances with different tile layouts or on
@@ -450,35 +450,35 @@ is only run on FPGAs.
 
 \subsection{Versatile Express}
 
-The Versatile Express by ARM is a family of development platforms, made for providing an environment for prototyping future \todo{Check if defined earlier}SoC designs.
-With an already defined and well-proven design environment, the designer may focus on prototyping new designs, instead of creating and debugging the development framework itself. 
-Versatile Express typically consists of the uATX Motherboard, on which daughterboards are supported.
-In some cases, a daughterboard can allow for others to be inserted to it, the concept seen in figure \ref{fig:vexpressTiles}. 
-The most common are the CoreTile Express and LogicTile express daughterboards. 
-CoreTile Express contains the CPU cores that runs the system, and the version used in this project contains four Cortex A9-processors, where three of the four are disabled.
-The LogicTile Express contains at least one FPGA, the number depending on the version, suitable for prototyping new logic designs. 
-Of three different existing versions, our system uses the LogicTile Express 20MG (20 Million ASIC gates equivalent).
-Its FPGA is a Virtex-7 XC7V2000T, and in addition, it also has A DDR3 SODIMM that supports up to 8GBs of 64bit DRAM, \todo{No idea what this meant on the data sheet}4GB SODIMM supplied.
-The architectural relationship between the CoreTile Express and the LogicTile Express used in our system can be seen in figure \ref{fig:logicTile}, where both tiles are connected on the same motherboard. \cite{VexpressHomepage} \cite{LogicTileDataSheet}
+The platform used to run SHMAC is a Versatile Express from ARM.
+
+The Versatile Express by ARM is a family of development platforms, made for providing an environment for prototyping future system-on-chip (SoC) designs.
+%With an already defined and well-proven design environment, the designer may focus on prototyping new designs, instead of creating and debugging the development framework itself. 
+A Versatile Express system typically consists of a $\mu$ATX motherboard, to which various daughterboards can be added.
+In some cases, a daughterboard can also allow for additional daughterboards to be inserted to it, as illustrated in Figure \ref{fig:vexpressTiles}. 
+Commonly used are the CoreTile Express and LogicTile Express boards. 
+CoreTile Express contains the CPU cores that runs the system. The version used in this project contains four Cortex A9-processors, running Linary Linux 13.12,
+with Linux kernel version 3.14.25.
+
+Only one core is used by the Linux host system.
+
+The LogicTile Express contains one or more FPGAs, the number depending on the version, suitable for prototyping SoC designs.
+Our project uses the LogicTile Express 20MG, equivalent to a Virtex-7 XC7V2000T, and a 4~Gb DDR3 memory chip.
+The architectural relationship between the CoreTile Express and the LogicTile Express used in our system can be seen in Figure \ref{fig:logicTile}, where both tiles are plugged into the same motherboard. \cite{VexpressHomepage,LogicTileDataSheet}
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.5\textwidth]{Figures/VersatileExpress/VexpressTiles}
-    \caption{Illustration of Versatile Express build, as seen from \cite{VexpressHomepage}.}
+    \caption{Illustration of Versatile Express build \cite{VexpressHomepage}.}
     \label{fig:vexpressTiles}
 \end{figure}
 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.95\textwidth]{Figures/VersatileExpress/OurTiles}
-    \caption{Architectural relationship between CoreTile Express and LogicTile Express, as seen from \cite{LogicTileDataSheet}.}
+    \caption{Architectural relationship between CoreTile Express and LogicTile Express \cite{LogicTileDataSheet}.}
     \label{fig:logicTile}
 \end{figure}
-
-Every reference of SHMAC in this report is the implementation that is synthesized and run on the Virtex-7 FPGA.
-Although the system runs Linux version 3.14.25, Linaro 13.12, our application software is to be run by bare metal.   
-  
-\todo{Last sentence on the intro. Is it useful somewhere?}Versatile Express covers a range of products using processors in the ARM Cortex™ family, from Cortex-M to Cortex-A50 series of processors.
 
 \subsection{SHMAC Architecture}
 
@@ -498,7 +498,7 @@ Several tile types are supported. The main ones are:
 	provides support for the ARMv4t instruction set, giving the core the ability to also execute
 	instructions from the 16-bit Thumb instruction set. Several performance optimizations are
 	also added to the core \cite{turboamber}. An overview of the processor tile can be seen in
-	figure \ref{fig:shmac-cpu}.
+	Figure \ref{fig:shmac-cpu}.
   \item[Scratchpad Tile] --- A memory tile providing a small amount of memory for use by software.
   	This memory is provided by the on-chip block RAM resources of the FPGA \cite{shmac-plan}.
   \item[DDR Memory Tile] --- Memory controller tile that gives SHMAC access to off-chip DDR memory.
@@ -544,7 +544,7 @@ When multiple packets are inbound from different directions, a round-robin schem
 packet to route through, and packets from the local tile has equal priority to those arriving from the other directions. \cite{shmac-plan}
 
 In the current implementation, it takes 3 cycles for a data packet to transfer from one tile to the next. 
-The architecture of the router can be seen in figure \ref{fig:shmac-router}.
+The architecture of the router can be seen in Figure \ref{fig:shmac-router}.
 
 \begin{figure}[htb]
     \centering
