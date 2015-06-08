@@ -99,7 +99,8 @@ The SHA-256 hash algorithm is defined in FIPS180-4 \cite{fips180-4} and is a mem
 family of hash functions. Like all hash functions, it works by accepting an arbitrary
 amount of input data and producing a constant-length output. The function is one-way,
 that is, given a hash, it is impossible to determine the input data used to produce
-the hash.\todo{Mention all 3 attributes}
+the hash. However, hash functions are deterministic, in that the same input data always
+produces the same input data.
 
 The SHA-256 algorithm works on blocks of 512~bits. Each of these blocks are expanded into a
 block of 64 32-bit long words using a message expansion function. Each of these words are
@@ -114,7 +115,6 @@ hash values from any previous blocks, or, if there are no previous blocks, the i
 hash value, producing a finished hash.
 
 A more detailed description of the algorithm can be found in Appendix \ref{app:hashing-algo}.
-
 In the bitcoin system, a double SHA-256 algorithm is used. To obtain a double hash, the
 output of a previous SHA-256 calculation is simply used as input data to the hashing
 algorithm. \cite{fips180-4}
