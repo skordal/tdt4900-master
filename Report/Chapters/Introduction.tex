@@ -4,16 +4,26 @@ In recent years, digital currencies know as ``cryptocurrencies'' have become pop
 and most popular of these is Bitcoin. The term ``cryptocurrency'' stems from the fact
 that a cryptographic hash function is at the core of the algorithms involved. For bitcoin,
 the SHA-256 hash algorithm is used in a two-pass configuration producing a double SHA-256
-hash \cite{bitcoin}, although other currencies uses other algorithms.
-% Add more introduction to bitcoin mining hardware.
+hash \cite{bitcoin}.
+
+Producing new bitcoins is done through a process called mining, described in Section \ref{sec:bitcoin-mining}.
+Mining requires large amounts of computing power, and has led to a quick development in
+the hardware used in the process, from regular CPUs and GPUs to FPGAs and highly specialized application specific
+integrated circuits (ASIC). This evolution of mining hardware is described in Section \ref{sec:bitcoin-history}.
+Bitcoin mining requires a large degree of thread-level parallelism, because the SHA-256
+algorithm does not provide any opportunities to exploit parallelism to accelerate the
+computation of a single hash; instead, running several separate SHA-256 computations in parallel,
+provides a possibility for exploiting parallelism to increase the number of SHA-256 computations
+that can be run in a specified period of time.
 
 Using bitcoin mining as an application, this project develops a SHA-256 accelerator
-for the Single-ISA Heterogeneous MAny-core Computer, SHMAC. To achieve higher throughputs
-and energy efficiency, a DMA is also developed. The two modules are integrated into a
-general-purpose CPU tile, and an estimation of the bitcoin mining efficiency is made
-using a benchmark application measuring the performance of the double SHA-256 calculation
-that is central to the bitcoin mining algorithm. Energy efficiency is also estimated by
-measuring the power used when running the benchmark.
+for the Single-ISA Heterogeneous MAny-core Computer, SHMAC, described in section \ref{sec:shmac},
+which provides a high degree of thread-level parallelism. To achieve higher throughput for the
+SHA-256 accelerator and the possibility of higher energy efficiency overall, a DMA is also
+developed. The two modules are integrated into a general-purpose CPU tile, and an estimation
+of the bitcoin mining efficiency is made using a benchmark application measuring the performance
+of the system by measuring how many hashes can be calculated each second and how much power
+is used when doing the calculations.
 
 \section{Original Assignment Text}
 
