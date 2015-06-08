@@ -2,84 +2,39 @@
 
 Recent years have seem the emergence of a new class of currencies, called
 cryptocurrencies. These currencies use cryptography to provide security
-and peer-to-peer networking to provide a decentralized system. Cryptography
-is also an important part of the peer-to-peer network of the currencies,
-in which a cryptographic hash with an arithmetic value beneath a certain
-threshold is used to sign a valid block of transactions in the distributed
-ledger. The process of finding such a hash is called ``mining''. The person
-who successfully mines a block is rewarded according to the rules of the
-particular cryptocoin being mined.
+and peer-to-peer networking to provide a decentralized system. Bitcoin was the
+first, and is currently the most popular of these currencies. It uses a two-pass
+SHA-256 hash at its core. Producing new bitcoins is done through a process
+referred to as ``mining'', and requires large amounts of computational
+power.
 
-Bitcoin is the first and most popular of these currencies. It uses a
-two-pass SHA-256 hash to sign its blocks. Huge amounts of computational
-power is required to find a valid hash, and as such there has been a lot
-of development in this area. Current-generation custom chips, ASICs, used
-in bitcoin ``mining'' provide huge amounts of computing power, but are starting
-to be limited by the available cooling and power resources.
-
-To alleviate this problem, this thesis looks at the possibilities of using
-heterogeneous computing to reduce power consumption and produce a more
-power-efficient mining solution.
+Current-generation hardware for bitcoin mining includes highly-optimized
+ASIC chips which provide huge amounts of performance. However, designers of
+such chips are having problems with delivering enough power and cooling
+to the chips. To alleviate this problem, this thesis looks at the possibilities
+of using heterogeneous computing to reduce power consumption and produce a more
+energy-efficient mining solution.
 
 A SHA-256 accelerator and a DMA is developed and integrated into a tile for
 the Single-ISA Heterogeneous MAny-core Computer, SHMAC, and a system with
-multiple cores is tested in order to find out how performance scales and
-what kind of performance and energy efficiency one can expect from such a system.
+multiple cores is used to exploit the thread-level parallelism provided by
+the platform. The system is tested using a benchmark to find out what performance
+and energy efficiency can be expected when using the system for bitcoin mining.
 
-% Change below?
-
-The results show that using an accelerator provides about 3,5 times better
-performance than calculating the hashes in software. They also show that
-using a DMA further increases performance. The performance does, however,
-not reach the neccessary number of hashes per second to be fast enough to
-be used for mining bitcoins. The testing also reveals some limitations of
-SHMAC's memory system.
+The results show a maximum performance of 175,7~kH/s when running the benchmark
+application on 14 cores using the SHA-256 accelerator and the DMA. The best
+energy efficiency was obtained when running on 14 cores \emph{without} the DMA enabled,
+at 163,2~kH/J. The results does not compare well to specialized FPGA-based
+bitcoin miners, but demonstrates the SHMAC platform's large degree of thread-level parallism
+which can be better exploited in other applications.
 
 \chapter*{Sammendrag}
-
-I løpet av de siste årene har det oppstått en ny klasse med valuater,
-kalt ``cryptocurrencies'', eller ``digitale valuater'' på norsk. Disse
-valuatene bruker kryptografi til å tilby sikkerhet og et peer-to-peer-nettverk
-for å tilby et desentralisert system. Kryptografi er også en viktig del av
-peer-to-peer-nettverket til valuatene, hvor en kryptografisk hash-funksjon
-med en aritmetisk verdi under en viss grense blir brukt til å signere
-gyldige blokker med transaksjoner i en distribuert liste som inneholder
-alle transaksjonene som er blitt gjort i nettverket. Jobben med å finde
-en slik hash kalles for ``mining''. Den som finner en gyldig hash for en
-blokk blir tildelt en belønning, hvis størrelse avhenger av reglene for
-det aktuelle nettverket.
-
-Bitcoin er den første og mest populære digitale valuate. Den bruker en
-dobbel SHA-256-hash for å signere blokkene sine. Store mengder med
-datakraft er nødvendig for å finne en gyldig hash, og det har derfor
-vært mye utvikling på dette feltet. Dagens generasjon av spesialiserte
-databrikker, ASICs, brukt i bitcoin-mining tilbyr store mengder
-datakraft, men begynner å bli begrenset av den tilgjengelige mengden
-med kraft- og kjøleressurser.
-
-For å bøte på dette problemet ser vi på mulighetene for å bruke heterogene
-datamaskiner til å senke strømforbruket og skape en mer energieffektiv
-mining-løsning.
-
-En SHA-256 akselerator og en DMA blir utviklet og integrert i en tile
-for SHMAC, the Single-ISA Heterogeneous MAny-core Computer, og et system
-med flere kjerner blir testet for å finne ut hvordan ytelsen skalerer
-og hvor stor ytelse og energieffektivitet man kan forvente fra et slikt system.
-
-% Kanskje endre nedenfor?
-
-Resultatene viser at å bruke en akselerator for hashing gir omtrent 3,5 ganger
-bedre ytelse enn å gjøre den tilsvarende operasjonen i software. De viser òg
-at å bruke en DMA ytterligere øker ytelsen. Ytelsen når imidlertid ikke den
-nødvendige ytelsen for at systemet skal være kjappt nok til å kunne delta
-i bitcoin-nettverket, og testingen avslører også enkelte begrensninger i
-SHMACs minnesystem.
 
 \chapter*{Acknowledgments}
 
 % Can be changed :-)
 
-We would like to thank Donn Morrison and Yaman Umurogly for their work as
+We would like to thank Donn Morrison and Yaman Umuroğlu for their work as
 supervisors on this project, taking time to assist us with all our problems.
 
 In addition we would like to thank Asbjørn Djupdal for assistance in setting
