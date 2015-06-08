@@ -150,7 +150,6 @@ and thus reduce the cost of running each GPU, in order to obtain greater profits
 At the best of its time, NVidia GPUs like GTX570 reached 155 MH/s rates, while AMD GPUs like 7970, costing \$450, performed as much as 675 MH/s.\cite{bespoke-silicon}
 % Maybe mention rigs?
 
-
 \subsection{Mining Rigs}
 \todo{Problem: Hard to find proper sources}
 For the building and use of rigs, GPUs were more accesibale than FPGAs for end users, since the minimum requirement were PC-building skills and eager forum-reading.
@@ -182,7 +181,7 @@ ZTex' FPGA boards, which can obtain up to 215~MH/s with a power usage of about 9
 % Note: Taylor managed to get the release year of the GPUs he compares performance to wrong,
 % choosing GPUs from 2012 to compare to FPGAs from 2011.
 
-\todo{But what about addition operations?}FPGAs provided great advantages to the speed of bitwise functions, which are important for
+FPGAs provided great advantages to the speed of bitwise functions, which are important for
 the SHA-256 algorithm. Popular open-source designs were created so that they could be used
 by different kinds of FPGAs. They consisted of a SHA-256 module which had a configurable depth pipeline, each
 consisting of the necessary hardware for computing a specific number of rounds of the
@@ -197,17 +196,14 @@ giving an extremely high activity factor for LUTs. Development boards could not 
 power and heat dissipation for sustained usage, and development of custom boards that focused
 on providing enough power and cooling with minimal unused resources, became popular. \cite{bespoke-silicon}
 
-Using Spartan XC6SLX150 parts and placing these on quad-chip boards, they achieved a maximum of 860 MH/s at 216 MHz and 39W, at the price of \$1060.
-Butterfly Labs (BFL) in Kansas offered a non-open-source version, with the price of \$599 with performance at 830 MH/s.
-They also offered a higher-end Goliath FPGA-based machine, the BFL Mini-rig, with priced at \$15K that achieved 25.2 GH/s, based on Altera FPGAs that each reached 650-750 MH/s per chip.
-BLF was at the time the most \todo{Advice: Google and check if this still stands}successfull commercial closed-source Bitcoin company.
-
 \subsection{ASIC Miners}
 \label{sec:asic}
 
 Neither GPUs nor FPGAs can compare to ASICs, specialized chips that started to appear on the network
 in the beginning of 2013 \cite{first-asic-miner}. It was the need for more high-performance and power
-efficient bitcoin miners caused implementors of bitcoin miners to turn to ASIC solutions.
+efficient bitcoin miners caused implementors of bitcoin miners to turn to ASIC solutions. The first
+ASIC solutions were crowdfuded projects, raising money over the internet or through preorders from
+future users.
 
 One of the first ASIC designs were Butterfly Labs' ASIC miners. Having experience developing
 FPGA based mining solutions, the company created an ASIC chip with 16 double SHA256 modules,
@@ -218,9 +214,6 @@ in order to be able to cool the chips properly.
 ASICMINER was another of the earliest designs, including only one SHA256 hash unit on a chip,
 replicating a single FPGA-based design at a much higher frequency, with better energy efficiency
 and a cheaper price. \cite{bespoke-silicon}
-
-Interestingly, in contrast to other ASIC products, these were funded by the community, either through raising money over the Internet, or by preordering by the users.
-\todo{Add numbers here. Or find a good spot?}
 
 \subsubsection{The Goldstrike 1}
 Another ASIC design is the Goldstrike 1 architecture, noteworthy because its architecture is
