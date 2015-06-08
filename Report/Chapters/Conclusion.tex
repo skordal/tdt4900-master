@@ -3,7 +3,8 @@
 
 The results obtained shows that using the SHA-256 accelerator and DMA module described in this
 report, it is possible to get a bitcoin mining performance of 175,7~kH/s when running the
-hashing benchmark on 14 cores simultaneously. The best energy efficiency is obtained when
+hashing benchmark on 14 cores simultaneously while using the DMA and a performance of 179,5~kH/s when
+not using the DMA. The best energy efficiency is obtained when
 running the benchmark on 14 cores \emph{without} the DMA enabled, at 163,2~kH/J.
 
 Although the performance and energy efficiency obtained in this study cannot compete
@@ -30,12 +31,7 @@ The current DMA Module only supports transfers of single 32-bit words, while the
 This means four transfers are done on the network when only one is needed. Exploiting the unused bandwidth could
 provide a speedup of as much as 75~\% and reduce the workload on the DMA significantly.
 While expanding the DMA transfer width, it must still be made compatible with the other modules on the tile, including the SHA-256 accelerator.
-This likely requires a solution where individual 32-bit words may be selected and written directly.
-Either a 128-bit block DMA module must be made smarter, so that it can select and write the correct 32-bit words to the correct addresses, or the tile could have two different DMA modules: one for 128-bit block transfers for entire SHMAC, and one for 32-bit block transfer, specifically designed for communication between modules within the tile.
-But if the latter solution is to work effectively between on-tile modules and external memory, cooperation between the 128-bit DMA module and the 32-bit DMA module would be required, for example by on-tile shared memory, otherwise the 32-bit DMA on its own would flood the interconnect network, causing the same problem as  our current solution.
-
-
-When using the current DMA module with the SHA-256 hashing, the performance gain is at only \textbf{XXX} percent, while the increase in energy usage is in average about \todo{Due to lack of data, we cannot make the outrageous cry of how bad it is, until we know how bad it is} \textbf{XXX}.
+This likely requires a solution where individual 32-bit words may be selected and written individually.
 
 The DMA could also be expanded to include support for burst transfers. This can allow quicker data
 transfer, as overhead is reduced, and potentially improving throughput.
