@@ -16,8 +16,8 @@ instead, running several separate SHA-256 computations in parallel provides a po
 exploiting parallelism to increase the number of SHA-256 computations that can be run in a specified period of time.
 
 Using bitcoin mining as an application, this project develops a SHA-256 accelerator
-for the Single-ISA Heterogeneous MAny-core Computer, SHMAC, described in section \ref{sec:shmac},
-which provides a high degree of thread-level parallelism. To achieve higher throughput for the
+for the Single-ISA Heterogeneous MAny-core Computer (SHMAC), described in section \ref{sec:shmac},
+which providess a high degree of thread-level parallelism. To achieve higher throughput for the
 SHA-256 accelerator and the possibility of higher energy efficiency overall, a DMA is also
 developed. The two modules are integrated into a general-purpose CPU tile, and an estimation
 of the bitcoin mining efficiency is made using a benchmark application measuring the performance
