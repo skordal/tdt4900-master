@@ -1,8 +1,13 @@
 \chapter{Conclusion and Future Work}
 \label{cha:conclusion}
 
+The results obtained shows that using the SHA-256 accelerator and DMA module described in this
+report, it is possible to get a bitcoin mining performance of 175,7~kH/s when running the
+hashing benchmark on 14 cores simultaneously. The best energy efficiency is obtained when
+running the benchmark on 14 cores \emph{without} the DMA enabled, at 163,2~kH/J.
+
 Although the performance and energy efficiency obtained in this study cannot compete
-with other bitcoin mining solutions in FPGAs, providing 128 times lower energy efficiency than
+with other bitcoin mining solutions implemented on FPGAs, providing 128 times lower energy efficiency than
 a dedicated bitcoin mining system, it still shows that SHMAC is an excellent platform
 for exploiting thread-level parallelism, and using our hardware accelerators provided a
 near-linear performance scaling over 14 CPU cores while retaining good energy efficiency.
