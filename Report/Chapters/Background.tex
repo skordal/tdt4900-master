@@ -139,7 +139,9 @@ The shift to GPU mining started in July 2010, when the first OpenCL miner was wr
 used in a private mining setup. In September that year, the first open source GPU miner,
 which was based on Cuda, was released after the author was paid 10~000 bitcoins, worth about
 \$600 USD at the time, by Jeff Garzik, one of the core bitcoin developers. An open source
-OpenCL-based miner was released shortly after. \cite{bitcoin-history}
+OpenCL-based miner was released shortly after. Using GPUs for bitcoin mining allows miners to
+take advantage of the heterogenity offered by common desktop computers to accelerate bitcoin
+mining. \cite{bitcoin-history}
 
 OpenCL miners typically compute the double SHA-256 hash using a fully unrolled implementation
 of the compression loop. Multiple hash calculations are run simultaneously exploiting the parallelism
@@ -147,25 +149,14 @@ offered by GPUs. Many miners tweaked various parameters of their hardware, such 
 clock frequencies of both the video RAM and the GPU core in order to get higher throughput
 and thus reduce the cost of running each GPU, in order to obtain greater profits.
 
-At the best of its time, NVidia GPUs like GTX570 reached 155 MH/s rates, while AMD GPUs like 7970, costing \$450, performed as much as 675 MH/s.\cite{bespoke-silicon}
-% Maybe mention rigs?
-
-\subsection{Mining Rigs}
-\todo{Problem: Hard to find proper sources}
-For the building and use of rigs, GPUs were more accesibale than FPGAs for end users, since the minimum requirement were PC-building skills and eager forum-reading.
-No formal training in parallell computing or FPGA tools were required.
-There were a few key restrictions, however, that had to be addressed and tweaked with:
-With GPUs followed additional cost in wasted resources, such as necessary motherboards needed for the GPU's, but with unused processors, hard-drive and RAM. 
-Each GPU demanded power, typically 200-300W per GPU.
-GPUs used at this scale goes beyond the airflow design of the rig cases, and the power consumption easily exceeded beyond natural cooling, power and noise limits.
-Each GPU needed to be plugged into a PCI-E 8x or 16x slot, which there were few on the commercial motherboards, and OpenCL required each to be attached to a display. 
-
-\todo{Dilemma: Have said part A, need to say part B? Or avoid it due to the excessive amount of details (vote the last)}\textbf{Dropped the GPU rig-limits solution}
-
-The power consumption on each GPU being at least 200W, making the use of rigs comparable with data centers.
-For some residental homes, only one or two GPUs could be utulized before the price per KWh was jacked up for the resident.
-The most successful Bitcoin mining operations tended to relocate to warehouse space with largers volume for air for cooling, and with cheap industrial power rate.
-
+In order to increase profits, miners started to place multiple GPUs on the same motherboard,
+providing higher hashrates while still using readily accessible hardware. However, for each
+GPU added, an additional cost in wasted resources, such as the additional motherboards needed
+to run the GPUs, which includes mostly unused hard-drives, RAM and processors.
+Additional challenges included providing enough power and cooling to the GPUs.
+The power consumption on each GPU was on average more than 200~W, making the use of rigs
+comparable with data centers, and the most successful bitcoin mining operations tended to
+relocate to warehouse space with larger volumes of air for cooling, and cheap industrial power prices. \cite{bespoke-silicon}
 
 \subsection{FPGA Mining}
 \label{sec:fpga-mining}
