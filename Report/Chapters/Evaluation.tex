@@ -488,9 +488,9 @@ when the interconnect network is starting to become congested, around the point 
 \end{figure}
 
 The numbers obtained here shows that our accelerated hashing tile cannot compete with other FPGA-based bitcoin hashing systems,
-such as BTCMiner, mentioned in Section \ref{sec:fpga-mining}, which gets a result of 21~MH/J as opposed to our 163,3~kH/J.
+such as BTCMiner, mentioned in Section \ref{sec:fpga-mining}, which gets a result of 21~MH/J, 128 times lower than our 163,3~kH/J.
 There are several reasons for this, mainly the lack of pipelining in the SHA-256 accelerator, which slows throughput by 65 times
-compared to a fully unrolled SHA-256 pipeline.
+compared to a fully unrolled SHA-256 pipeline, and a memory system that is not optimized for the high throughput required for bitcoin mining.
 
 %\section{Discussion about NoC efficiency}
 
