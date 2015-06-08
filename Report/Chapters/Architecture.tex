@@ -108,13 +108,6 @@ or by including a DMA in the hashing accelerator to transfer data to and from th
 however, preclude the DMA from being used as a general data transfer module, providing unnecessary
 overhead in terms of possibly unused logic.
 
-%Using this
-%interface for the hashing module would, however, have made it impossible to use a DMA to transfer
-%data to and from the module, making the hashing process much more dependent on the CPU, limiting
-%its benefits as an accelerator for offloading work from the processor.
-
-% Figure
-
 \subsection{DMA Module}
 
 The DMA module was designed to investigate whether separate data transfers with a DMA could improve throughput and energy efficiency of the hashing process, and also gain energy savings by freeing up the on-tile CPU for other work or sleeping.
