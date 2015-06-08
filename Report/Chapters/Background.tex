@@ -234,8 +234,8 @@ the chips are in use, no parts of the chips can be turned off to save power. \ci
 
 % Fun fact, GH/Ws = GH/J
 
-\subsection{Scaling of bitcoin hardware}
-\todo{Still have this one?}
+%\subsection{Scaling of bitcoin hardware}
+%\todo{Still have this one?}
 %Due to the dark silicon problem, future chips will require that parts be powered down or deactivated
 %in order to satisfy a given power budget \cite{dark-silicon2}. Bitcoin mining may be close to
 %the worst case for dark silicon optimizations, far beyond multicore CPUs or GPUs. Due to bitcoin
@@ -281,6 +281,10 @@ However, adding multiple cores does not circumvent the problem in the long run.
 Multicore chips will not scale as transistors shrink, and the fraction of a chip that can be filled with cores running at full frequency is dropping exponentially with each processor generation. 
 Large fractions of the chip will be left dark --- either switched off for a long time, or significantly underclocked. \cite{dark-silicon}
 %New designs are required, with new architectural techniques that spend area to buy energy efficiency. \cite{dark-silicon}
+
+The case of bitcoin mining may be close to the worst case for dark silicon optimizations, far beyond multicore CPUs or GPUs. 
+Due to bitcoin mining's high processing requirements, the logic needed to run the algorithm cannot be turned off without losing performance.
+Butterfly Labs ran into this problem with their 65~nm chip, and had to scale back the performance to reduce power consumtion and manage to cool the chip properly. While bitcoin mining began as a ``race to ASIC'', energy costs now determine which ASICs are the most profitable and therefore energy efficiency is a problem that must be addressed. \cite{bespoke-silicon}
 
 \subsection{Approaches to the Problem of Dark Silicon}
 \label{sec:taylor}
@@ -444,7 +448,6 @@ In some cases, a daughterboard can also allow for additional daughterboards to b
 Commonly used are the CoreTile Express and LogicTile Express boards. 
 CoreTile Express contains the CPU cores that runs the system. The version used in this project contains four Cortex A9-processors, running Linary Linux 13.12,
 with Linux kernel version 3.14.25.
-
 Only one core is used by the Linux host system.
 
 The LogicTile Express contains one or more FPGAs, the number depending on the version, suitable for prototyping SoC designs.
