@@ -145,11 +145,28 @@ OpenCL miners typically compute the double SHA-256 hash using a fully unrolled i
 of the compression loop. Multiple hash calculations are run simultaneously exploiting the parallelism
 offered by GPUs. Many miners tweaked various parameters of their hardware, such as the voltage and
 clock frequencies of both the video RAM and the GPU core in order to get higher throughput
-and thus reduce the cost of running each GPU, in order to obtain greater profits \cite{bespoke-silicon}.
+and thus reduce the cost of running each GPU, in order to obtain greater profits.
+
+At the best of its time, NVidia GPUs like GTX570 reached 155 MH/s rates, while AMD GPUs like 7970, costing \$450, performed as much as 675 MH/s.\cite{bespoke-silicon}
 % Maybe mention rigs?
 
+
 \subsection{Mining Rigs}
-\todo{!!}\textbf{FILL IN!}
+\todo{Problem: Hard to find proper sources}
+For the building and use of rigs, GPUs were more accesibale than FPGAs for end users, since the minimum requirement were PC-building skills and eager forum-reading.
+No formal training in parallell computing or FPGA tools were required.
+There were a few key restrictions, however, that had to be addressed and tweaked with:
+With GPUs followed additional cost in wasted resources, such as necessary motherboards needed for the GPU's, but with unused processors, hard-drive and RAM. 
+Each GPU demanded power, typically 200-300W per GPU.
+GPUs used at this scale goes beyond the airflow design of the rig cases, and the power consumption easily exceeded beyond natural cooling, power and noise limits.
+Each GPU needed to be plugged into a PCI-E 8x or 16x slot, which there were few on the commercial motherboards, and OpenCL required each to be attached to a display. 
+
+\todo{Dilemma: Have said part A, need to say part B? Or avoid it due to the excessive amount of details (vote the last)}\textbf{Dropped the GPU rig-limits solution}
+
+The power consumption on each GPU being at least 200W, making the use of rigs comparable with data centers.
+For some residental homes, only one or two GPUs could be utulized before the price per KWh was jacked up for the resident.
+The most successful Bitcoin mining operations tended to relocate to warehouse space with largers volume for air for cooling, and with cheap industrial power rate.
+
 
 \subsection{FPGA Mining}
 \label{sec:fpga-mining}
@@ -165,7 +182,7 @@ ZTex' FPGA boards, which can obtain up to 215~MH/s with a power usage of about 9
 % Note: Taylor managed to get the release year of the GPUs he compares performance to wrong,
 % choosing GPUs from 2012 to compare to FPGAs from 2011.
 
-FPGAs provided great advantages to the speed of bitwise functions, which are important for
+\todo{But what about addition operations?}FPGAs provided great advantages to the speed of bitwise functions, which are important for
 the SHA-256 algorithm. Popular open-source designs were created so that they could be used
 by different kinds of FPGAs. They consisted of a SHA-256 module which had a configurable depth pipeline, each
 consisting of the necessary hardware for computing a specific number of rounds of the
@@ -179,6 +196,11 @@ Power consumption became much higher than typical for FPGAs, with the pipelined 
 giving an extremely high activity factor for LUTs. Development boards could not provice enough
 power and heat dissipation for sustained usage, and development of custom boards that focused
 on providing enough power and cooling with minimal unused resources, became popular. \cite{bespoke-silicon}
+
+Using Spartan XC6SLX150 parts and placing these on quad-chip boards, they achieved a maximum of 860 MH/s at 216 MHz and 39W, at the price of \$1060.
+Butterfly Labs (BFL) in Kansas offered a non-open-source version, with the price of \$599 with performance at 830 MH/s.
+They also offered a higher-end Goliath FPGA-based machine, the BFL Mini-rig, with priced at \$15K that achieved 25.2 GH/s, based on Altera FPGAs that each reached 650-750 MH/s per chip.
+BLF was at the time the most \todo{Advice: Google and check if this still stands}successfull commercial closed-source Bitcoin company.
 
 \subsection{ASIC Miners}
 \label{sec:asic}
@@ -196,6 +218,9 @@ in order to be able to cool the chips properly.
 ASICMINER was another of the earliest designs, including only one SHA256 hash unit on a chip,
 replicating a single FPGA-based design at a much higher frequency, with better energy efficiency
 and a cheaper price. \cite{bespoke-silicon}
+
+Interestingly, in contrast to other ASIC products, these were funded by the community, either through raising money over the Internet, or by preordering by the users.
+\todo{Add numbers here. Or find a good spot?}
 
 \subsubsection{The Goldstrike 1}
 Another ASIC design is the Goldstrike 1 architecture, noteworthy because its architecture is
@@ -225,7 +250,8 @@ the chips are in use, no parts of the chips can be turned off to save power. \ci
 
 % Fun fact, GH/Ws = GH/J
 
-%\subsection{Scaling of bitcoin hardware}
+\subsection{Scaling of bitcoin hardware}
+\todo{Still have this one?}
 %Due to the dark silicon problem, future chips will require that parts be powered down or deactivated
 %in order to satisfy a given power budget \cite{dark-silicon2}. Bitcoin mining may be close to
 %the worst case for dark silicon optimizations, far beyond multicore CPUs or GPUs. Due to bitcoin
