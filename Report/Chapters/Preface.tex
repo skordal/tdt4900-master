@@ -2,11 +2,11 @@
 
 Recent years have seem the emergence of a new class of currencies, called
 cryptocurrencies. These currencies use cryptography to provide security
-and peer-to-peer networking to provide a decentralized system. Bitcoin was the
-first, and is currently the most popular of these currencies. It uses a two-pass
+and peer-to-peer networking to provide a decentralized system. Bitcoin is
+the most popular of these currencies. It uses a two-pass
 SHA-256 hash at its core. Producing new bitcoins is done through a process
-referred to as ``mining'', and requires large amounts of computational
-power.
+referred to as ``mining'', which involves a brute-force search for a hash with
+a specific value. This process requires large amounts of computing power.
 
 Current-generation hardware for bitcoin mining includes highly-optimized
 ASIC chips which provide huge amounts of performance. However, designers of
@@ -25,10 +25,36 @@ The results show a maximum performance of 175,7~kH/s when running the benchmark
 application on 14 cores using the SHA-256 accelerator and the DMA. The best
 energy efficiency was obtained when running on 14 cores \emph{without} the DMA enabled,
 at 163,2~kH/J. The results does not compare well to specialized FPGA-based
-bitcoin miners, but demonstrates the SHMAC platform's large degree of thread-level parallism
+bitcoin miners, but demonstrates the SHMAC platform's large degree of thread-level parallelism
 which can be better exploited in other applications.
 
 \chapter*{Sammendrag}
+
+De siste årene har en ny type valuta, kalt ``cryptocurrencies'' eller digitale valutaer. Disse valutaene
+bruker kryptografi til å tilby sikkerhet og peer-to-peer-nettverk til å tilby et
+desentralisert system. Bitcoin er den mest populære av dem. Bitcoin er bygd rundt
+en dobbel SHA-256 hash. Å lage nye bitcoins blir gjort via en prosess som kalles
+for ``mining'', og invovlerer et brute-force søk etter en hash med en bestemt verdi.
+Dette krever store mengder med datakraft.
+
+Den nåværende genersasjonen av hardware for bitcoin mining består av høyt optimaliserte
+ASIC-brikker som gir store mengder ytelse. Likevel opplever designerne av slike brikker
+problemer med kjøling og strømtilførsel. For å bøte på dette problemet ser vi på mulighetene
+for å bruke heterogene arkitekturer for å redusere strømforbruk og lage en mer energieffektiv
+løsning.
+
+En SHA-256 akselerator og en DMA blir utviklet og integrert i en tile for SHMAC,
+the Single-ISA Heterogeneous MAny-core Computer, og et system med flere kjerner
+blir brukt for å utnytte trådnivåparallelliteten som platformen tilbyr. Systemet
+blir testet med et benchmark-program for å finne ut hvilken ytelse og energieffektivitet
+som kan forventes når man bruker systemet til bitcoin-mining.
+
+Resultatene viser en maksimal ytelse på 175,5~kH/s når man kjører benchmark-programmet
+på 14 kjerner med SHA-256 akseleratoren og DMAen. Den beste energieffektiviteten
+ble observert når programmet ble kjørt på 14 kjerner med DMA-modulen avskrudd,
+på 163,2~kH/J. Resultatene kommer ikke godt ut når man sammenlikner med spesialiserte
+FPGA-baserte bitcoin-minere, men demonstrerer likevel hvordan SHMAC-platformens høye
+grad av trådnivåparallelitet kan utnyttes av andre programmer.
 
 \chapter*{Acknowledgments}
 
