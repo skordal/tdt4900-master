@@ -2,11 +2,11 @@
 
 Recent years have seem the emergence of a new class of currencies, called
 cryptocurrencies. These currencies use cryptography to provide security
-and peer-to-peer networking to provide a decentralized system. Bitcoin was the
-first, and is currently the most popular of these currencies. It uses a two-pass
+and peer-to-peer networking to provide a decentralized system. Bitcoin is
+the most popular of these currencies. It uses a two-pass
 SHA-256 hash at its core. Producing new bitcoins is done through a process
-referred to as ``mining'', and requires large amounts of computational
-power.
+referred to as ``mining'', which involves a brute-force search for a hash with
+a specific value. This process requires large amounts of computing power.
 
 Current-generation hardware for bitcoin mining includes highly-optimized
 ASIC chips which provide huge amounts of performance. However, designers of
@@ -25,10 +25,21 @@ The results show a maximum performance of 175,7~kH/s when running the benchmark
 application on 14 cores using the SHA-256 accelerator and the DMA. The best
 energy efficiency was obtained when running on 14 cores \emph{without} the DMA enabled,
 at 163,2~kH/J. The results does not compare well to specialized FPGA-based
-bitcoin miners, but demonstrates the SHMAC platform's large degree of thread-level parallism
+bitcoin miners, but demonstrates the SHMAC platform's large degree of thread-level parallelism
 which can be better exploited in other applications.
 
 \chapter*{Sammendrag}
+
+De siste årene har en ny type valuta, kalt ``cryptocurrencies''. Disse valutaene
+bruker kryptografi til å tilby sikkerhet og peer-to-peer-nettverk til å tilby et
+desentralisert system. Bitcoin var den første slike valutaen, og er nå den mest
+populære av dem. Bitcoin er bygd rundt en dobbel SHA-256 hash. Å lage nye bitcoins
+blir gjort via en prosess som kalles for ``mining'', og krever store mengder med
+datakraft.
+
+Den nåværende genersasjonen av hardware for bitcoin mining består av høyt-optimaliserte
+ASIC-brikker som tilbyr store mengder ytelse. Likevel har designerne av slike brikker
+problemer med kjøling og strømtilførsel.
 
 \chapter*{Acknowledgments}
 
