@@ -136,7 +136,7 @@ Every single command, either load or store, are passed from the channels to the 
 Loaded data is passed on to the corresponding channel, and a channel informs the wishbone master when it is finished, so that the slave interface is informed when the final transfer is done executing.
 The corresponding request detail register is modified, and an interrupt request is sent to the interrupt controller.
 
-\todo{Kristian, trenger godkjenning}The current DMA module only supports transfers of single 32-bit words, while the interconnect used between tiles in SHMAC supports 128-bit blocks.
+The current DMA module only supports transfers of single 32-bit words, while the interconnect used between tiles in SHMAC supports 128-bit blocks.
 This means four transfers are done on the network for each 128-bit blocks, when only one entire block transfer is needed. 
 The reason for not expanding to 128-bit blocks was due to compatibility issues with the SHA-256 module. 
 We were concerned that expanding would force blocks to have an alignment of 128-bits, which would make the DMA harder to use from a software perspective and add additional difficulties in transferring data to and from the registers of the hashing accelerator. 
@@ -190,7 +190,7 @@ scratchpad bug previously mentioned.
 
 The design contains 14 CPU tiles and is illustrated in Figure \ref{fig:15x2}. The
 current implementation of SHMAC does not allow more than 15 tiles on each row due
-to only using 4 bits to represent each grid coordinate.\todo{Check sources}
+to only using 4 bits to represent each grid coordinate.
 
 \begin{figure}[htb]
     \centering
