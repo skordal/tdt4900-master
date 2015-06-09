@@ -1,0 +1,401 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date: 02/02/2015 05:42:11 PM
+-- Design Name: 
+-- Module Name: DMA_WISHBONE_Toplevel - Behavioral
+-- Project Name: 
+-- Target Devices: 
+-- Tool Versions: 
+-- Description: 
+-- 
+-- Dependencies: 
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+-- 
+----------------------------------------------------------------------------------
+
+
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx leaf cells in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity DMA_WISHBONE_Toplevel is
+    Port ( 
+    
+            -- WISHBONE COMMON INPUTS 
+               clk_i : in STD_LOGIC;
+              rst_i : in STD_LOGIC;
+              --dat_i : in STD_LOGIC_VECTOR (127 downto 0);
+              --tgd_i : in STD_LOGIC_VECTOR (2 downto 0);
+              
+            -- WISHBONE MASTER INPUTS   
+              ack_i : in STD_LOGIC;
+              err_i : in STD_LOGIC;
+              rty_i : in STD_LOGIC;
+              stall_i: in STD_LOGIC;
+              M_dat_i: in std_logic_vector(127 downto 0);
+              M_tgd_i : in std_logic_vector(2 downto 0);
+              
+              -- WISHBONE MASTER OUTPUTS
+              M_dat_o : out STD_LOGIC_VECTOR (127 downto 0);
+              M_tgd_o : out STD_LOGIC_VECTOR (2 downto 0);
+              adr_o : out STD_LOGIC_VECTOR (31 downto 0);
+              cyc_o : out STD_LOGIC;
+              lock_o : out STD_LOGIC;
+              sel_o : out STD_LOGIC_VECTOR (15 downto 0);
+              stb_o : out STD_LOGIC;
+              tga_o : out STD_LOGIC_VECTOR (2 downto 0);
+              tgc_o : out STD_LOGIC_VECTOR (2 downto 0);
+              we_o : out STD_LOGIC;
+    
+             -- WISHBONE SLAVE INPUTS 
+             adr_i : in STD_LOGIC_VECTOR (31 downto 0);
+             cyc_i : in STD_LOGIC;
+             lock_i : in std_logic;
+             sel_i : in std_logic_vector(15 downto 0);
+             stb_i : in std_logic;
+             tga_i : in std_logic;
+             tgc_i : in std_logic;
+             we_i : in std_logic;
+             S_dat_i: in std_logic_vector(127 downto 0);
+             S_tgd_i : in std_logic_vector(2 downto 0);
+           
+             -- WISHBONE SLAVE OUTPUTS
+             S_dat_o : out STD_LOGIC_VECTOR (127 downto 0);
+             S_tgd_o : out STD_LOGIC_VECTOR (2 downto 0);             
+             ack_o : out std_logic;
+             err_o : out std_logic;
+             rty_o : out std_logic;
+             stall_o : out std_logic;
+    
+            interrupt : out std_logic
+    );
+    
+           
+end DMA_WISHBONE_Toplevel;
+
+architecture Behavioral of DMA_WISHBONE_Toplevel is
+    -- Internal signals
+    
+--    signal interrupt_signal : std_logic := '0';
+--    signal clear : std_logic := '0'; -- Signal used to clear RReg when DMA has completed
+    
+    -- Interim signals, DMA -> Wishbone interface
+    signal newDMAOutputToWB :  STD_LOGIC := '0';                          
+    signal DMADetailsToWB :  STD_LOGIC_VECTOR (33 downto 0) := (33 downto 0 => '0');   
+    signal DMADataOutToWB :  STD_LOGIC_VECTOR (31 downto 0) := (31 downto 0 => '0');       
+    --signal DMAMonitorOut0 : std_logic := '0';
+    --signal DMAMonitorOut1 : std_logic := '0';
+    signal DMAFlagsToWB : STD_LOGIC_VECTOR(2 downto 0);
+    
+    -- Interim signals, Wishbone interface -> DMA                                                      
+    signal blockNewOutputToDMA : STD_LOGIC := '0';
+    signal newDMAInputToDMA : STD_LOGIC := '0';                          
+    signal DMAAddressInToDMA : STD_LOGIC_VECTOR (31 downto 0) := (31 downto 0 => '0');    
+    signal DMADataInToDMA : STD_LOGIC_VECTOR (31 downto 0) := (31 downto 0 => '0');       
+      
+    -- Signal for concatination
+    signal DMADataInTotal : STD_LOGIC_VECTOR(63 downto 0) := (63 downto 0 => '0');
+    
+    
+    
+    
+    
+    -- Signals from WB_Slave to DMA, and WB_MASTER to DMA
+    signal activateDMAChannel0 : std_logic := '0';
+    signal activateDMAChannel1 : std_logic := '0';
+    signal DMATransferDetails0 : std_logic_vector (95 downto 0) := (95 downto 0 => '0'); 
+    signal DMATransferDetails1 : std_logic_vector (95 downto 0) := (95 downto 0 => '0'); 
+    signal clear0 : std_logic := '0';
+    signal clear1 : std_logic := '0';
+    
+    -- Components
+
+     component DMAOptima_Toplevel -- The DMA Module itself
+	   generic( n : integer := 32; 
+             m : integer := 32;
+             u : integer := 96;    
+             p : integer := 64;
+             bufferDepth : integer := 8
+        );
+        port(
+        -- General inputs
+          clk : in std_logic;
+              reset : in std_logic;
+              
+              -- Transfer Input
+              transferDetails0 : in std_logic_vector(u-1 downto 0);
+              transferDetails1 : in std_logic_vector(u-1 downto 0);
+              
+              activateC0 : in std_logic;
+              activateC1 : in std_logic;
+              
+              -- Input from WB_MASTER to channels
+              blockTransfer : in std_logic;
+              dataIn : in std_logic_vector(p-1 downto 0);
+              storeData : in std_logic;
+              
+              -- Output from data fifo buffer
+              dataFull : out std_logic;
+              
+              -- Output from DMA to WB_MASTER
+              storeOutput : out std_logic;
+              commandOut : out std_logic_vector(33 downto 0);
+              dataOut : out std_logic_vector(31 downto 0);
+              flagsOut : out std_logic_vector(2 downto 0)
+              
+           
+        );
+	end component;
+	
+	component WISHBONE_DMA_MASTER_STANDARD_SC
+	Port (
+                    -- WISHBONE MASTER INPUTS
+                    clk_i : in STD_LOGIC;
+                     rst_i : in STD_LOGIC;
+                     dat_i : in STD_LOGIC_VECTOR (127 downto 0);
+                     ack_i : in STD_LOGIC;
+                     err_i : in STD_LOGIC;
+                     rty_i : in STD_LOGIC;
+                     tgd_i : in STD_LOGIC_VECTOR (2 downto 0);
+                     
+                     -- WISHBONE MASTER OUTPUTS
+                     adr_o : out STD_LOGIC_VECTOR (31 downto 0);
+                     dat_o : out STD_LOGIC_VECTOR (127 downto 0);
+                     cyc_o : out STD_LOGIC;
+                     lock_o : out STD_LOGIC;
+                     sel_o : out STD_LOGIC_VECTOR (15 downto 0);
+                     stb_o : out STD_LOGIC;
+                     tga_o : out STD_LOGIC_VECTOR (2 downto 0);
+                     tgc_o : out STD_LOGIC_VECTOR (2 downto 0);
+                     tgd_o : out STD_LOGIC_VECTOR (2 downto 0);
+                     we_o : out STD_LOGIC;
+        
+                    -- Inputs from DMA
+                    newDMAOutput : in STD_LOGIC;
+                    DMADetailsOut : in  STD_LOGIC_VECTOR (33 downto 0);
+                    DMADataOut : in STD_LOGIC_VECTOR (31 downto 0);
+                    DMAFlagsOut : in std_logic_vector(2 downto 0);
+                    
+                    -- Outputs to DMA
+                    blockNewOutput : out STD_LOGIC; 
+                    newDMAInput : out STD_LOGIC;
+                    DMAAddressIn : out STD_LOGIC_VECTOR (31 downto 0);
+                    DMADAtaIn : out STD_LOGIC_VECTOR (31 downto 0);
+                    
+                    -- Outputs to Slave Registers
+                    clear0 : out STD_LOGIC;
+                    clear1 : out std_logic
+     );
+     end component;
+     
+     component WISHBONE_DMA_SLAVE
+         Port (
+           -- WISHBONE COMMON INPUTS 
+              clk_i : in STD_LOGIC;
+              rst_i : in STD_LOGIC;
+              dat_i : in STD_LOGIC_VECTOR (127 downto 0);
+              dat_o : out STD_LOGIC_VECTOR (127 downto 0);
+              tgd_i : in STD_LOGIC_VECTOR (2 downto 0);
+             tgd_o : out STD_LOGIC_VECTOR (2 downto 0);
+             
+               -- WISHBONE SLAVE INPUTS                         
+               adr_i : in STD_LOGIC_VECTOR (31 downto 0);       
+               cyc_i : in STD_LOGIC;                            
+               lock_i : in std_logic;                           
+               sel_i : in std_logic_vector(15 downto 0);                            
+               stb_i : in std_logic;                            
+               tga_i : in std_logic;                            
+               tgc_i : in std_logic;                            
+               we_i : in std_logic;                             
+                                                                
+               -- WISHBONE SLAVE OUTPUTS                        
+               ack_o : out std_logic;                           
+               err_o : out std_logic;                           
+               rty_o : out std_logic;                           
+               stall_o : out std_logic;
+               interrupt : out std_logic;
+               
+               -- Inputs to DMA
+               transferDetails0 : out std_logic_vector(95 downto 0);
+               transferDetails1 : out std_logic_vector(95 downto 0);
+               activate0 : out std_logic;
+               activate1 : out std_logic;
+               
+               -- Outputs from WB_Master (DMA)
+               clear0 : in std_logic;
+               clear1 : in std_logic          
+          );
+          end component;
+     
+begin
+
+    DMA : DMAOptima_Toplevel
+    port map(
+          clk  => clk_i,
+                reset => rst_i, 
+                
+                transferDetails0 => DMATransferDetails0,
+                transferDetails1 => DMATransferDetails1,
+                
+                activateC0 => activateDMAChannel0,
+                activateC1 => activateDMAChannel1,
+                
+                blockTransfer => blockNewOutputToDMA,
+                dataIn => DMADataInTotal,
+                storeData => newDMAInputToDMA,
+                
+                --datafull =>
+                
+                -- Output from DMA to WB_MASTER
+                storeOutput => newDMAOutputToWB,
+                commandOut => DMADetailsToWB,
+                dataOut => DMADataOutToWB,
+                flagsOut =>DMAFlagsToWB
+                
+    );
+    
+    WISHBONE_DMA_MASTER : WISHBONE_DMA_MASTER_STANDARD_SC
+    port map(
+        -- WBM Inputs
+        clk_i => clk_i,
+        rst_i => rst_i,
+        dat_i => M_dat_i, 
+        ack_i => ack_i, 
+        err_i => err_i, 
+        rty_i => rty_i, 
+        tgd_i => M_tgd_i, 
+        
+        -- WBM Outputs         
+        adr_o => adr_o, 
+        dat_o => M_dat_o, 
+        cyc_o => cyc_o, 
+        lock_o => lock_o,
+        sel_o => sel_o,
+        stb_o => stb_o, 
+        tga_o => tga_o,
+        tgc_o => tgc_o,
+        tgd_o => M_tgd_o,
+        we_o => we_o,
+        
+        -- Inputs from DMA
+        newDMAOutput => newDMAOutputToWB,
+        DMADetailsOut => DMADetailsToWB,
+        DMADataOut => DMADataOutToWB,
+        DMAFlagsOut => DMAFlagsToWB,
+                       
+        -- Outputs to DMA
+        blockNewOutput => blockNewOutputToDMA,
+        newDMAInput => newDMAInputToDMA,
+        DMAAddressIn => DMAAddressInToDMA,
+        DMADAtaIn =>DMADataInToDMA,
+                       
+        -- Outputs to RReg
+        clear0 => clear0,
+        clear1 => clear1
+        
+    );
+    
+    WISHBONE_DMA_SLAVE0 : WISHBONE_DMA_SLAVE
+    port map(
+          -- WBS Inputs
+         clk_i => clk_i,
+         rst_i => rst_i,
+         dat_i => S_dat_i,
+         tgd_i => S_tgd_i,
+    
+         adr_i => adr_i,  
+         cyc_i => cyc_i,
+         lock_i => lock_i,
+         sel_i => sel_i,
+         stb_i => stb_i,
+         tga_i => tga_i,
+         tgc_i => tgc_i,
+         we_i => we_i,
+    
+         -- WBS Outputs
+  
+        dat_o => S_dat_o,
+        tgd_o => S_tgd_o,        
+        ack_o => ack_o,
+        err_o => err_o,
+        rty_o => rty_o,
+        stall_o => stall_o,
+        interrupt => interrupt,
+        
+        -- Input from WBM
+        clear0 => clear0, 
+        clear1 => clear1,
+    
+        -- Output to DMA
+        transferDetails0 => DMATransferDetails0,
+        transferDetails1 => DMATransferDetails1,
+        activate0 => activateDMAChannel0,
+        activate1 => activateDMAChannel1   
+    
+    
+    
+    
+    );
+
+    -- Combinatoric signals
+    DMADataInTotal <= DMAAddressInToDMA & DMADAtaInToDMA;
+    --interrupt <= clear0 OR clear1;
+    
+    
+    
+    -- Behaviour signals and processes
+--    updateRegisterAndActivateDMA : Process (clk_i, rst_i, DMARequestInput, previousOnOff)
+--    begin
+--        if rising_edge(clk_i) then
+--            if rst_i = '1' then
+--                previousOnOff <= '0';
+--                activateDMA <= '0';
+--            else
+--                previousOnOff <= DMARequestInput(0);
+--                if DMARequestInput(0) = '1' and previousOnOff = '0' then
+--                    activateDMA <= '1'; -- The moment the ON/OFF bit is set to on in Slave, the activateDMA-signal should be high to activate coming from slave to the DMA Module
+--                else
+--                    activateDMA <= '0';
+--                end if
+--            end if;    
+--        end if;
+--    end process;
+    
+        
+--    updateRegisters : process (clk_i, rst_i, writeRreg, SRegIn, LRegIn, RRegIn, clear)
+--    begin
+--        if rising_edge(clk_i) then
+--            if rst_i = '1' then
+--                SReg <= (31 downto 0 => '0');
+--                LReg <= (31 downto 0 => '0');
+--                RReg <= (31 downto 0 => '0');
+--                interrupt <= '0';
+--            elsif writeRreg = '1' then
+--                SReg <= SRegIn;
+--                LReg <= LRegIn;
+--                RReg <= RRegIn;
+--                interrupt <= '0';
+--            elsif clear = '1' then
+--                interrupt <= '1';
+--                Rreg(0) <= '0';
+--            else
+--                interrupt <= '0';
+--            end if;
+--        end if;
+--    end process;
+
+
+end Behavioral;
