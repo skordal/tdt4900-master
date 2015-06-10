@@ -216,6 +216,7 @@ The Goldstrike is an ASIC-based bitcoin mining solution capable of reaching 2~TH
 requirements, a bitcoin mining core was created that was able to perform at 125 GH/s. Four of
 these were combined in one package, with four of these packages then combined on a circuit board
 to produce the target performance.
+
 The Goldstrike cores consist of an architecture with 120 hash engines running in parallel.
 A hash engine searches through all possible values of the 32-bit nonce field in the bitcoin header
 (see Section \ref{sec:bitcoin-mining}) in order to find a valid hash.
@@ -265,7 +266,7 @@ of transistors is only improving by a factor of 1.4.
 
 Under a constant power-budget, there is a shortfall of a factor of 2 in the energy budget,
 and this utilization potential of a chip is falling exponentially by 2 times for each generation.
-If the power limitation were to be based on the current generation, then designs would be 93.75\% dark in eight years.
+If the power limitation were to be based on the current generation, then designs would be 93.75~\% dark in eight years.
 This gives rise to the term ``dark silicon'', where a chip must either be underclocked or parts of
 it turned off in order to stay within a defined power budget, giving rise to ``dark'' areas of the chip.
 This is especially true for chips where the cooling solutions are no longer efficient enough to remove
@@ -327,7 +328,7 @@ Specialized hardware also risk becomming obsolete when standards are revised. \c
 \subsubsection{Deus Ex Machina}
 The term ``deus ex machina'' comes from literature and theater, in which the protagonists seem increasingly doomed until the very last moment, when something completely unexpected comes out of nowhere to save the day.
 In the case of dark silicon, a deus ex machina would be a major breakthrough in semiconductor device technology.
-The required breakthrough would have to be very fundamental, making it possible to build circuits out of devices other than MOSFETs\footnote{Short for Metal–Oxide–Semiconductor Field-Effect Transistor}. 
+The required breakthrough would have to be very fundamental, making it possible to build circuits out of devices other than MOSFETs\footnote{Metal–Oxide–Semiconductor Field-Effect Transistor}. 
 There are physical limits to what can be done with, for instance, the leakage from MOFSET transistors, and transistors made of other materials may go beyond these limits.
 New transistors must also be able to compete with MOFSETs in performance.
 Tunnel field-effect transistors (TFET) and nanoelectromechanical system switches (NEMS) are examples of inventions that may hint to order-of-magnitude improvements to the leakage problem, although they still fall short in performance. \cite{dark-silicon}
@@ -437,7 +438,6 @@ is only run on FPGAs.
 
 The platform used to run SHMAC is a Versatile Express from ARM.
 Versatile Express is a family of development platforms, made for providing an environment for prototyping future System-on-Chip (SoC) designs.
-%With an already defined and well-proven design environment, the designer may focus on prototyping new designs, instead of creating and debugging the development framework itself. 
 A Versatile Express system typically consists of a $\mu$ATX motherboard, to which various daughterboards can be added.
 In some cases, a daughterboard can also allow for additional daughterboards to be inserted to it, as illustrated in Figure \ref{fig:vexpressTiles}. 
 Commonly used are the CoreTile Express and LogicTile Express boards. 
@@ -477,16 +477,16 @@ Several tile types are supported. The main ones are:
 \begin{description}
     % Torbjørn: Joined Amber and Turbo Amber.
   \item[Processor Tile] Currently two versions are supported: the open source ARM Amber CPU, and an improved version called Turbo Amber.
-  	The original Amber core provides support for the ARMv2a instruction set, while the Turbo Amber
+  	The original Amber core provides support for the ARMv2a instruction set \cite{amber-spec}, while the Turbo Amber
 	provides support for the ARMv4t instruction set, giving the core the ability to also execute
 	instructions from the 16-bit Thumb instruction set. Several performance optimizations are
-	also added to the core. An overview of the processor tile can be seen in
-	Figure \ref{fig:shmac-cpu}. \cite{turboamber}
+	also added to the core \cite{turboamber}. An overview of the processor tile can be seen in
+	Figure \ref{fig:shmac-cpu}.
   \item[Scratchpad Tile] --- A memory tile providing a small amount of memory for use by software.
   	This memory is provided by the on-chip block RAM resources of the FPGA \cite{shmac-plan}.
   \item[DDR Memory Tile] --- Memory controller tile that gives SHMAC access to off-chip DDR memory.
   \item[APB Interface (I/O tile)] --- This tile implements the Advanced Peripherals Bus (APB) slave
-  	which gives the host processor on the Versatile Express board access to SHMACs memory space
+  	which gives the host processor on the Versatile Express board access to SHMAC's memory space
 	for use when programming the memories. \cite{shmac-plan}
   \item[Dummy Tile] --- Empty tile which only contains router functionality. Can be used, for instance,
   	as a filler tile. \cite{shmac-plan}

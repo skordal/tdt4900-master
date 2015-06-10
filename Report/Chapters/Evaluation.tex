@@ -21,9 +21,9 @@ following method:
     \item Hashing using software only, not using the SHA-256 hashing module or DMA module.
     All work is done by the on-tile processor.
     \item Hashing using only the hashing accelerator.
-    The processor controls and copies data to and from the hashing module, and does the endian byte conversion in software.
+    The processor controls and copies data to and from the hashing module, and does the endian conversion in software.
     \item Hashing using the hashing accelerator and DMA.
-    The processor controls each module, but the DMA handles data transfer, as well as endian byte conversion.
+    The processor controls each module, but the DMA handles data transfer, as well as endian conversion.
 \end{enumerate}
 
 Interrupts are used by the hashing module to signal when it is finished working. However,
@@ -43,7 +43,9 @@ Power usage for the application is determined by measuring the wall-power of the
 that SHMAC is running on both when idle and when running the test applications. The
 power usage of the application is then determined using the following formula, where
 $P$ is the power in watts:
+
 \[P_{application} = P_{running} - P_{idle}\]
+
 Using the result of the power measurement, the energy efficiency can be obtained as
 the number of hashes per second per watt, H/s/W. As watt is defined as joule per second,
 J/s, the unit can be rewritten to hashes per joule, H/J.
@@ -92,7 +94,7 @@ uses a write-through cache, all memory writes ends up going to DRAM immediately 
 additional congestion.
 
 Another interesting effect to note in the results is how the XY routing affects the performance
-of each tile. The more tiles that tries to access main memory through a tile router, the less
+of each tile. The more tiles that tries to access main memory through a tile's router, the less
 performance that particular tile has; network congestion does, in other words, have a great impact on individual
 tile performance.
 This was especially obvious for processor tile 10, which is located on the end of row 3 with no
@@ -100,7 +102,7 @@ processors on either its left or right sides. This tile showed notably better pe
 any other processor tiles in the grid. This is because its location means that no data to or from other tiles
 have to pass through its router, which gives it more time to process its own requests. In addition,
 this tile can access all memory tiles without having to send or receive data through any other
-processor tiles because of its location. The individual performance of each processor is noted in
+processor tiles. The individual performance of each processor is noted in
 Appendix \ref{app:performance}, Table \ref{tab:Full-Perf-SW1}.
 
 \begin{figure}
@@ -138,9 +140,10 @@ Figure \ref{fig:shadmacomp-scaling1} shows the results when using the SHA-256 ac
 Looking at the case where only one core is running, one can see that the performance when using the accelerator and DMA is about 2,8 times faster than
 using the software version, at 18~230~H/s in hardware and 6~450~H/s in software. Adding more processors gives an even higher gain due to the
 near linear scaling of the performance when using the hardware accelerators.
+
 Only up to four processors where used for this test, as adding in processors from the second row of processors when scaling up caused the application to crash.
 An attempt at starting processors from the top and bottom row at the same time also led to a crash.
-It was discovered that this was likely because of an bug in the implementation of the scratchpad memory tile we used. An attempt was made at integrating fixes
+It was discovered that this was likely because of an bug in the implementation of the scratchpad memory tile used. An attempt was made at integrating fixes
 to the scratchpad bug from an experimental SHMAC branch, but failed due to differences in the code. Because of this bug, it is not
 possible to predict how many cores can be active and hashing using hardware acceleration at the same time before reaching the memory congestion limit,
 nor is it possible to see if the DMA has any significant effect on the performance. It was decided to attempt to work around the scratchpad bug with
@@ -237,9 +240,9 @@ In this case, both the CPU and the DMA will cause the same traffic for each stor
 With the CPU's load traffic being 25\% compared to using the DMA, and the store traffic 100\%, using the CPU for data transfers should cause an average of 67.5\% data traffic, compared to using the DMA module.
 
 Still, a slight performance increase is observed while using the DMA module, before reaching 12 tiles. 
-It is likely due to the DMA module relieving the CPU for the endian byte conversion, as this is done instantly during DMA transfer, if enabled.
-Without the DMA, the CPU must do this over several cycles. 
-And in general, the CPU likely has more overhead when copying the data to or from the accelerator, compared to the DMA module, but it is hard to predict how much improvement this gives to the DMA, when the CPU is supported by its cache, having access to a full 128-bit cache line after one load from memory.
+It is likely due to the DMA module relieving the CPU of the endian conversion, as this is done instantly during DMA transfer, if enabled.
+Without the DMA, the CPU must do this over several cycles.
+The CPU likely also has more overhead when copying the data to or from the accelerator compared to the DMA, although it is hard to predict how much the DMA improves on this when the CPU is supported by its cache, that loads a full 128-bit cache line per load from memory.
 
 \begin{figure}
 	\centering
@@ -304,7 +307,7 @@ And in general, the CPU likely has more overhead when copying the data to or fro
 		\addlegendentry{Software}
 		\end{axis}
 	\end{tikzpicture}
-	\caption{Hardware hashing performance for the architecture hardware design with software performance included for comparison.}
+	\caption{Hardware hashing performance for the alternative architecture with software performance included for comparison.}
 	\label{fig:shadmacomp-scaling2}
 \end{figure}
 
@@ -332,10 +335,10 @@ the main memory. When cores are inactive, they are waiting in a nop-operation lo
 the no-operation instruction and the branch instruction. However, when stalling, the processor does not decode or
 execute new instructions, which may cause less transistor switching to happen internally in the processor, thus reducing power
 wasted from the switching. This could be a good indicator that the Turbo Amber processor could benefit
-from a form of sleep or wait-for-interrupt instruction, which is not currently supported by the processor \cite{amber-spec}, that will
+from a form of sleep or wait-for-interrupt instruction, which is not currently supported by the processor \cite{amber-spec}, which will
 allow it to stall as long as it has no work to do.
 
-\begin{figure}
+\begin{figure}{htb}
 	\centering
 	\begin{tikzpicture}
 		\begin{axis}[
@@ -410,7 +413,7 @@ hashing module provides large gains in energy efficiency, which becomes especial
 because of the much higher performance the accelerators can provide with little overhead in energy use. At 14 active
 tiles, hardware acceleration without DMA provides over 6 times better energy efficiency than software hashing,
 at 163~205,5~H/J versus 25~985,5~H/J.
-It is interesting to note that the energy efficiency when using the DMA module becomes notably worse, compared to when it is disabled, when the interconnect network starts to become congested, around the point where 10 cores or more are active.
+It is interesting to note that the energy efficiency when using the DMA module becomes notably worse compared to when it is disabled, when the interconnect network starts to become congested, around the point where 10 cores or more are active.
 
 \begin{figure}
 	\centering
@@ -480,7 +483,7 @@ It is interesting to note that the energy efficiency when using the DMA module b
 \end{figure}
 
 The numbers obtained here shows that our accelerated hashing tile cannot compete with other FPGA-based bitcoin hashing systems,
-such as BTCMiner, mentioned in Section \ref{sec:fpga-mining}, which gets a result of 21~MH/J, 128 better lower than our 163,3~kH/J.
+such as BTCMiner, mentioned in Section \ref{sec:fpga-mining}, which gets a result of 21~MH/J, 128 times better than our 163,3~kH/J.
 There are several reasons for this, mainly the lack of pipelining in the SHA-256 accelerator, which slows throughput by 65 times
 compared to a fully unrolled SHA-256 pipeline, and a memory system that is not optimized for the high throughput required for bitcoin mining.
 

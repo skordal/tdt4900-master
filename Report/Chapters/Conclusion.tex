@@ -1,4 +1,4 @@
-\chapter{Conclusion and Future Work}
+\chapter{Conclusion}
 \label{cha:conclusion}
 
 The results obtained with the benchmark shows that using the SHA-256 accelerator and DMA
@@ -18,14 +18,19 @@ the domain of highly optimized ASICs. However, although SHMAC cannot be used for
 mining, the high degree of thread-level parallelism provided by the platform can be well exploited
 in other application areas benefitting from high levels of parallelism.
 
-\section{Enhancing the SHA-256 Module}
+\section{Future Work}
+
+It is possible to improve the results obtained in this thesis further by adding additional
+optimizations to the accelerators.
+
+\subsection{Enhancing the SHA-256 Module}
 
 The SHA-256 module can obtain performance increases from pipelining. Although this uses more
 resources on the FPGA chip as well as requiring additional memory transfers from a CPU or a
 DMA to keep it fed with data, it can increase performance and energy efficiency depending
 on the application.
 
-\section{Enhancing the DMA Module}
+\subsection{Enhancing the DMA Module}
 
 The current DMA Module only supports transfers of single 32-bit words, while the interconnect used in SHMAC supports 128-bit words.
 This means four transfers are done on the network when only one is needed. Exploiting the unused bandwidth could

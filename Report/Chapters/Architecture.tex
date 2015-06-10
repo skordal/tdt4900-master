@@ -67,7 +67,7 @@ overview of the module is available in figure \ref{fig:sha256-module}.
 \end{figure}
 
 In order for the module to remain generic, so that it can also be used in cryptography, 
-optimization specifically for bitcoin mining has been omitted; specifically, this means that the module
+an optimization specifically for bitcoin mining has been omitted; this means that the module
 does not support doing the two-pass hashing required by the bitcoin protocol, instead relying
 on software to set up correct input data for the second pass. It also relies on software to
 do the neccessary padding of the input data as required by the SHA-256 algorithm.
@@ -79,6 +79,7 @@ block ram resources that, in SHMAC, is used both by CPUs and scratchpad memory t
 using block RAMs for optimization would place limits on how many tiles can be included in
 a SHMAC design; indeed, it was observed when synthesizing large designs with many cores
 that the FPGA would run out of block RAM before any other resources according to the synthesis logs.
+
 Another optimization, that has already been mentioned in Section \ref{sec:fpga-mining}, is
 pipelining. This can increase the throughput to as much as one hash per cycle, but will require
 a large amount of additional logic because of the amount of data required by each iteration
@@ -107,7 +108,7 @@ overhead in terms of possibly unused logic.
 
 \subsection{DMA Module}
 
-The DMA module was designed under the purpose to investigate whether separate data transfers with DMA could improve throughput and energy efficiency of the hashing process, and also gain energy savings by freeing up the on-tile CPU for other work or sleeping. A topview is seen in figure \ref{fig:DMATop}.
+The DMA module was designed for the purpose of investigating whether separate data transfers with DMA could improve throughput and energy efficiency of the hashing process, and also gain energy savings by freeing up the on-tile CPU for other work or sleeping. An overview of the module can be seen in figure \ref{fig:DMATop}.
 
 \begin{figure}[htb]
     \centering
@@ -118,14 +119,14 @@ The DMA module was designed under the purpose to investigate whether separate da
 
 The DMA module consists of the DMA logic itself, in addition to a wishbone slave interface for configuration
 and a wishbone master interface for transferring data.
-It transfers words of 32-bit data using single wishbone cycle transfers. In addition, the DMA supports
+It transfers words of 32-bit data using single-cycle wishbone transfers. In addition, the DMA supports
 swapping the endianness of the data it copies. This improves performance when used with the SHA-256
 accelerator, because the results from the accelerator are in big-endian
 and must be converted to little-endian to give the correct results when used by the software running on the processor.
 Converting endianness in software adds several additional instructions per hash, which are now avoided.
 If endian swapping is active, the data bytes are swapped combinatorcially before being passed on to the wishbone master.
 
-The wishbone slave consists of three registers for each DMA channel, used for base source address, base destination address, and detailing the transfer request.
+The wishbone slave consists of three registers for each DMA channel, used for base source address, base destination address, and details of the transfer.
 When request is activated, the selected channel receives data from the slave, and executes the transfer.
 An arbiter arbitrates between the channels if both are active.
 Every single command, either load or store, are passed from the channels to the wishbone master, where they are executed.
@@ -145,7 +146,7 @@ Otherwise they would have had to be changed so that they would be correctly alig
 \section{System architecture}
 \label{sec:SHMAC_sys_arch}
 
-The CPU tile with the integrated SHA-256 accelerator and DMA module was integrated into a grid in order
+The CPU tile with the integrated SHA-256 accelerator and DMA module was placed in a grid with other similar CPU tiles in order
 to exploit the thread-level parallelism offered by the SHMAC architecture.
 The test designs were synthesized using Xilinx' Vivado software suite, version 2013.4, and
 uploaded to the Versatile Express machine.
