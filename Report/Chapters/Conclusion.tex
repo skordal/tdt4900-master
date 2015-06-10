@@ -33,7 +33,7 @@ provide a speedup of as much as 75~\% and reduce the workload on the DMA signifi
 While expanding the DMA transfer width, it must still be made compatible with the other modules on the tile, including the SHA-256 accelerator.
 This likely requires a solution where individual 32-bit words may be selected and written individually.
 
-The DMA could also be expanded to include support for burst transfers. This can allow quicker data
+The DMA could also be expanded to include support for wishbone burst transfers. This can allow quicker data
 transfer, as overhead is reduced, and potentially improving throughput.
 
 

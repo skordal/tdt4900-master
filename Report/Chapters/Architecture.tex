@@ -26,10 +26,9 @@ a Turbo Amber CPU and peripherals such as an interrupt controller and timer modu
 together with a wishbone bus.
 The SHA-256 accelerator and the DMA's slave interface and master interface is added to this bus.
 
-With two masters now connected to the wishbone bus, an arbiter is added as well.
-The tile also needs an arbiter to arbitrate between the DMA and the CPU on the wishbone bus.
+The tile also needs an arbiter to arbitrate between the DMA master and the CPU on the wishbone bus.
 For this purpose, the reference arbiter from the Wishbone Public Domain Library for VHDL % \cite{WBLibrary}
-was adapted for use. This is a round-robin arbiter, illustrated in Figure \ref{fig:WBArbiter}.
+was adapted for use. This is a round-robin arbiter, with its function illustrated in Figure \ref{fig:WBArbiter}.
 
 %
 %For this project, the ARB0001a: 4 Level, Round-robin Arbiter from WISHBONE Public Domain Library for VHDL has been taken in use.
@@ -67,8 +66,8 @@ overview of the module is available in figure \ref{fig:sha256-module}.
 	\label{fig:sha256-module}
 \end{figure}
 
-In order for the module to remain generic, so that it can also be used in cryptography, it
-is also not optimized specifically for bitcoin mining; specifically, this means that the module
+In order for the module to remain generic, so that it can also be used in cryptography, 
+optimization specifically for bitcoin mining has been omitted; specifically, this means that the module
 does not support doing the two-pass hashing required by the bitcoin protocol, instead relying
 on software to set up correct input data for the second pass. It also relies on software to
 do the neccessary padding of the input data as required by the SHA-256 algorithm.
@@ -80,12 +79,11 @@ block ram resources that, in SHMAC, is used both by CPUs and scratchpad memory t
 using block RAMs for optimization would place limits on how many tiles can be included in
 a SHMAC design; indeed, it was observed when synthesizing large designs with many cores
 that the FPGA would run out of block RAM before any other resources according to the synthesis logs.
-
 Another optimization, that has already been mentioned in Section \ref{sec:fpga-mining}, is
 pipelining. This can increase the throughput to as much as one hash per cycle, but will require
 a large amount of additional logic because of the amount of data required by each iteration
 of the SHA-256 compression function. The state required would include 2048~bits of storage
-for the expanded message block in addition to the two sets of 8 32~bit words needed for
+for the expanded message block in addition to the two sets of 8 32-bit words needed for
 state and the intermediate hash value respectively.
 
 The module is controlled by the processor using a memory-mapped interface. This allows the use
@@ -94,7 +92,6 @@ provides registers for 512 bits of input and 256 bits of output data, in additio
 status registers. This interface can also be used for accelerators of other cryptographic hash
 functions which processes input data of the same length and returns a hash of 256 bits or less,
 such as RIPEMD-160 or RIPEMD-256 \cite{ripemd} or the still popular MD5 algorithm \cite{md5}.
-
 With some work, the interface could be made even more generic in order to support algorithms
 with other input and output sizes; a possibility would be to eliminate the input and output
 registers completely in favour of using a DMA built into the module to move data of arbitrary
@@ -110,7 +107,7 @@ overhead in terms of possibly unused logic.
 
 \subsection{DMA Module}
 
-The DMA module was designed to investigate whether separate data transfers with a DMA could improve throughput and energy efficiency of the hashing process, and also gain energy savings by freeing up the on-tile CPU for other work or sleeping.
+The DMA module was designed under the purpose to investigate whether separate data transfers with DMA could improve throughput and energy efficiency of the hashing process, and also gain energy savings by freeing up the on-tile CPU for other work or sleeping. A topview is seen in figure \ref{fig:DMATop}.
 
 \begin{figure}[htb]
     \centering
@@ -119,17 +116,16 @@ The DMA module was designed to investigate whether separate data transfers with 
     \label{fig:DMATop}
 \end{figure}
 
-The DMA module consists of the DMA logic, in addition to a wishbone slave interface for configuration
+The DMA module consists of the DMA logic itself, in addition to a wishbone slave interface for configuration
 and a wishbone master interface for transferring data.
-
-The DMA transfers words of 32-bit data using single wishbone transfers.  In addition, the DMA supports
+It transfers words of 32-bit data using single wishbone cycle transfers. In addition, the DMA supports
 swapping the endianness of the data it copies. This improves performance when used with the SHA-256
 accelerator, because the results from the accelerator are in big-endian
 and must be converted to little-endian to give the correct results when used by the software running on the processor.
 Converting endianness in software adds several additional instructions per hash, which are now avoided.
 If endian swapping is active, the data bytes are swapped combinatorcially before being passed on to the wishbone master.
 
-The wishbone slave consists of three registers for each DMA channel, used for base source, base destination and detailing the transfer request.
+The wishbone slave consists of three registers for each DMA channel, used for base source address, base destination address, and detailing the transfer request.
 When request is activated, the selected channel receives data from the slave, and executes the transfer.
 An arbiter arbitrates between the channels if both are active.
 Every single command, either load or store, are passed from the channels to the wishbone master, where they are executed.
@@ -149,16 +145,16 @@ Otherwise they would have had to be changed so that they would be correctly alig
 \section{System architecture}
 \label{sec:SHMAC_sys_arch}
 
-The CPU tile with the integrated SHA-256 accelerator and DMA was integrated into a grid in order
+The CPU tile with the integrated SHA-256 accelerator and DMA module was integrated into a grid in order
 to exploit the thread-level parallelism offered by the SHMAC architecture.
 The test designs were synthesized using Xilinx' Vivado software suite, version 2013.4, and
-uploaded to a Versatile Express machine.
+uploaded to the Versatile Express machine.
 
 \subsection{Initial 5x4 Grid Architecture}
 Initially, a 20~tile setup was used on SHMAC. The following tiles were included in the design:
 
 \begin{itemize}
-    \item 16 CPU tiles with on-tile DMA and SHA256 accelerator
+    \item 16 CPU tiles with on-tile DMA module and SHA-256 accelerator
     \item 2 scratchpad tiles
     \item 1 DRAM tile
     \item 1 I/O tile
@@ -186,8 +182,7 @@ in order to measure the scaling of the performance and energy efficiency when us
 
 The second design places all processor tiles in a single row. This causes all traffic
 to the memory tiles, placed on the row below, to come from above, which bypasses the
-scratchpad bug previously mentioned.
-
+scratchpad bug.
 The design contains 14 CPU tiles and is illustrated in Figure \ref{fig:15x2}. The
 current implementation of SHMAC does not allow more than 15 tiles on each row due
 to only using 4 bits to represent each grid coordinate.
